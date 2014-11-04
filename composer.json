@@ -1,0 +1,26 @@
+{
+	"name": "wearearchitect/sharepoint-oauth-app-client",
+	"type": "library",
+	"description": "SharePoint OAuth App Client",
+	"keywords": ["sharepoint", "online", "2013", "oauth", "rest", "api", "client"],
+	"homepage": "https://github.com/wearearchitect/sharepoint-oauth-app-client",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Quetzy Garcia",
+			"email": "qgarcia@wearearchitect.com",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0",
+		"guzzlehttp/guzzle": "5.0.*",
+		"nixilla/php-jwt": "~0.1",
+		"nesbot/Carbon": "1.13.*"
+	},
+	"autoload": {
+		"psr-4": {
+			"WeAreArchitect\\SharePoint\\": "src/"
+		}
+	}
+}
