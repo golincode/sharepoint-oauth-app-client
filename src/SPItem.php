@@ -108,7 +108,7 @@ class SPItem
 	 * Get Item ID
 	 *
 	 * @access  public
-	 * @return  string
+	 * @return  int
 	 */
 	public function getID()
 	{
@@ -176,10 +176,11 @@ class SPItem
 	 * @static
 	 * @access  public
 	 * @param   SPList $list SharePoint List
+	 * @param   int    $top  Number of SharePoint Items to retrieve
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPList &$list)
+	public static function getAll(SPList &$list, $top = 5000)
 	{
 		$json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')", [
 			'headers' => [
@@ -189,7 +190,7 @@ class SPItem
 
 			'query'   => [
 				'$expand' => 'Items/File',
-				'top'     => 5000
+				'top'     => $top
 			]
 		]);
 
