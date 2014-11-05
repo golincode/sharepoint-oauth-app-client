@@ -106,6 +106,13 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	private $guid = null;
 
 	/**
+	 * List Template Type
+	 *
+	 * @access  private
+	 */
+	private $template = 0;
+
+	/**
 	 * List Type
 	 *
 	 * @access  private
@@ -237,6 +244,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
+			'template'    => 'BaseTemplate',
 			'type'        => '__metadata.type',
 			'item_type'   => 'ListItemEntityTypeFullName',
 			'guid'        => 'Id',
@@ -285,6 +293,17 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	public function getType()
 	{
 		return $this->type;
+	}
+
+	/**
+	 * Get List Template Type
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getTemplate()
+	{
+		return $this->template;
 	}
 
 	/**
