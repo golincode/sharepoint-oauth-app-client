@@ -46,8 +46,8 @@ class SPFormDigest implements Serializable
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
-			'digest'      => 'GetContextWebInformation.FormDigestValue',
-			'expires'     => 'GetContextWebInformation.FormDigestTimeoutSeconds'
+			'digest'  => 'GetContextWebInformation.FormDigestValue',
+			'expires' => 'GetContextWebInformation.FormDigestTimeoutSeconds'
 		], $missing);
 
 		$this->expires = Carbon::now()->addSeconds($this->expires);
@@ -75,8 +75,8 @@ class SPFormDigest implements Serializable
 	public function serialize()
 	{
 		return serialize([
-			'digest'      => $this->digest,
-			'expires'     => $this->expires->getTimestamp()
+			'digest'  => $this->digest,
+			'expires' => $this->expires->getTimestamp()
 		]);
 	}
 
