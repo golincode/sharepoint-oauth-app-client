@@ -116,7 +116,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * Allow iterating through the Site Lists
 	 *
 	 * @access  public
-	 * @return  ArrayIterator with the Site Lists
+	 * @return  ArrayIterator
 	 */
 	public function getIterator()
 	{
@@ -187,7 +187,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
-	 * Get the Site configuration
+	 * Get the SharePoint Site configuration
 	 *
 	 * @access  public
 	 * @return  array
@@ -381,9 +381,9 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * Get all SharePoint Lists
 	 *
 	 * @access  public
-	 * @param   bool   $fetch Fetch SharePoint List Items?
+	 * @param   bool   $fetch Fetch SharePoint Items?
 	 * @throws  SPException
-	 * @return  SPSite
+	 * @return  array
 	 */
 	public function getSPLists($fetch = false)
 	{
@@ -394,7 +394,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * Create a SharePoint List
 	 *
 	 * @access  public
-	 * @param   array  $properties List properties (Title, Description, ...)
+	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
 	 * @throws  SPException
 	 * @return  SPList
 	 */

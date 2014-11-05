@@ -106,6 +106,13 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	private $guid = null;
 
 	/**
+	 * List Template Type
+	 *
+	 * @access  private
+	 */
+	private $template = 0;
+
+	/**
 	 * List Type
 	 *
 	 * @access  private
@@ -141,7 +148,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	private $items = [];
 
 	/**
-	 * Count the Items in the List
+	 * Count the SharePoint Items
 	 *
 	 * @access  public
 	 * @return  int
@@ -152,10 +159,10 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
-	 * Allow iterating through the List Items
+	 * Allow iterating through the SharePoint Items
 	 *
 	 * @access  public
-	 * @return  ArrayIterator with the List Items
+	 * @return  ArrayIterator
 	 */
 	public function getIterator()
 	{
@@ -237,6 +244,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
+			'template'    => 'BaseTemplate',
 			'type'        => '__metadata.type',
 			'item_type'   => 'ListItemEntityTypeFullName',
 			'guid'        => 'Id',
@@ -251,7 +259,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 * @access  public
 	 * @param   SPSite $site  SharePoint Site
 	 * @param   array  $json  JSON response from the SharePoint REST API
-	 * @param   bool   $fetch Fetch SharePoint List items?
+	 * @param   bool   $fetch Fetch SharePoint Items?
 	 * @return  SPList
 	 */
 	public function __construct(SPSite &$site, array $json, $fetch = false)
@@ -285,6 +293,17 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	public function getType()
 	{
 		return $this->type;
+	}
+
+	/**
+	 * Get List Template Type
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getTemplate()
+	{
+		return $this->template;
 	}
 
 	/**
@@ -365,7 +384,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 * @static
 	 * @access  public
 	 * @param   SPSite $site  SharePoint Site
-	 * @param   bool   $fetch Fetch SharePoint List items?
+	 * @param   bool   $fetch Fetch SharePoint Items?
 	 * @throws  SPException
 	 * @return  array
 	 */
@@ -398,7 +417,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 * @access  public
 	 * @param   SPSite $site  SharePoint Site
 	 * @param   string $guid  SharePoint List GUID
-	 * @param   bool   $fetch Fetch SharePoint List items?
+	 * @param   bool   $fetch Fetch SharePoint Items?
 	 * @throws  SPException
 	 * @return  array
 	 */
@@ -426,7 +445,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 * @access  public
 	 * @param   SPSite $site  SharePoint Site
 	 * @param   string $title SharePoint List Title
-	 * @param   bool   $fetch Fetch SharePoint List items?
+	 * @param   bool   $fetch Fetch SharePoint Items?
 	 * @throws  SPException
 	 * @return  array
 	 */
@@ -485,7 +504,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 			'body'    => $body
 		], 'POST');
 
-		$list = new static($site, $json);
+		$list = new static($site, $json['d']);
 
 		// update SharePoint Site
 		$site[$list->title] = $list;
