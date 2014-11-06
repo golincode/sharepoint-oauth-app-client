@@ -198,6 +198,20 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
+	 * Get the base URL
+	 *
+	 * @access  public
+	 * @param   string $path Path to append to the base URL
+	 * @return  string
+	 */
+	public function getBaseURL($path = null)
+	{
+		$url = parse_url($this->config['url']);
+
+		return $url['scheme'].$url['host'].($path !== null ? '/'.ltrim($path, '/') : $path);
+	}
+
+	/**
 	 * Send an HTTP request
 	 *
 	 * @access  public

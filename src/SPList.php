@@ -329,6 +329,18 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
+	 * Get the base URL
+	 *
+	 * @access  public
+	 * @param   string $path Path to append to the base URL
+	 * @return  string
+	 */
+	public function getBaseURL($path = null)
+	{
+		return $this->site->getBaseURL($path);
+	}
+
+	/**
 	 * Send an HTTP request
 	 *
 	 * @access  public
