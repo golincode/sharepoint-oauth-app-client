@@ -76,11 +76,11 @@ class SPItem
 	private $file_time = null;
 
 	/**
-	 * Item File URL
+	 * Item File relative URL
 	 *
 	 * @access  private
 	 */
-	private $file_url = null;
+	private $file_relative_url = null;
 
 	/**
 	 * Object hydration handler
@@ -100,10 +100,10 @@ class SPItem
 			'title'     => 'Title',
 
 			// ? = optional properties
-			'file_name' => 'File.Name?',
-			'file_size' => 'File.Length?',
-			'file_time' => 'File.TimeLastModified?',
-			'file_url'  => 'File.ServerRelativeUrl?'
+			'file_name'         => 'File.Name?',
+			'file_size'         => 'File.Length?',
+			'file_time'         => 'File.TimeLastModified?',
+			'file_relative_url' => 'File.ServerRelativeUrl?'
 		], $missing);
 	}
 
@@ -207,7 +207,11 @@ class SPItem
 	 */
 	public function getFileURL()
 	{
-		return $this->list->getBaseURL($this->file_url);
+		if ($this->file_name === null) {
+			return null;
+		}
+
+		return $this->list->getURL($this->file_name);
 	}
 
 	/**
@@ -226,7 +230,7 @@ class SPItem
 			'name' => $this->file_name,
 			'size' => $this->file_size,
 			'time' => $this->file_time,
-			'url'  => $this->list->getBaseURL($this->file_url)
+			'url'  => $this->getFileURL()
 		];
 	}
 
