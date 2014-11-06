@@ -329,6 +329,19 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
+	 * Get the base URL
+	 *
+	 * @access  public
+	 * @param   string $path      Path to append
+	 * @param   bool   $host_only Use only host?
+	 * @return  string
+	 */
+	public function getBaseURL($path = null, $host_only = true)
+	{
+		return $this->site->getBaseURL($path, $host_only);
+	}
+
+	/**
 	 * Send an HTTP request
 	 *
 	 * @access  public

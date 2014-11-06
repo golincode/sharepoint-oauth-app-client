@@ -271,4 +271,15 @@ class SPUser
 
 		return new static($site, $json['d']);
 	}
+
+	/**
+	 * Get a URL to logout from SharePoint
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getLogoutURL()
+	{
+		return $this->site->getBaseURL('_layouts/SignOut.aspx', false);
+	}
 }

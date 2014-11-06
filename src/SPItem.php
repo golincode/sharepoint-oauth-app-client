@@ -55,18 +55,32 @@ class SPItem
 	private $title = null;
 
 	/**
-	 * Item file name
+	 * Item File Name
 	 *
 	 * @access  private
 	 */
-	private $file = null;
+	private $file_name = null;
 
 	/**
-	 * Item file URL
+	 * Item File Size
 	 *
 	 * @access  private
 	 */
-	private $url = null;
+	private $file_size = 0;
+
+	/**
+	 * Item File Time (modified)
+	 *
+	 * @access  private
+	 */
+	private $file_time = null;
+
+	/**
+	 * Item File URL
+	 *
+	 * @access  private
+	 */
+	private $file_url = null;
 
 	/**
 	 * Object hydration handler
@@ -80,12 +94,16 @@ class SPItem
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
-			'type'  => '__metadata.type',
-			'id'    => 'Id',
-			'guid'  => 'GUID',
-			'title' => 'Title',
-			'file'  => 'File.Name?',
-			'url'   => 'File.ServerRelativeUrl?'
+			'type'      => '__metadata.type',
+			'id'        => 'Id',
+			'guid'      => 'GUID',
+			'title'     => 'Title',
+
+			// ? = optional properties
+			'file_name' => 'File.Name?',
+			'file_size' => 'File.Length?',
+			'file_time' => 'File.TimeLastModified?',
+			'file_url'  => 'File.ServerRelativeUrl?'
 		], $missing);
 	}
 
@@ -154,20 +172,62 @@ class SPItem
 	 * @access  public
 	 * @return  string|null
 	 */
-	public function getFile()
+	public function getFileName()
 	{
-		return $this->file;
+		return $this->file_name;
 	}
 
 	/**
-	 * Get Item file URL
+	 * Get Item File Size (in KiloBytes)
+	 *
+	 * @access  public
+	 * @return  int
+	 */
+	public function getFileSize()
+	{
+		return $this->file_size;
+	}
+
+	/**
+	 * Get Item File Timestamp
+	 *
+	 * @access  public
+	 * @return  Carbon
+	 */
+	public function getFileTime()
+	{
+		return $this->file_time;
+	}
+
+	/**
+	 * Get Item File URL
 	 *
 	 * @access  public
 	 * @return  string|null
 	 */
-	public function getURL()
+	public function getFileURL()
 	{
-		return $this->url;
+		return $this->list->getBaseURL($this->file_url);
+	}
+
+	/**
+	 * Get Item File Meta
+	 *
+	 * @access  public
+	 * @return  array
+	 */
+	public function getFileMeta()
+	{
+		if ($this->file_name === null) {
+			return [];
+		}
+
+		return [
+			'name' => $this->file_name,
+			'size' => $this->file_size,
+			'time' => $this->file_time,
+			'url'  => $this->list->getBaseURL($this->file_url)
+		];
 	}
 
 	/**
@@ -176,7 +236,7 @@ class SPItem
 	 * @static
 	 * @access  public
 	 * @param   SPList $list SharePoint List
-	 * @param   int    $top  Number of SharePoint Items to retrieve
+	 * @param   int    $top  SharePoint Item threshold
 	 * @throws  SPException
 	 * @return  array
 	 */
