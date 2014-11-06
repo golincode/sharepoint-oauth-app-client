@@ -280,6 +280,6 @@ class SPUser
 	 */
 	public function getLogoutURL()
 	{
-		return $this->site->getBaseURL('_layouts/SignOut.aspx', false);
+		return $this->site->getURL('_layouts/SignOut.aspx');
 	}
 }
