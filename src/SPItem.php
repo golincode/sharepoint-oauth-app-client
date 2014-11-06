@@ -207,7 +207,7 @@ class SPItem
 	 */
 	public function getFileURL()
 	{
-		return $this->file_url;
+		return $this->list->getBaseURL($this->file_url);
 	}
 
 	/**
@@ -226,7 +226,7 @@ class SPItem
 			'name' => $this->file_name,
 			'size' => $this->file_size,
 			'time' => $this->file_time,
-			'url'  => $this->file_url
+			'url'  => $this->list->getBaseURL($this->file_url)
 		];
 	}
 
