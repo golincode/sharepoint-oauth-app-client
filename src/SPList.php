@@ -337,6 +337,18 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
+	 * Get the SharePoint Site URL
+	 *
+	 * @access  public
+	 * @param   string $path Path to append
+	 * @return  string
+	 */
+	public function getSiteURL($path = null)
+	{
+		return $this->site->getURL($path);
+	}
+
+	/**
 	 * Get the SharePoint List URL
 	 *
 	 * @access  public
@@ -347,7 +359,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	{
 		$path = ($path !== null ? $this->title.'/'.ltrim($path, '/') : $this->title);
 
-		return $this->site->getURL($path);
+		return $this->getSiteURL($path);
 	}
 
 	/**
