@@ -99,6 +99,13 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	private $site = null;
 
 	/**
+	 * List Path
+	 *
+	 * @access  private
+	 */
+	private $path = null;
+
+	/**
 	 * List GUID
 	 *
 	 * @access  private
@@ -244,6 +251,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
+			'path'        => 'ParentWebUrl',
 			'template'    => 'BaseTemplate',
 			'type'        => '__metadata.type',
 			'item_type'   => 'ListItemEntityTypeFullName',
@@ -329,16 +337,17 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
-	 * Get the base URL
+	 * Get the SharePoint List URL
 	 *
 	 * @access  public
-	 * @param   string $path      Path to append
-	 * @param   bool   $host_only Use only host?
+	 * @param   string $path Path to append
 	 * @return  string
 	 */
-	public function getBaseURL($path = null, $host_only = true)
+	public function getURL($path = null)
 	{
-		return $this->site->getBaseURL($path, $host_only);
+		$path = ($path !== null ? $this->title.'/'.ltrim($path, '/') : $this->title);
+
+		return $this->site->getURL($path);
 	}
 
 	/**

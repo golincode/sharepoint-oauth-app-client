@@ -198,20 +198,15 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
-	 * Get the base URL
+	 * Get the SharePoint Site URL
 	 *
 	 * @access  public
-	 * @param   string $path      Path to append
-	 * @param   bool   $host_only Use only host?
+	 * @param   string $path Path to append
 	 * @return  string
 	 */
-	public function getBaseURL($path = null, $host_only = true)
+	public function getURL($path = null)
 	{
-		$url = parse_url($this->config['url']);
-
-		$base_url = $host_only ? $url['host'] : $url['host'].rtrim($url['path'], '/');
-
-		return $url['scheme'].'://'.$base_url.($path !== null ? '/'.ltrim($path, '/') : $path);
+		return rtrim($this->config['url'], '/').($path !== null ? '/'.ltrim($path, '/') : $path);
 	}
 
 	/**
