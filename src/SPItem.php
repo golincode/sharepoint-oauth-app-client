@@ -100,10 +100,10 @@ class SPItem
 			'title'     => 'Title',
 
 			// ? = optional properties
-			'file'      => 'File.Name?',
-			'size'      => 'File.Length?',
-			'timestamp' => 'File.TimeLastModified?',
-			'url'       => 'File.ServerRelativeUrl?'
+			'file_name' => 'File.Name?',
+			'file_size' => 'File.Length?',
+			'file_time' => 'File.TimeLastModified?',
+			'file_url'  => 'File.ServerRelativeUrl?'
 		], $missing);
 	}
 
@@ -208,6 +208,26 @@ class SPItem
 	public function getFileURL()
 	{
 		return $this->file_url;
+	}
+
+	/**
+	 * Get Item File Meta
+	 *
+	 * @access  public
+	 * @return  array
+	 */
+	public function getFileMeta()
+	{
+		if ($this->file_name === null) {
+			return [];
+		}
+
+		return [
+			'name' => $this->file_name,
+			'size' => $this->file_size,
+			'time' => $this->file_time,
+			'url'  => $this->file_url
+		];
 	}
 
 	/**
