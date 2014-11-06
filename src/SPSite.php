@@ -201,14 +201,17 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * Get the base URL
 	 *
 	 * @access  public
-	 * @param   string $path Path to append to the base URL
+	 * @param   string $path      Path to append
+	 * @param   bool   $host_only Use only host?
 	 * @return  string
 	 */
-	public function getBaseURL($path = null)
+	public function getBaseURL($path = null, $host_only = true)
 	{
 		$url = parse_url($this->config['url']);
 
-		return $url['scheme'].$url['host'].($path !== null ? '/'.ltrim($path, '/') : $path);
+		$base_url = $host_only ? $url['host'] : $url['host'].rtrim($url['path'], '/');
+
+		return $url['scheme'].'://'.$base_url.($path !== null ? '/'.ltrim($path, '/') : $path);
 	}
 
 	/**
