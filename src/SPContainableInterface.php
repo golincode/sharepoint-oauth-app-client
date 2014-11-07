@@ -13,4 +13,13 @@
 
 namespace WeAreArchitect\SharePoint;
 
-interface SPContainableInterface {}
+interface SPContainableInterface
+{
+	/**
+	 * Get SharePoint Containable GUID
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getGUID();
+}
