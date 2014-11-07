@@ -19,7 +19,7 @@ use Countable;
 use IteratorAggregate;
 use SplFileInfo;
 
-class SPList implements ArrayAccess, Countable, IteratorAggregate
+class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerInterface
 {
 	use SPObjectTrait;
 
@@ -424,7 +424,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
-	 * Get all SharePoint Lists in a Title indexed array
+	 * Get all SharePoint Lists
 	 *
 	 * @static
 	 * @access  public
@@ -448,11 +448,11 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 
 			// exclude lists the user shouldn't work with
 			if (in_array($list['BaseTemplate'], static::$fetchable)) {
-				$lists[] = new static($site, $list, $fetch);
+				$lists[$list['Id']] = new static($site, $list, $fetch);
 			}
 		}
 
-		return $site->setSPLists($lists);
+		return $lists;
 	}
 
 	/**
@@ -475,12 +475,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 			]
 		]);
 
-		$list = new static($site, $json['d'], $fetch);
-
-		// update SharePoint Site
-		$site[$list->title] = $list;
-
-		return $list;
+		return new static($site, $json['d'], $fetch);
 	}
 
 	/**
@@ -503,12 +498,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 			]
 		]);
 
-		$list = new static($site, $json['d'], $fetch);
-
-		// update SharePoint Site
-		$site[$title] = $list;
-
-		return $list;
+		return new static($site, $json['d'], $fetch);
 	}
 
 	/**
@@ -519,7 +509,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 * @param   SPSite $site       SharePoint Site
 	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
 	 * @throws  SPException
-	 * @return  SPList
+	 * @return  SPContainerInterface
 	 */
 	public static function create(SPSite &$site, array $properties)
 	{
@@ -549,12 +539,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 			'body'    => $body
 		], 'POST');
 
-		$list = new static($site, $json['d']);
-
-		// update SharePoint Site
-		$site[$list->title] = $list;
-
-		return $list;
+		return new static($site, $json['d']);
 	}
 
 	/**
@@ -563,7 +548,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 * @access  public
 	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
 	 * @throws  SPException
-	 * @return  SPList
+	 * @return  SPContainerInterface
 	 */
 	public function update(array $properties)
 	{
@@ -598,9 +583,6 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 		 */
 		$this->hydrate($properties, true);
 
-		// update SharePoint Site
-		$site[$this->title] = $this;
-
 		return $this;
 	}
 
@@ -622,8 +604,6 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 				'IF-MATCH'        => '*'
 			]
 		], 'POST');
-
-		unset($this->site[$this->title]);
 
 		return true;
 	}
@@ -687,24 +667,6 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
-	 * Set SharePoint Items
-	 *
-	 * @access  public
-	 * @param   array  $items SharePoint Items
-	 * @return  array
-	 */
-	public function setSPItems(array $items)
-	{
-		$this->items = [];
-
-		foreach($items as $item) {
-			$this[] = $item;
-		}
-
-		return $this->items;
-	}
-
-	/**
 	 * Get all SharePoint Items
 	 *
 	 * @static
@@ -713,7 +675,9 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function getSPItems()
 	{
-		return SPItem::getAll($this);
+		$this->items = SPItem::getAll($this);
+
+		return $this->items;
 	}
 
 	/**
@@ -726,7 +690,11 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function getSPItem($id = 0)
 	{
-		return SPItem::getByID($this, $id);
+		$item = SPItem::getByID($this, $id);
+
+		$this[] = $item;
+
+		return $item;
 	}
 
 	/**
@@ -739,23 +707,11 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function createSPItem(array $properties)
 	{
-		return SPItem::create($this, $properties);
-	}
+		$item = SPItem::create($this, $properties);
 
-	/**
-	 * Create a SharePoint Item via File Upload (including properties)
-	 *
-	 * @access  public
-	 * @param   SplFileInfo $file       File object
-	 * @param   array       $properties SharePoint Item properties (Title, ...)
-	 * @param   string      $name       Name for the file being uploaded
-	 * @param   bool        $overwrite  Overwrite existing files?
-	 * @throws  SPException
-	 * @return  SPItem
-	 */
-	public function uploadSPItem(SplFileInfo $file, array $properties, $name = null, $overwrite = false)
-	{
-		return SPItem::upload($this, $file, $name, $overwrite)->update($properties);
+		$this[] = $item;
+
+		return $item;
 	}
 
 	/**
@@ -764,23 +720,31 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 * @access  public
 	 * @param   string $title      SharePoint Item Title
 	 * @param   array  $properties SharePoint Item properties (Title, ...)
-	 * @return  SPList
+	 * @return  SPContainerInterface
 	 */
 	public function updateSPItem($title = null, array $properties)
 	{
-		return $this[$title]->update($properties);
+		$item = $this[$title]->update($properties);
+
+		$this[] = $item;
+
+		return $item;
 	}
 
 	/**
 	 * Delete a SharePoint Item
 	 *
 	 * @access  public
-	 * @param   string $title SharePoint Item Title
+	 * @param   string $index SharePoint Item index
 	 * @throws  SPException
 	 * @return  boolean true if the SharePoint Item was deleted
 	 */
-	public function deleteSPItem($title = null)
+	public function deleteSPItem($index = null)
 	{
-		return $this[$title]->delete();
+		if ($deleted = $this[$index]->delete()) {
+			unset($this[$index]);
+		}
+
+		return $deleted;
 	}
 }

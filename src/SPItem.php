@@ -87,7 +87,7 @@ class SPItem
 	}
 
 	/**
-	 * Get Item Type
+	 * Get SharePoint Type
 	 *
 	 * @access  public
 	 * @return  string
