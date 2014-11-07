@@ -744,7 +744,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function uploadSPItem(SplFileInfo $file, array $properties, $name = null, $overwrite = false)
 	{
-		return SPItem::uploadProperties($this, $file, $properties, $name, $overwrite);
+		return SPItem::upload($this, $file, $name, $overwrite)->update($properties);
 	}
 
 	/**
