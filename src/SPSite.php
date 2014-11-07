@@ -163,7 +163,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function offsetSet($title = null, $list = null)
 	{
-		if ( ! $list instanceof SPList) {
+		if ( ! $list instanceof SPContainerInterface) {
 			throw new SPException('SharePoint List expected');
 		}
 
@@ -399,7 +399,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function getSPLists($fetch = false)
 	{
-		return SPList::getAll($this, $fetch);
+		return SPContainerInterface::getAll($this, $fetch);
 	}
 
 	/**
@@ -408,11 +408,11 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * @access  public
 	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
 	 * @throws  SPException
-	 * @return  SPList
+	 * @return  SPContainerInterface
 	 */
 	public function createSPList(array $properties)
 	{
-		return SPList::create($this, $properties);
+		return SPContainerInterface::create($this, $properties);
 	}
 
 	/**
@@ -421,7 +421,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * @access  public
 	 * @param   string $title      SharePoint List Title
 	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
-	 * @return  SPList
+	 * @return  SPContainerInterface
 	 */
 	public function updateSPList($title = null, array $properties)
 	{
