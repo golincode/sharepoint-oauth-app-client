@@ -450,24 +450,6 @@ class SPItem
 	}
 
 	/**
-	 * Create a SharePoint Item via File Upload (including properties)
-	 *
-	 * @static
-	 * @access  public
-	 * @param   SPList      $list       SharePoint List
-	 * @param   SplFileInfo $file       File object
-	 * @param   array       $properties SharePoint Item properties (Title, ...)
-	 * @param   string      $name       Name for the file being uploaded
-	 * @param   bool        $overwrite  Overwrite existing files?
-	 * @throws  SPException
-	 * @return  SPItem
-	 */
-	public static function uploadProperties(SPList &$list, SplFileInfo $file, array $properties, $name = null, $overwrite = false)
-	{
-		return static::upload($list, $file, $name, $overwrite)->update($properties);
-	}
-
-	/**
 	 * Delete a SharePoint Item
 	 *
 	 * @access  public
