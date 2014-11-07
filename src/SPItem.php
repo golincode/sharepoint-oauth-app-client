@@ -167,6 +167,17 @@ class SPItem
 	}
 
 	/**
+	 * Check if the Item contains a File
+	 *
+	 * @access  public
+	 * @return  bool
+	 */
+	public function hasFile()
+	{
+		return ($this->file_name !== null);
+	}
+
+	/**
 	 * Get Item File Name
 	 *
 	 * @access  public
@@ -207,7 +218,7 @@ class SPItem
 	 */
 	public function getFileURL()
 	{
-		if ($this->file_name === null) {
+		if ( ! $this->hasFile()) {
 			return null;
 		}
 
@@ -222,7 +233,7 @@ class SPItem
 	 */
 	public function getFileMeta()
 	{
-		if ($this->file_name === null) {
+		if ( ! $this->hasFile()) {
 			return [];
 		}
 
