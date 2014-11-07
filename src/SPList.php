@@ -99,11 +99,11 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	private $site = null;
 
 	/**
-	 * List Path
+	 * List Parent Path
 	 *
 	 * @access  private
 	 */
-	private $path = null;
+	private $parent_path = null;
 
 	/**
 	 * List GUID
@@ -251,7 +251,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
-			'path'        => 'ParentWebUrl',
+			'parent_path' => 'ParentWebUrl',
 			'template'    => 'BaseTemplate',
 			'type'        => '__metadata.type',
 			'item_type'   => 'ListItemEntityTypeFullName',
@@ -323,6 +323,17 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate
 	public function getTitle()
 	{
 		return $this->title;
+	}
+
+	/**
+	 * Get Item Parent Path
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getParentPath()
+	{
+		return $this->parent_path;
 	}
 
 	/**
