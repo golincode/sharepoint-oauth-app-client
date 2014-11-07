@@ -27,18 +27,25 @@ class SPFile implements SPContainableInterface
 	private $container = null;
 
 	/**
+	 * SharePoint Type
+	 *
+	 * @access  private
+	 */
+	private $type = null;
+
+	/**
+	 * File ID
+	 *
+	 * @access  private
+	 */
+	private $id = null;
+
+	/**
 	 * File GUID
 	 *
 	 * @access  private
 	 */
 	private $guid = null;
-
-	/**
-	 * File ETag
-	 *
-	 * @access  private
-	 */
-	private $etag = null;
 
 	/**
 	 * File Title
@@ -94,8 +101,9 @@ class SPFile implements SPContainableInterface
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
-			'guid'         => 'UniqueId',
-			'etag'         => 'ETag',
+			'type'         => 'ListItemAllFields.__metadata.type',
+			'id'           => 'ListItemAllFields.ID',
+			'guid'         => 'ListItemAllFields.GUID',
 			'title'        => 'Title',
 			'name'         => 'Name',
 			'size'         => 'Length',
@@ -106,7 +114,7 @@ class SPFile implements SPContainableInterface
 	}
 
 	/**
-	 * SPFile constructor
+	 * SharePoint File constructor
 	 *
 	 * @access  public
 	 * @param   SPContainerInterface $container SharePoint Container
@@ -118,6 +126,28 @@ class SPFile implements SPContainableInterface
 		$this->container = $container;
 
 		$this->hydrate($json);
+	}
+
+	/**
+	 * Get File Type
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getType()
+	{
+		return $this->type;
+	}
+
+	/**
+	 * Get File ID
+	 *
+	 * @access  public
+	 * @return  int
+	 */
+	public function getID()
+	{
+		return $this->id;
 	}
 
 	/**
@@ -386,7 +416,7 @@ class SPFile implements SPContainableInterface
 			'headers' => [
 				'Authorization'   => 'Bearer '.$this->container->getAccessToken(),
 				'X-RequestDigest' => (string) $this->container->getFormDigest(),
-				'IF-MATCH'        => $this->etag,
+				'IF-MATCH'        => '*',
 				'X-HTTP-Method'   => 'DELETE'
 			]
 		], 'POST');

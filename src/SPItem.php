@@ -13,21 +13,19 @@
 
 namespace WeAreArchitect\SharePoint;
 
-use SplFileInfo;
-
 class SPItem
 {
 	use SPObjectTrait;
 
 	/**
-	 * Item List
+	 * SharePoint List
 	 *
 	 * @access  private
 	 */
 	private $list = null;
 
 	/**
-	 * Item Type
+	 * SharePoint Type
 	 *
 	 * @access  private
 	 */
@@ -55,34 +53,6 @@ class SPItem
 	private $title = null;
 
 	/**
-	 * Item File Name
-	 *
-	 * @access  private
-	 */
-	private $file_name = null;
-
-	/**
-	 * Item File Size
-	 *
-	 * @access  private
-	 */
-	private $file_size = 0;
-
-	/**
-	 * Item File Time (modified)
-	 *
-	 * @access  private
-	 */
-	private $file_time = null;
-
-	/**
-	 * Item File relative URL
-	 *
-	 * @access  private
-	 */
-	private $file_relative_url = null;
-
-	/**
 	 * Object hydration handler
 	 *
 	 * @access  protected
@@ -94,21 +64,15 @@ class SPItem
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
-			'type'      => '__metadata.type',
-			'id'        => 'Id',
-			'guid'      => 'GUID',
-			'title'     => 'Title',
-
-			// ? = optional properties
-			'file_name'         => 'File.Name?',
-			'file_size'         => 'File.Length?',
-			'file_time'         => 'File.TimeLastModified?',
-			'file_relative_url' => 'File.ServerRelativeUrl?'
+			'type'  => '__metadata.type',
+			'id'    => 'Id',
+			'guid'  => 'GUID',
+			'title' => 'Title'
 		], $missing);
 	}
 
 	/**
-	 * SharePointItem constructor
+	 * SPItem constructor
 	 *
 	 * @access  public
 	 * @param   SPList $list SharePoint List object
@@ -120,6 +84,17 @@ class SPItem
 		$this->list = $list;
 
 		$this->hydrate($json);
+	}
+
+	/**
+	 * Get Item Type
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getType()
+	{
+		return $this->type;
 	}
 
 	/**
@@ -145,17 +120,6 @@ class SPItem
 	}
 
 	/**
-	 * Get Item Type
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getType()
-	{
-		return $this->type;
-	}
-
-	/**
 	 * Get Item Title
 	 *
 	 * @access  public
@@ -164,85 +128,6 @@ class SPItem
 	public function getTitle()
 	{
 		return $this->title;
-	}
-
-	/**
-	 * Check if the Item contains a File
-	 *
-	 * @access  public
-	 * @return  bool
-	 */
-	public function hasFile()
-	{
-		return ($this->file_name !== null);
-	}
-
-	/**
-	 * Get Item File Name
-	 *
-	 * @access  public
-	 * @return  string|null
-	 */
-	public function getFileName()
-	{
-		return $this->file_name;
-	}
-
-	/**
-	 * Get Item File Size (in KiloBytes)
-	 *
-	 * @access  public
-	 * @return  int
-	 */
-	public function getFileSize()
-	{
-		return $this->file_size;
-	}
-
-	/**
-	 * Get Item File Timestamp
-	 *
-	 * @access  public
-	 * @return  Carbon
-	 */
-	public function getFileTime()
-	{
-		return $this->file_time;
-	}
-
-	/**
-	 * Get Item File URL
-	 *
-	 * @access  public
-	 * @return  string|null
-	 */
-	public function getFileURL()
-	{
-		if ( ! $this->hasFile()) {
-			return null;
-		}
-
-		return $this->list->getURL($this->file_name);
-	}
-
-	/**
-	 * Get Item File Meta
-	 *
-	 * @access  public
-	 * @return  array
-	 */
-	public function getFileMeta()
-	{
-		if ( ! $this->hasFile()) {
-			return [];
-		}
-
-		return [
-			'name' => $this->file_name,
-			'size' => $this->file_size,
-			'time' => $this->file_time,
-			'url'  => $this->getFileURL()
-		];
 	}
 
 	/**
@@ -272,10 +157,10 @@ class SPItem
 		$items = [];
 
 		foreach ($json['d']['Items']['results'] as $item) {
-			$items[] = new static($list, $item);
+			$items[$item['GUID']] = new static($list, $item);
 		}
 
-		return $list->setSPItems($items);
+		return $items;
 	}
 
 	/**
@@ -305,12 +190,7 @@ class SPItem
 			]
 		]);
 
-		$item = new static($list, $json['d']);
-
-		// update SharePoint List
-		$list[$item->title] = $item;
-
-		return $item;
+		return new static($list, $json['d']);
 	}
 
 	/**
@@ -349,12 +229,7 @@ class SPItem
 
 		], 'POST');
 
-		$item = new static($list, $json['d']);
-
-		// update SharePoint List
-		$list[$item->title] = $item;
-
-		return $item;
+		return new static($list, $json['d']);
 	}
 
 	/**
@@ -399,65 +274,7 @@ class SPItem
 		 */
 		$this->hydrate($properties, true);
 
-		// update SharePoint List
-		$this->list[$this->title] = $this;
-
 		return $this;
-	}
-
-	/**
-	 * Create a SharePoint Item via File Upload (without properties)
-	 *
-	 * @static
-	 * @access  public
-	 * @param   SPList      $list       SharePoint List
-	 * @param   SplFileInfo $file       File object
-	 * @param   string      $name       Name for the file being uploaded
-	 * @param   bool        $overwrite  Overwrite existing files?
-	 * @throws  SPException
-	 * @return  SPItem
-	 */
-	public static function upload(SPList &$list, SplFileInfo $file, $name = null, $overwrite = false)
-	{
-		if ( ! $file->isFile()) {
-			throw new SPException('Regular file expected: '.$file);
-		}
-
-		if ( ! $file->isReadable()) {
-			throw new SPException('Unable to read file: '.$file);
-		}
-
-		// use original name if none specified
-		if (empty($name)) {
-			$name = basename($file->getRealPath());
-		}
-
-		$body = file_get_contents($file->getRealPath());
-
-		if ($body === false) {
-			throw new SPException('Unable to get file contents for: '.$file);
-		}
-
-		$json = $list->request('_api/web/GetFolderByServerRelativeUrl(\''.$list->getTitle().'\')/Files/Add(url=\''.$name.'\',overwrite=\''.($overwrite ? 'true' : 'false').'\')', [
-			'headers' => [
-				'Authorization'   => 'Bearer '.$list->getAccessToken(),
-				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $list->getFormDigest()
-			],
-
-			'query'   => [
-				'$expand' => 'ListItemAllFields/File'
-			],
-
-			'body'    => $body
-		], 'POST');
-
-		$item = new static($list, $json['d']['ListItemAllFields']);
-
-		// update SharePoint List
-		$list[$item->title] = $item;
-
-		return $item;
 	}
 
 	/**
@@ -469,18 +286,14 @@ class SPItem
 	 */
 	public function delete()
 	{
-		$this->list->request("_api/web/Lists/GetByTitle('".$this->list->getTitle()."')/items(".$this->id.")", [
+		$this->list->request("_api/web/Lists(guid'".$this->list->getGUID()."')/items(".$this->id.")", [
 			'headers' => [
 				'Authorization'   => 'Bearer '.$this->list->getAccessToken(),
-				'Accept'          => 'application/json;odata=verbose',
 				'X-RequestDigest' => (string) $this->list->getFormDigest(),
-				'X-HTTP-Method'   => 'DELETE',
-				'IF-MATCH'        => '*'
+				'IF-MATCH'        => '*',
+				'X-HTTP-Method'   => 'DELETE'
 			]
 		], 'POST');
-
-		// update SharePoint List
-		unset($this->list[$this->title]);
 
 		return true;
 	}
