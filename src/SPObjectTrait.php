@@ -13,87 +13,61 @@
 
 namespace WeAreArchitect\SharePoint;
 
-use Carbon\Carbon;
-
 trait SPObjectTrait
 {
+	use SPHydratorTrait;
+
 	/**
-	 * Extra properties
+	 * SharePoint Type
 	 *
 	 * @access  private
 	 */
-	private $extra = [];
+	private $type = null;
 
 	/**
-	 * Assign properties
+	 * SharePoint ID
 	 *
 	 * @access  private
-	 * @param   string $property Property name
-	 * @param   mixed  $value    Property value
-	 * @return  void
 	 */
-	private function assign($property = null, $value = null)
-	{
-		// convert datetime strings to Carbon objects
-		if (preg_match('/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/', $value) === 1) {
-			$value = new Carbon($value);
-		}
+	private $id = null;
 
-		if (property_exists($this, $property)) {
-			$this->$property = $value;
-		} else {
-			$this->extra[$property] = $value;
-		}
+	/**
+	 * SharePoint GUID
+	 *
+	 * @access  private
+	 */
+	private $guid = null;
+
+	/**
+	 * Get SharePoint Type
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getType()
+	{
+		return $this->type;
 	}
 
 	/**
-	 * Fill object with the mapped properties
+	 * Get SharePoint ID
 	 *
-	 * @access  protected
-	 * @param   array $json    JSON response from the SharePoint REST API
-	 * @param   array $mapper  Dot notation property mapper
-	 * @param   bool  $missing Allow missing properties?
-	 * @throws  SPException
-	 * @return  void
+	 * @access  public
+	 * @return  int
 	 */
-	private function fill(array $json, array $mapper, $missing = false)
+	public function getID()
 	{
-		foreach ($mapper as $property => $map) {
-
-			// is the current property optional?
-			$optional = (strrpos($map, '?', -1) !== false);
-
-			// make spaces SharePoint compatible / remove optional flag
-			$map = str_replace([' ', '?'], ['_x0020_', ''], $map);
-
-			$current = $json;
-
-			foreach (explode('.', $map) as $segment) {
-
-				if ( ! is_array($current) || ! array_key_exists($segment, $current)) {
-
-					if ($optional || $missing) {
-						continue 2;
-					}
-
-					throw new SPException('Invalid property mapper: '.$map);
-				}
-
-				$current = $current[$segment];
-			}
-
-			$this->assign($property, $current);
-		}
+		return $this->id;
 	}
 
 	/**
-	 * Object hydration handler
+	 * Get SharePoint GUID
 	 *
-	 * @access  protected
-	 * @param   array     $json    JSON response from the SharePoint REST API
-	 * @param   bool      $missing Allow missing properties?
-	 * @throws  SPException
-	 * @return  void
+	 * @access  public
+	 * @return  string
 	 */
-	abstract protected function hydrate(array $json, $missing = false);
+	public function getGUID()
+	{
+		return $this->guid;
+	}
 }
