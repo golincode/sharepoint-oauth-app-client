@@ -18,24 +18,24 @@ use Serializable;
 
 class SPFormDigest implements Serializable
 {
-	use SPObjectTrait;
+	use SPHydratorTrait;
 
 	/**
-	 * Form Digest
+	 * Form digest
 	 *
 	 * @access  private
 	 */
 	private $digest = null;
 
 	/**
-	 * Form Digest expire date
+	 * Expire date
 	 *
 	 * @access  private
 	 */
 	private $expires = null;
 
 	/**
-	 * Object hydration handler
+	 * Hydration handler
 	 *
 	 * @access  protected
 	 * @param   array     $json    JSON response from the SharePoint REST API
@@ -54,7 +54,7 @@ class SPFormDigest implements Serializable
 	}
 
 	/**
-	 * SPFormDigest constructor
+	 * SharePoint Form Digest constructor
 	 *
 	 * @access  public
 	 * @param   array  $json JSON response from the SharePoint REST API
@@ -67,7 +67,7 @@ class SPFormDigest implements Serializable
 	}
 
 	/**
-	 * Serialize SPAccessToken object
+	 * Serialize SharePoint Form Digest object
 	 *
 	 * @access  public
 	 * @return  string
@@ -81,7 +81,7 @@ class SPFormDigest implements Serializable
 	}
 
 	/**
-	 * Recreate SPAccessToken object
+	 * Recreate SharePoint Form Digest object
 	 *
 	 * @access  public
 	 * @param   string $serialized
@@ -96,7 +96,7 @@ class SPFormDigest implements Serializable
 	}
 
 	/**
-	 * SPFormDigest String value
+	 * SharePoint Form Digest string value
 	 *
 	 * @access  public
 	 * @return  string
@@ -107,7 +107,7 @@ class SPFormDigest implements Serializable
 	}
 
 	/**
-	 * Create a Form Digest
+	 * Create a SharePoint Form Digest
 	 *
 	 * @static
 	 * @access  public
@@ -128,7 +128,7 @@ class SPFormDigest implements Serializable
 	}
 
 	/**
-	 * Check if the Form Digest has expired
+	 * Check if the SharePoint Form Digest has expired
 	 *
 	 * @access  public
 	 * @return  bool
@@ -139,7 +139,7 @@ class SPFormDigest implements Serializable
 	}
 
 	/**
-	 * Get the Form Digest expire date
+	 * Get the SharePoint Form Digest expire date
 	 *
 	 * @access  public
 	 * @return  Carbon

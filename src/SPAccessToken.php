@@ -109,7 +109,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * Create SharePoint Access Token (User Context Token)
+	 * Create a SharePoint Access Token (User Context Token)
 	 *
 	 * @static
 	 * @access  public
@@ -165,7 +165,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * Create SharePoint Access Token (App only policy)
+	 * Create a SharePoint Access Token (App only policy)
 	 *
 	 * @static
 	 * @access  public
