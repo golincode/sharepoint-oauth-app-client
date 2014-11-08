@@ -25,27 +25,6 @@ class SPItem
 	private $list = null;
 
 	/**
-	 * SharePoint Type
-	 *
-	 * @access  private
-	 */
-	private $type = null;
-
-	/**
-	 * Item ID
-	 *
-	 * @access  private
-	 */
-	private $id = null;
-
-	/**
-	 * Item GUID
-	 *
-	 * @access  private
-	 */
-	private $guid = null;
-
-	/**
 	 * Item Title
 	 *
 	 * @access  private
@@ -53,7 +32,7 @@ class SPItem
 	private $title = null;
 
 	/**
-	 * Object hydration handler
+	 * Hydration handler
 	 *
 	 * @access  protected
 	 * @param   array     $json    JSON response from the SharePoint REST API
@@ -72,7 +51,7 @@ class SPItem
 	}
 
 	/**
-	 * SPItem constructor
+	 * SharePoint Item constructor
 	 *
 	 * @access  public
 	 * @param   SPList $list SharePoint List object
@@ -87,40 +66,7 @@ class SPItem
 	}
 
 	/**
-	 * Get SharePoint Type
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getType()
-	{
-		return $this->type;
-	}
-
-	/**
-	 * Get Item ID
-	 *
-	 * @access  public
-	 * @return  int
-	 */
-	public function getID()
-	{
-		return $this->id;
-	}
-
-	/**
-	 * Get Item GUID
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getGUID()
-	{
-		return $this->guid;
-	}
-
-	/**
-	 * Get Item Title
+	 * Get SharePoint Item Title
 	 *
 	 * @access  public
 	 * @return  string
@@ -269,8 +215,9 @@ class SPItem
 		], 'POST');
 
 		/**
-		 * Use $properties, since SharePoint
-		 * doesn't return a response when updating
+		 * NOTE: Rehydration is done using the $properties array,
+		 * since the SharePoint API does not return a response on
+		 * a successful update
 		 */
 		$this->hydrate($properties, true);
 
