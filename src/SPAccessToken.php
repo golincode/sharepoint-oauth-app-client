@@ -20,24 +20,24 @@ use Serializable;
 
 class SPAccessToken implements Serializable
 {
-	use SPObjectTrait;
+	use SPHydratorTrait;
 
 	/**
-	 * Access Token
+	 * Access token
 	 *
 	 * @access  private
 	 */
 	private $token = '';
 
 	/**
-	 * Access Token expire date
+	 * Expire date
 	 *
 	 * @access  private
 	 */
 	private $expires = null;
 
 	/**
-	 * Object hydration handler
+	 * Hydration handler
 	 *
 	 * @access  protected
 	 * @param   array     $json    JSON response from the SharePoint REST API
@@ -56,7 +56,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * SPAccessToken constructor
+	 * SharePoint Access Token constructor
 	 *
 	 * @access  public
 	 * @param   array  $json JSON response from the SharePoint REST API
@@ -69,7 +69,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * Serialize SPAccessToken object
+	 * Serialize SharePoint Access Token object
 	 *
 	 * @access  public
 	 * @return  string
@@ -83,7 +83,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * Recreate SPAccessToken object
+	 * Recreate SharePoint Access Token object
 	 *
 	 * @access  public
 	 * @param   string $serialized
@@ -98,7 +98,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * SPAccessToken String value
+	 * SharePoint Access Token string value
 	 *
 	 * @access  public
 	 * @return  string
@@ -109,7 +109,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * Create Access Token (User Context Token)
+	 * Create SharePoint Access Token (User Context Token)
 	 *
 	 * @static
 	 * @access  public
@@ -143,7 +143,7 @@ class SPAccessToken implements Serializable
 		// build resource
 		$resource = str_replace('@', '/'.$hostname.'@', $jwt->appctxsender);
 
-		// decode Application context
+		// decode application context
 		$oauth2 = json_decode($jwt->appctx);
 
 		$json = $site->request($oauth2->SecurityTokenServiceUri, [
@@ -165,7 +165,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * Create Access Token (App only policy)
+	 * Create SharePoint Access Token (App only policy)
 	 *
 	 * @static
 	 * @access  public
@@ -215,7 +215,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * Check if the Access Token has expired
+	 * Check if the SharePoint Access Token has expired
 	 *
 	 * @access  public
 	 * @return  bool
@@ -226,7 +226,7 @@ class SPAccessToken implements Serializable
 	}
 
 	/**
-	 * Get the Access Token expire date
+	 * Get the SharePoint Access Token expire date
 	 *
 	 * @access  public
 	 * @return  Carbon
