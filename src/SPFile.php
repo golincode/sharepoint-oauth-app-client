@@ -15,44 +15,9 @@ namespace WeAreArchitect\SharePoint;
 
 use SplFileInfo;
 
-class SPFile implements SPContainableInterface
+class SPFile
 {
-	use SPObjectTrait;
-
-	/**
-	 * SharePoint Container
-	 *
-	 * @access  private
-	 */
-	private $container = null;
-
-	/**
-	 * SharePoint Type
-	 *
-	 * @access  private
-	 */
-	private $type = null;
-
-	/**
-	 * File ID
-	 *
-	 * @access  private
-	 */
-	private $id = null;
-
-	/**
-	 * File GUID
-	 *
-	 * @access  private
-	 */
-	private $guid = null;
-
-	/**
-	 * File Title
-	 *
-	 * @access  private
-	 */
-	private $title = null;
+	use SPItemTrait;
 
 	/**
 	 * File Name
@@ -117,59 +82,15 @@ class SPFile implements SPContainableInterface
 	 * SharePoint File constructor
 	 *
 	 * @access  public
-	 * @param   SPContainerInterface $container SharePoint Container
-	 * @param   array                $json      JSON response from the SharePoint REST API
+	 * @param   SPListInterface $list SharePoint List
+	 * @param   array           $json JSON response from the SharePoint REST API
 	 * @return  SPFile
 	 */
-	public function __construct(SPContainerInterface &$container, array $json)
+	public function __construct(SPListInterface &$list, array $json)
 	{
-		$this->container = $container;
+		$this->container = $list;
 
 		$this->hydrate($json);
-	}
-
-	/**
-	 * Get File Type
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getType()
-	{
-		return $this->type;
-	}
-
-	/**
-	 * Get File ID
-	 *
-	 * @access  public
-	 * @return  int
-	 */
-	public function getID()
-	{
-		return $this->id;
-	}
-
-	/**
-	 * Get File GUID
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getGUID()
-	{
-		return $this->guid;
-	}
-
-	/**
-	 * Get File Title
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getTitle()
-	{
-		return $this->title;
 	}
 
 	/**
@@ -236,6 +157,7 @@ class SPFile implements SPContainableInterface
 	public function getMetadata()
 	{
 		return [
+			'id'    => $this->id,
 			'guid'  => $this->guid,
 			'title' => $this->title,
 			'name'  => $this->name,
@@ -251,15 +173,15 @@ class SPFile implements SPContainableInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPContainerInterface $container SharePoint Container
+	 * @param   SPListInterface $list SharePoint List
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPContainerInterface &$container)
+	public static function getAll(SPListInterface &$list)
 	{
-		$json = $container->request("_api/web/GetFolderByServerRelativeUrl('".$container->getURL(null, true)."')/Files", [
+		$json = $list->request("_api/web/GetFolderByServerRelativeUrl('".$list->getURL(null, true)."')/Files", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$container->getAccessToken(),
+				'Authorization' => 'Bearer '.$list->getAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
@@ -267,7 +189,7 @@ class SPFile implements SPContainableInterface
 		$files = [];
 
 		foreach ($json['d']['results'] as $file) {
-			$files[$file['UniqueId']] = new static($container, $file);
+			$files[$file['UniqueId']] = new static($list, $file);
 		}
 
 		return $files;
@@ -278,12 +200,12 @@ class SPFile implements SPContainableInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPContainerInterface $container SharePoint Container
+	 * @param   SPListInterface $container SharePoint Container
 	 * @param   string               $name      File Name
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function getByName(SPContainerInterface &$container, $name = null)
+	public static function getByName(SPListInterface &$container, $name = null)
 	{
 		if (empty($name)) {
 			throw new SPException('The SharePoint File Name is empty/not set');
@@ -304,14 +226,14 @@ class SPFile implements SPContainableInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPContainerInterface    $container SharePoint Folder
+	 * @param   SPListInterface    $container SharePoint Folder
 	 * @param   SplFileInfo             $file      File object
 	 * @param   string                  $name      Name for the file being uploaded
 	 * @param   bool                    $overwrite Overwrite if file already exists?
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function create(SPContainerInterface &$container, SplFileInfo $file, $name = null, $overwrite = false)
+	public static function create(SPListInterface &$container, SplFileInfo $file, $name = null, $overwrite = false)
 	{
 		$body = file_get_contents($file->getRealPath());
 
@@ -379,12 +301,12 @@ class SPFile implements SPContainableInterface
 	 * Move a SharePoint File
 	 *
 	 * @access  public
-	 * @param   SPContainerInterface $container SharePoint Container to move to
+	 * @param   SPListInterface $container SharePoint Container to move to
 	 * @param   string               $name      SharePoint File name
 	 * @throws  SPException
 	 * @return  SPItem
 	 */
-	public function move(SPContainerInterface &$container, $name = null)
+	public function move(SPListInterface &$container, $name = null)
 	{
 		$new_url = $container->getURL(null, true).'/'.(empty($name) ? $this->name : $name);
 

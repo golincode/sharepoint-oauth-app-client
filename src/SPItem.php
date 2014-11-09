@@ -15,7 +15,7 @@ namespace WeAreArchitect\SharePoint;
 
 class SPItem
 {
-	use SPObjectTrait;
+	use SPItemTrait;
 
 	/**
 	 * SharePoint List
@@ -23,13 +23,6 @@ class SPItem
 	 * @access  private
 	 */
 	private $list = null;
-
-	/**
-	 * Item Title
-	 *
-	 * @access  private
-	 */
-	private $title = null;
 
 	/**
 	 * Hydration handler
@@ -63,17 +56,6 @@ class SPItem
 		$this->list = $list;
 
 		$this->hydrate($json);
-	}
-
-	/**
-	 * Get SharePoint Item Title
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getTitle()
-	{
-		return $this->title;
 	}
 
 	/**
