@@ -13,15 +13,9 @@
 
 namespace WeAreArchitect\SharePoint;
 
-use ArrayAccess;
-use ArrayIterator;
-use Countable;
-use IteratorAggregate;
-use SplFileInfo;
-
-class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerInterface
+class SPList implements SPListInterface
 {
-	use SPObjectTrait;
+	use SPListTrait;
 
 	/**
 	 * List Template Types (SharePoint 2013)
@@ -92,39 +86,11 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	const FLD_WORKFLOWEVENTPL  = 30; // Field contains the most recent event in a workflow instance
 
 	/**
-	 * List Site
-	 *
-	 * @access  private
-	 */
-	private $site = null;
-
-	/**
-	 * List Parent Path
-	 *
-	 * @access  private
-	 */
-	private $parent_path = null;
-
-	/**
-	 * List GUID
-	 *
-	 * @access  private
-	 */
-	private $guid = null;
-
-	/**
 	 * List Template Type
 	 *
 	 * @access  private
 	 */
 	private $template = 0;
-
-	/**
-	 * List Type
-	 *
-	 * @access  private
-	 */
-	private $type = null;
 
 	/**
 	 * List Item Entity Type Full Name
@@ -134,13 +100,6 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	private $item_type = null;
 
 	/**
-	 * List Title
-	 *
-	 * @access  private
-	 */
-	private $title = null;
-
-	/**
 	 * List Description
 	 *
 	 * @access  private
@@ -148,99 +107,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	private $description = null;
 
 	/**
-	 * List Items
-	 *
-	 * @access  private
-	 */
-	private $items = [];
-
-	/**
-	 * Count the SharePoint Items
-	 *
-	 * @access  public
-	 * @return  int
-	 */
-	public function count()
-	{
-		return count($this->items);
-	}
-
-	/**
-	 * Allow iterating through the SharePoint Items
-	 *
-	 * @access  public
-	 * @return  ArrayIterator
-	 */
-	public function getIterator()
-	{
-		return new ArrayIterator($this->items);
-	}
-
-	/**
-	 * Check if an SharePoint Item exists
-	 *
-	 * @access  public
-	 * @param   string $title SharePoint Item Title
-	 * @return  bool true if exists, false otherwise
-	 */
-	public function offsetExists($title = null)
-	{
-		return isset($this->items[$title]);
-	}
-
-	/**
-	 * Get a SharePoint Item
-	 *
-	 * @access  public
-	 * @param   string $title SharePoint Item Title
-	 * @throws  SPException
-	 * @return  SPItem
-	 */
-	public function offsetGet($title = null)
-	{
-		if (isset($this->items[$title])) {
-			return $this->items[$title];
-		}
-
-		throw new SPException('Invalid SharePoint Item');
-	}
-
-	/**
-	 * Add a SharePoint Item
-	 *
-	 * @access  public
-	 * @param   string $title SharePoint Item Title
-	 * @param   SPItem $item  SharePoint Item
-	 * @throws  SPException
-	 * @return  void
-	 */
-	public function offsetSet($title = null, $item = null)
-	{
-		if ( ! $item instanceof SPItem) {
-			throw new SPException('SharePoint Item expected');
-		}
-
-		if ($title === null) {
-			$title = $item->getTitle();
-		}
-
-		$this->items[$title] = $item;
-	}
-
-	/**
-	 * Remove a SharePoint Item
-	 *
-	 * @access  public
-	 * @param   string $title SharePoint Item Title
-	 * @return  void
-	 */
-	public function offsetUnset($title = null)
-	{
-		unset($this->items[$title]);
-	}
-
-	/**
-	 * Object hydration handler
+	 * Hydration handler
 	 *
 	 * @access  protected
 	 * @param   array     $json    JSON response from the SharePoint REST API
@@ -262,7 +129,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	}
 
 	/**
-	 * SPList constructor
+	 * SharePoint List constructor
 	 *
 	 * @access  public
 	 * @param   SPSite $site  SharePoint Site
@@ -272,35 +139,13 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	 */
 	public function __construct(SPSite &$site, array $json, $fetch = false)
 	{
-		$this->site = $site;
+		$this->parent = $site;
 
 		$this->hydrate($json);
 
 		if ($fetch) {
 			$this->getSPItems();
 		}
-	}
-
-	/**
-	 * Get SharePoint List GUID
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getGUID()
-	{
-		return $this->guid;
-	}
-
-	/**
-	 * Get List Type
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getType()
-	{
-		return $this->type;
 	}
 
 	/**
@@ -315,28 +160,6 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	}
 
 	/**
-	 * Get List Title
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getTitle()
-	{
-		return $this->title;
-	}
-
-	/**
-	 * Get Item Parent Path
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getParentPath()
-	{
-		return $this->parent_path;
-	}
-
-	/**
 	 * Get List Description
 	 *
 	 * @access  public
@@ -345,71 +168,6 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	public function getDescription()
 	{
 		return $this->description;
-	}
-
-	/**
-	 * Get the SharePoint Site URL
-	 *
-	 * @access  public
-	 * @param   string $path Path to append
-	 * @return  string
-	 */
-	public function getSiteURL($path = null)
-	{
-		return $this->site->getURL($path);
-	}
-
-	/**
-	 * Get the SharePoint List URL
-	 *
-	 * @access  public
-	 * @param   string $path Path to append
-	 * @return  string
-	 */
-	public function getURL($path = null)
-	{
-		$path = ($path !== null ? $this->title.'/'.ltrim($path, '/') : $this->title);
-
-		return $this->getSiteURL($path);
-	}
-
-	/**
-	 * Send an HTTP request
-	 *
-	 * @access  public
-	 * @param   string $url     URL to make the request to
-	 * @param   array  $options HTTP client options (see GuzzleHttp\Client options)
-	 * @param   string $method  HTTP method name (GET, POST, PUT, DELETE, ...)
-	 * @throws  SPException
-	 * @return  array JSON data in an array structure
-	 */
-	public function request($url = null, array $options = [], $method = 'GET')
-	{
-		return $this->site->request($url, $options, $method);
-	}
-
-	/**
-	 * Get the current Access Token object
-	 *
-	 * @access  public
-	 * @throws  SPException
-	 * @return  SPAccessToken
-	 */
-	public function getAccessToken()
-	{
-		return $this->site->getAccessToken();
-	}
-
-	/**
-	 * Get the current Form Digest object
-	 *
-	 * @access  public
-	 * @throws  SPException
-	 * @return  SPFormDigest
-	 */
-	public function getFormDigest()
-	{
-		return $this->site->getFormDigest();
 	}
 
 	/**
@@ -445,7 +203,6 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 		$lists = [];
 
 		foreach ($json['d']['results'] as $list) {
-
 			// exclude lists the user shouldn't work with
 			if (in_array($list['BaseTemplate'], static::$fetchable)) {
 				$lists[$list['Id']] = new static($site, $list, $fetch);
@@ -509,7 +266,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	 * @param   SPSite $site       SharePoint Site
 	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
 	 * @throws  SPException
-	 * @return  SPContainerInterface
+	 * @return  SPList
 	 */
 	public static function create(SPSite &$site, array $properties)
 	{
@@ -548,7 +305,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	 * @access  public
 	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
 	 * @throws  SPException
-	 * @return  SPContainerInterface
+	 * @return  SPList
 	 */
 	public function update(array $properties)
 	{
@@ -597,9 +354,9 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	{
 		$this->request("_api/web/Lists(guid'".$this->guid."')", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->site->getAccessToken(),
+				'Authorization'   => 'Bearer '.$this->getAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $this->site->getFormDigest(),
+				'X-RequestDigest' => (string) $this->getFormDigest(),
 				'X-HTTP-Method'   => 'DELETE',
 				'IF-MATCH'        => '*'
 			]
@@ -634,9 +391,9 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 
 		$json = $this->request("_api/web/Lists(guid'".$this->guid."')/Fields", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->site->getAccessToken(),
+				'Authorization'   => 'Bearer '.$this->getAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $this->site->getFormDigest(),
+				'X-RequestDigest' => (string) $this->getFormDigest(),
 				'Content-type'    => 'application/json;odata=verbose',
 				'Content-length'  => strlen($body)
 			],
@@ -652,7 +409,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	 *
 	 * @access  public
 	 * @throws  SPException
-	 * @return  int SharePoint Items in this SharePoint List
+	 * @return  int SharePoint Item count
 	 */
 	public function getSPItemCount()
 	{
@@ -720,7 +477,7 @@ class SPList implements ArrayAccess, Countable, IteratorAggregate, SPContainerIn
 	 * @access  public
 	 * @param   string $title      SharePoint Item Title
 	 * @param   array  $properties SharePoint Item properties (Title, ...)
-	 * @return  SPContainerInterface
+	 * @return  SPItem
 	 */
 	public function updateSPItem($title = null, array $properties)
 	{
