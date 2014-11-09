@@ -21,7 +21,7 @@ use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
 use IteratorAggregate;
 
-class SPSite implements ArrayAccess, Countable, IteratorAggregate
+class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInterface
 {
 	/**
 	 * HTTP Client object
@@ -52,14 +52,14 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	private $config = [];
 
 	/**
-	 * Site Lists
+	 * SharePoint Lists
 	 *
 	 * @access  private
 	 */
 	private $lists = [];
 
 	/**
-	 * SPSite constructor
+	 * SharePoint Site constructor
 	 *
 	 * @access  public
 	 * @param   array  $config
@@ -113,7 +113,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
-	 * Allow iterating through the Site Lists
+	 * Get the SharePoint List iterator
 	 *
 	 * @access  public
 	 * @return  ArrayIterator
@@ -127,12 +127,12 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * Check if an SharePoint List exists
 	 *
 	 * @access  public
-	 * @param   string $title SharePoint List Title
+	 * @param   string $index SharePoint List index
 	 * @return  bool true if exists, false otherwise
 	 */
-	public function offsetExists($title = null)
+	public function offsetExists($index = null)
 	{
-		return isset($this->lists[$title]);
+		return isset($this->lists[$index]);
 	}
 
 	/**
@@ -156,34 +156,34 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * Add a SharePoint List
 	 *
 	 * @access  public
-	 * @param   string $title SharePoint List Title
+	 * @param   string $index SharePoint List Title
 	 * @param   SPItem $list  SharePoint List
 	 * @throws  SPException
 	 * @return  void
 	 */
-	public function offsetSet($title = null, $list = null)
+	public function offsetSet($index = null, $list = null)
 	{
-		if ( ! $list instanceof SPContainerInterface) {
+		if ( ! $list instanceof SPListInterface) {
 			throw new SPException('SharePoint List expected');
 		}
 
-		if ($title === null) {
-			$title = $list->getTitle();
+		if ($index === null) {
+			$index = $list->getGUID();
 		}
 
-		$this->lists[$title] = $list;
+		$this->lists[$index] = $list;
 	}
 
 	/**
 	 * Remove a SharePoint List
 	 *
 	 * @access  public
-	 * @param   string $title SharePoint List Title
+	 * @param   string $index SharePoint List index
 	 * @return  void
 	 */
-	public function offsetUnset($title = null)
+	public function offsetUnset($index = null)
 	{
-		unset($this->lists[$title]);
+		unset($this->lists[$index]);
 	}
 
 	/**
@@ -198,15 +198,20 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
-	 * Get the SharePoint Site URL
+	 * Get the URL
 	 *
 	 * @access  public
-	 * @param   string $path Path to append
+	 * @param   bool   $include Include path?
+	 * @param   string $path    Path to append to the URL
 	 * @return  string
 	 */
-	public function getURL($path = null)
+	public function getURL($include = true, $path = null)
 	{
-		return rtrim($this->config['url'], '/').($path !== null ? '/'.ltrim($path, '/') : $path);
+		$components = parse_url($this->config['url']);
+
+		$url = $components['scheme'].'://'.$components['host'].($include ?  $components['path'] : '');
+
+		return rtrim($url, '/').($path ? '/'.ltrim($path, '/') : '');
 	}
 
 	/**
@@ -372,24 +377,6 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 	/**
-	 * Set SharePoint Lists
-	 *
-	 * @access  public
-	 * @param   array  $lists SharePoint Lists
-	 * @return  array
-	 */
-	public function setSPLists(array $lists)
-	{
-		$this->lists = [];
-
-		foreach($lists as $list) {
-			$this[] = $list;
-		}
-
-		return $this->lists;
-	}
-
-	/**
 	 * Get all SharePoint Lists
 	 *
 	 * @access  public
@@ -399,7 +386,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function getSPLists($fetch = false)
 	{
-		return SPContainerInterface::getAll($this, $fetch);
+		return SPListInterface::getAll($this, $fetch);
 	}
 
 	/**
@@ -408,11 +395,15 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * @access  public
 	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
 	 * @throws  SPException
-	 * @return  SPContainerInterface
+	 * @return  SPList
 	 */
 	public function createSPList(array $properties)
 	{
-		return SPContainerInterface::create($this, $properties);
+		$list = SPList::create($this, $properties);
+
+		$this[] = $list;
+
+		return $list;
 	}
 
 	/**
@@ -421,7 +412,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate
 	 * @access  public
 	 * @param   string $title      SharePoint List Title
 	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
-	 * @return  SPContainerInterface
+	 * @return  SPList
 	 */
 	public function updateSPList($title = null, array $properties)
 	{
