@@ -13,15 +13,8 @@
 
 namespace WeAreArchitect\SharePoint;
 
-interface SPContainerInterface extends SPRequestInterface
-{
-	/**
-	 * Get the URL of the SharePoint Container
-	 *
-	 * @access  public
-	 * @param   string $path     Path to append
-	 * @param   bool   $relative Return the relative URL?
-	 * @return  string
-	 */
-	public function getURL($path = null, $relative = false);
-}
+use ArrayAccess;
+use Countable;
+use IteratorAggregate;
+
+interface SPListInterface extends ArrayAccess, Countable, IteratorAggregate, SPRequestInterface {}

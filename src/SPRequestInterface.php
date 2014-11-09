@@ -16,6 +16,16 @@ namespace WeAreArchitect\SharePoint;
 interface SPRequestInterface
 {
 	/**
+	 * Get URL
+	 *
+	 * @access  public
+	 * @param   bool   $include Include domain (SPList, SPFolder) / path (SPSite)?
+	 * @param   string $path    Path to append to the URL
+	 * @return  string
+	 */
+	public function getURL($include = true, $path = null);
+
+	/**
 	 * Send an HTTP request
 	 *
 	 * @access  public
