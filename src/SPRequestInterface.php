@@ -16,16 +16,6 @@ namespace WeAreArchitect\SharePoint;
 interface SPRequestInterface
 {
 	/**
-	 * Get URL
-	 *
-	 * @access  public
-	 * @param   bool   $include Include domain (SPList, SPFolder) / path (SPSite)?
-	 * @param   string $path    Path to append to the URL
-	 * @return  string
-	 */
-	public function getURL($include = true, $path = null);
-
-	/**
 	 * Send an HTTP request
 	 *
 	 * @access  public
@@ -38,20 +28,20 @@ interface SPRequestInterface
 	public function request($url = null, array $options = [], $method = 'GET');
 
 	/**
-	 * Get the current Access Token
+	 * Get the current SharePoint Access Token
 	 *
 	 * @access  public
 	 * @throws  SPException
 	 * @return  SPAccessToken
 	 */
-	public function getAccessToken();
+	public function getSPAccessToken();
 
 	/**
-	 * Get the current Form Digest
+	 * Get the current SharePoint Form Digest
 	 *
 	 * @access  public
 	 * @throws  SPException
 	 * @return  SPFormDigest
 	 */
-	public function getFormDigest();
+	public function getSPFormDigest();
 }
