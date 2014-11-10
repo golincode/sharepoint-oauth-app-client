@@ -100,6 +100,13 @@ class SPList implements SPListInterface
 	private $item_type = null;
 
 	/**
+	 * List Title
+	 *
+	 * @access  private
+	 */
+	private $title = null;
+
+	/**
 	 * List Description
 	 *
 	 * @access  private
@@ -156,6 +163,17 @@ class SPList implements SPListInterface
 	public function getTemplate()
 	{
 		return $this->template;
+	}
+
+	/**
+	 * Get SharePoint Title
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getTitle()
+	{
+		return $this->title;
 	}
 
 	/**
