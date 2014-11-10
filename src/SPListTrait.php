@@ -20,18 +20,11 @@ trait SPListTrait
 	use SPObjectTrait;
 
 	/**
-	 * SharePoint Site/List/Folder
+	 * SharePoint Site
 	 *
 	 * @access  private
 	 */
-	private $parent = null;
-
-	/**
-	 * SharePoint Relative URL
-	 *
-	 * @access  private
-	 */
-	private $relative_url = null;
+	private $site = null;
 
 	/**
 	 * SharePoint Items
@@ -126,37 +119,6 @@ trait SPListTrait
 	}
 
 	/**
-	 * Get Relative URL
-	 *
-	 * @access  public
-	 */
-	public function getRelativeURL()
-	{
-		return $this->relative_url;
-	}
-
-	/**
-	 * Get URL
-	 *
-	 * @access  public
-	 * @param   bool   $include Include domain?
-	 * @param   string $path    Path to append to the URL
-	 * @return  string
-	 */
-	public function getURL($include = true, $path = null)
-	{
-		if ($path !== null) {
-			$path = '/'.ltrim($path, '/');
-		}
-
-		if ($include) {
-			return $this->parent->getURL(true, $this->title.$path);
-		}
-
-		return $this->relative_url.$path;
-	}
-
-	/**
 	 * Send an HTTP request
 	 *
 	 * @access  public
@@ -168,30 +130,30 @@ trait SPListTrait
 	 */
 	public function request($url = null, array $options = [], $method = 'GET')
 	{
-		return $this->parent->request($url, $options, $method);
+		return $this->site->request($url, $options, $method);
 	}
 
 	/**
-	 * Get the current Access Token
+	 * Get the current SharePoint Access Token
 	 *
 	 * @access  public
 	 * @throws  SPException
 	 * @return  SPAccessToken
 	 */
-	public function getAccessToken()
+	public function getSPAccessToken()
 	{
-		return $this->parent->getAccessToken();
+		return $this->site->getSPAccessToken();
 	}
 
 	/**
-	 * Get the current Form Digest
+	 * Get the current SharePoint Form Digest
 	 *
 	 * @access  public
 	 * @throws  SPException
 	 * @return  SPFormDigest
 	 */
-	public function getFormDigest()
+	public function getSPFormDigest()
 	{
-		return $this->parent->getFormDigest();
+		return $this->site->getSPFormDigest();
 	}
 }
