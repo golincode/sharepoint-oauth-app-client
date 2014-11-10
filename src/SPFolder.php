@@ -121,15 +121,15 @@ class SPFolder implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPSite $site   SharePoint Site
-	 * @param   string $folder SharePoint Folder relative URL
-	 * @param   bool   $fetch  Fetch SharePoint Files?
+	 * @param   SPSite $site         SharePoint Site
+	 * @param   string $relative_url SharePoint Folder relative URL
+	 * @param   bool   $fetch        Fetch SharePoint Files?
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPSite $site, $folder = null, $fetch = false)
+	public static function getAll(SPSite $site, $relative_url = null, $fetch = false)
 	{
-		$json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$folder."')/Folders", [
+		$json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relative_url."')/Folders", [
 			'headers' => [
 				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
@@ -139,7 +139,7 @@ class SPFolder implements SPListInterface
 		$folders = [];
 
 		foreach ($json['d']['results'] as $subfolder) {
-			// "Forms" is a system folder and should not be messed with
+			// NOTE: "Forms" is a system folder and should not be messed with
 			if ($subfolder['Name'] != 'Forms') {
 				$folders[$subfolder['UniqueId']] = new static($site, $subfolder, $fetch);
 			}
