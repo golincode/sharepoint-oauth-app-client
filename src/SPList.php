@@ -118,7 +118,6 @@ class SPList implements SPListInterface
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
-			'parent_path' => 'ParentWebUrl',
 			'template'    => 'BaseTemplate',
 			'type'        => '__metadata.type',
 			'item_type'   => 'ListItemEntityTypeFullName',
@@ -139,7 +138,7 @@ class SPList implements SPListInterface
 	 */
 	public function __construct(SPSite &$site, array $json, $fetch = false)
 	{
-		$this->parent = $site;
+		$this->site = $site;
 
 		$this->hydrate($json);
 
@@ -195,7 +194,7 @@ class SPList implements SPListInterface
 	{
 		$json = $site->request('_api/web/Lists', [
 			'headers' => [
-				'Authorization' => 'Bearer '.$site->getAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
@@ -227,7 +226,7 @@ class SPList implements SPListInterface
 	{
 		$json = $site->request("_api/web/Lists(guid'".$guid."')", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$site->getAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
@@ -250,7 +249,7 @@ class SPList implements SPListInterface
 	{
 		$json = $site->request("_api/web/Lists/GetByTitle('".$title."')", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$site->getAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
@@ -286,9 +285,9 @@ class SPList implements SPListInterface
 
 		$json = $site->request('_api/web/Lists', [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$site->getAccessToken(),
+				'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $site->getFormDigest(),
+				'X-RequestDigest' => (string) $site->getSPFormDigest(),
 				'Content-type'    => 'application/json;odata=verbose',
 				'Content-length'  => strlen($body)
 			],
@@ -335,8 +334,9 @@ class SPList implements SPListInterface
 		], 'POST');
 
 		/**
-		 * Use $properties, since SharePoint
-		 * doesn't return a response when updating
+		 * NOTE: Rehydration is done using the $properties array,
+		 * since the SharePoint API does not return a response on
+		 * a successful update
 		 */
 		$this->hydrate($properties, true);
 
@@ -475,13 +475,13 @@ class SPList implements SPListInterface
 	 * Update a SharePoint Item
 	 *
 	 * @access  public
-	 * @param   string $title      SharePoint Item Title
+	 * @param   string $index      SharePoint Item index
 	 * @param   array  $properties SharePoint Item properties (Title, ...)
 	 * @return  SPItem
 	 */
-	public function updateSPItem($title = null, array $properties)
+	public function updateSPItem($index = null, array $properties)
 	{
-		$item = $this[$title]->update($properties);
+		$item = $this[$index]->update($properties);
 
 		$this[] = $item;
 
