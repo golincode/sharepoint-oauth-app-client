@@ -18,6 +18,20 @@ class SPFolder implements SPListInterface
 	use SPListTrait;
 
 	/**
+	 * Folder Name
+	 *
+	 * @access  private
+	 */
+	private $name = null;
+
+	/**
+	 * Folder Relative URL
+	 *
+	 * @access  private
+	 */
+	private $relative_url = null;
+
+	/**
 	 * Hydration handler
 	 *
 	 * @access  protected
@@ -32,7 +46,7 @@ class SPFolder implements SPListInterface
 			'type'         => 'ListItemAllFields.__metadata.type',
 			'id'           => 'ListItemAllFields.ID',
 			'guid'         => 'ListItemAllFields.GUID',
-			'title'        => 'Name',
+			'name'         => 'Name',
 			'relative_url' => 'ServerRelativeUrl'
 		], $missing);
 	}
@@ -41,20 +55,54 @@ class SPFolder implements SPListInterface
 	 * SharePoint Folder constructor
 	 *
 	 * @access  public
-	 * @param   SPListInterface $list  SharePoint List/Folder
-	 * @param   array           $json  JSON response from the SharePoint REST API
-	 * @param   int             $level Recursion fetch level
+	 * @param   SPSite $site  SharePoint Site
+	 * @param   array  $json  JSON response from the SharePoint REST API
+	 * @param   bool   $fetch Fetch SharePoint Files?
 	 * @return  SPFolder
 	 */
-	public function __construct(SPListInterface &$list, array $json, $level = 0)
+	public function __construct(SPSite &$site, array $json, $fetch = false)
 	{
-		$this->parent = $list;
+		$this->site = $site;
 
 		$this->hydrate($json);
 
-		if ($level > 0) {
-			// get stuff
+		if ($fetch) {
+			// get files
 		}
+	}
+
+	/**
+	 * Get SharePoint Site
+	 *
+	 * @access  public
+	 * @return  SPSite
+	 */
+	public function getSite()
+	{
+		return $this->site;
+	}
+
+	/**
+	 * Get SharePoint Name
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	/**
+	 * Get Relative URL
+	 *
+	 * @access  public
+	 * @param   string $path Path to append to the URL
+	 * @return  string
+	 */
+	public function getRelativeURL($path = null)
+	{
+		return $this->relative_url.($path ? '/'.ltrim($path, '/') : '');
 	}
 
 	/**
@@ -62,16 +110,16 @@ class SPFolder implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPListInterface $list  SharePoint List/Folder
-	 * @param   int             $level Recursion fetch level
+	 * @param   SPFolder $folder SharePoint Folder
+	 * @param   bool     $fetch  Fetch SharePoint Files?
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPListInterface &$list, $level = 0)
+	public static function getAll(SPFolder $folder, $fetch = false)
 	{
-		$json = $list->request("_api/web/GetFolderByServerRelativeUrl('".$list->getURL(true)."')/Folders", [
+		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Folders", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$list->getAccessToken(),
+				'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			],
 			'query'   => [
@@ -81,8 +129,8 @@ class SPFolder implements SPListInterface
 
 		$folders = [];
 
-		foreach ($json['d']['results'] as $folder) {
-			$folders[$folder['ListItemAllFields']['GUID']] = new static($list, $folder, $level);
+		foreach ($json['d']['results'] as $subfolder) {
+			$folders[$subfolder['ListItemAllFields']['GUID']] = new static($folder->getSite(), $subfolder, $fetch);
 		}
 
 		return $folders;
@@ -93,22 +141,22 @@ class SPFolder implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPListInterface $list  SharePoint List/Folder
-	 * @param   string          $name  SharePoint Folder Name
-	 * @param   int             $level Recursion fetch level
+	 * @param   SPSite $site  SharePoint Site
+	 * @param   string $name  SharePoint Folder Name
+	 * @param   bool   $fetch Fetch SharePoint Files?
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getByName(SPListInterface &$list, $name = null, $level = 0)
+	public static function getByName(SPSite &$site, $name = null, $fetch = false)
 	{
-		$json = $list->request("_api/web/GetFolderByServerRelativeUrl('".$name."')", [
+		$json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$name."')", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$list->getAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
 
-		return new static($list, $json['d'], $level);
+		return new static($site, $json['d'], $fetch);
 	}
 
 	/**
@@ -116,26 +164,26 @@ class SPFolder implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPListInterface $list SharePoint List/Folder
-	 * @param   array           $name SharePoint Folder name
+	 * @param   SPFolder $parent Parent SharePoint Folder
+	 * @param   array    $name   SharePoint Folder name
 	 * @throws  SPException
 	 * @return  SPFolder
 	 */
-	public static function create(SPListInterface &$list, $name)
+	public static function create(SPFolder &$parent, $name)
 	{
 		$body = json_encode([
 			'__metadata' => [
 				'type' => 'SP.Folder'
 			],
 
-			'ServerRelativeUrl' => $list->getURL(true, $name)
+			'ServerRelativeUrl' => $parent->getRelativeURL($name)
 		]);
 
-		$json = $list->request('_api/web/Lists', [
+		$json = $parent->request('_api/web/Folders', [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$list->getAccessToken(),
+				'Authorization'   => 'Bearer '.$parent->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $list->getFormDigest(),
+				'X-RequestDigest' => (string) $parent->getSPFormDigest(),
 				'Content-type'    => 'application/json;odata=verbose',
 				'Content-length'  => strlen($body)
 			],
@@ -143,7 +191,7 @@ class SPFolder implements SPListInterface
 			'body'    => $body
 		], 'POST');
 
-		return new static($list, $json['d']);
+		return new static($parent->getSite(), $json['d']);
 	}
 
 	/**
@@ -169,9 +217,9 @@ class SPFolder implements SPListInterface
 
 		$this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relative_url."')", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->getAccessToken(),
+				'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $this->getFormDigest(),
+				'X-RequestDigest' => (string) $this->getSPFormDigest(),
 				'X-HTTP-Method'   => 'MERGE',
 				'IF-MATCH'        => '*',
 				'Content-type'    => 'application/json;odata=verbose',
@@ -202,8 +250,8 @@ class SPFolder implements SPListInterface
 	{
 		$this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relative_url."')", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->parent->getAccessToken(),
-				'X-RequestDigest' => (string) $this->parent->getFormDigest(),
+				'Authorization'   => 'Bearer '.$this->site->getSPAccessToken(),
+				'X-RequestDigest' => (string) $this->site->getSPFormDigest(),
 				'X-HTTP-Method'   => 'DELETE',
 				'IF-MATCH'        => '*'
 			]
@@ -213,17 +261,17 @@ class SPFolder implements SPListInterface
 	}
 
 	/**
-	 * Get the SharePoint Folder Item count
+	 * Get the SharePoint Folder Item count (Folders and Files)
 	 *
 	 * @access  public
 	 * @throws  SPException
-	 * @return  int SharePoint Files in this SharePoint Folder
+	 * @return  int SharePoint Folder and File count
 	 */
 	public function getSPItemCount()
 	{
 		$json = $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relative_url."')/itemCount", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$this->getAccessToken(),
+				'Authorization' => 'Bearer '.$this->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
