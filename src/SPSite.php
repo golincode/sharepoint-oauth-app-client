@@ -115,7 +115,7 @@ class SPSite implements SPRequestInterface
 
 		$url = $parts['scheme'].'://'.$parts['host'].($domain ? '' : $parts['path']);
 
-		return $url.($path ? '/'.ltrim($path, '/') : '');
+		return rtrim($url, '/').($path ? '/'.ltrim($path, '/') : '/');
 	}
 
 	/**
