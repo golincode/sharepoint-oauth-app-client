@@ -157,7 +157,7 @@ class SPFolder implements SPListInterface
 	 * @param   string $relative_url SharePoint Folder relative URL
 	 * @param   bool   $fetch        Fetch SharePoint Files?
 	 * @throws  SPException
-	 * @return  array
+	 * @return  SPFolder
 	 */
 	public static function getByName(SPSite &$site, $relative_url = null, $fetch = false)
 	{
