@@ -239,7 +239,7 @@ class SPUser
 	{
 		$json = $site->request('_api/SP.UserProfiles.PeopleManager/GetMyProperties', [
 			'headers' => [
-				'Authorization' => 'Bearer '.$site->getAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
@@ -260,7 +260,7 @@ class SPUser
 	{
 		$json = $site->request('_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)', [
 			'headers' => [
-				'Authorization' => 'Bearer '.$site->getAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			],
 
