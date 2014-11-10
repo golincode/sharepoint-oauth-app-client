@@ -273,9 +273,7 @@ class SPFile implements SPItemInterface
 			'body'    => $body
 		], 'POST');
 
-		var_dump($json); // FIXME: remove
-
-		return new static($folder, $json['d']['ListItemAllFields']);
+		return new static($folder, $json['d']);
 	}
 
 	/**
