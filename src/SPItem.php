@@ -13,7 +13,7 @@
 
 namespace WeAreArchitect\SharePoint;
 
-class SPItem
+class SPItem implements SPItemInterface
 {
 	use SPItemTrait;
 
@@ -70,15 +70,14 @@ class SPItem
 	 */
 	public static function getAll(SPList &$list, $top = 5000)
 	{
-		$json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')", [
+		$json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
 			'headers' => [
 				'Authorization' => 'Bearer '.$list->getAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			],
 
 			'query'   => [
-				'$expand' => 'Items/File',
-				'top'     => $top
+				'top' => $top
 			]
 		]);
 
