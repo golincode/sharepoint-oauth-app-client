@@ -139,7 +139,10 @@ class SPFolder implements SPListInterface
 		$folders = [];
 
 		foreach ($json['d']['results'] as $subfolder) {
-			$folders[$subfolder['UniqueId']] = new static($site, $subfolder, $fetch);
+			// "Forms" is a system folder and should not be messed with
+			if ($subfolder['Name'] != 'Forms') {
+				$folders[$subfolder['UniqueId']] = new static($site, $subfolder, $fetch);
+			}
 		}
 
 		return $folders;
@@ -150,15 +153,21 @@ class SPFolder implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPSite $site  SharePoint Site
-	 * @param   string $name  SharePoint Folder Name
-	 * @param   bool   $fetch Fetch SharePoint Files?
+	 * @param   SPSite $site         SharePoint Site
+	 * @param   string $relative_url SharePoint Folder relative URL
+	 * @param   bool   $fetch        Fetch SharePoint Files?
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getByName(SPSite &$site, $name = null, $fetch = false)
+	public static function getByName(SPSite &$site, $relative_url = null, $fetch = false)
 	{
-		$json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$name."')", [
+		$name = basename($relative_url);
+
+		if (strtolower($name) == 'forms') {
+			throw new SPException('The SharePoint Folder "Forms" is a system folder');
+		}
+
+		$json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relative_url."')", [
 			'headers' => [
 				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
