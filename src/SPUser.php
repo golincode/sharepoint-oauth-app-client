@@ -112,7 +112,7 @@ class SPUser
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
-	public function __construct(SPSite $site, array $json)
+	public function __construct(SPSite &$site, array $json)
 	{
 		$this->site = $site;
 
@@ -235,7 +235,7 @@ class SPUser
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
-	public static function getCurrent(SPSite $site)
+	public static function getCurrent(SPSite &$site)
 	{
 		$json = $site->request('_api/SP.UserProfiles.PeopleManager/GetMyProperties', [
 			'headers' => [
@@ -256,7 +256,7 @@ class SPUser
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
-	public static function getByAccount(SPSite $site, $account = null)
+	public static function getByAccount(SPSite &$site, $account = null)
 	{
 		$json = $site->request('_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)', [
 			'headers' => [
