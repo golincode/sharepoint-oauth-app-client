@@ -13,6 +13,7 @@
 
 namespace WeAreArchitect\SharePoint;
 
+use Carbon\Carbon;
 use SplFileInfo;
 
 class SPFile implements SPItemInterface
@@ -277,7 +278,7 @@ class SPFile implements SPItemInterface
 	}
 
 	/**
-	 * Update a SharePoint File
+	 * Update a SharePoint File - FIXME: files are being created with 0 size
 	 *
 	 * @access  public
 	 * @param   SplFileInfo $file File object
@@ -292,7 +293,7 @@ class SPFile implements SPItemInterface
 			throw new SPException('Could not get file contents for: '.$file);
 		}
 
-		$json = $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
+		$this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
 			'headers' => [
 				'Authorization'   => 'Bearer '.$this->folder->getSPAccessToken(),
 				'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
@@ -301,9 +302,15 @@ class SPFile implements SPItemInterface
 			]
 		], 'POST');
 
-		var_dump($json); // FIXME: remove
-
-		// TODO: rehydrate
+		/**
+		 * NOTE: Rehydration is done in a best effort manner,
+		 * since the SharePoint API does not return a response on
+		 * a successful update
+		 */
+		$this->hydrate([
+			'size'  => strlen($body),
+			'mtime' => Carbon::now()
+		], true);
 
 		return $this;
 	}
@@ -321,7 +328,7 @@ class SPFile implements SPItemInterface
 	{
 		$new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 
-		$json = $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relative_url."')/moveTo(newUrl='".$new_url."',flags=1)", [
+		$this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relative_url."')/moveTo(newUrl='".$new_url."',flags=1)", [
 			'headers' => [
 				'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
@@ -329,9 +336,17 @@ class SPFile implements SPItemInterface
 			]
 		], 'POST');
 
-		var_dump($json); // FIXME: remove
+		/**
+		 * NOTE: Rehydration is done in a best effort manner,
+		 * since the SharePoint API does not return a response on
+		 * a successful update
+		 */
+		$this->hydrate([
+			'name'  => $new_url,
+			'mtime' => Carbon::now()
+		], true);
 
-		// TODO: rehydrate
+		$this->folder = $folder;
 
 		return $this;
 	}
