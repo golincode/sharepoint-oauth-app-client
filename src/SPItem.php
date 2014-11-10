@@ -15,7 +15,7 @@ namespace WeAreArchitect\SharePoint;
 
 class SPItem implements SPItemInterface
 {
-	use SPItemTrait;
+	use SPObjectTrait;
 
 	/**
 	 * SharePoint List
@@ -72,7 +72,7 @@ class SPItem implements SPItemInterface
 	{
 		$json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$list->getAccessToken(),
+				'Authorization' => 'Bearer '.$list->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			],
 
@@ -108,7 +108,7 @@ class SPItem implements SPItemInterface
 
 		$json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items(".$id.")", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$list->getAccessToken(),
+				'Authorization' => 'Bearer '.$list->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			],
 
@@ -145,9 +145,9 @@ class SPItem implements SPItemInterface
 
 		$json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$list->getAccessToken(),
+				'Authorization'   => 'Bearer '.$list->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $list->getFormDigest(),
+				'X-RequestDigest' => (string) $list->getSPFormDigest(),
 				'Content-type'    => 'application/json;odata=verbose',
 				'Content-length'  => strlen($body)
 			],
@@ -182,9 +182,9 @@ class SPItem implements SPItemInterface
 
 		$this->list->request("_api/web/Lists(guid'".$this->list->getGUID()."')/items(".$this->id.")", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->list->getAccessToken(),
+				'Authorization'   => 'Bearer '.$this->list->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $this->list->getFormDigest(),
+				'X-RequestDigest' => (string) $this->list->getSPFormDigest(),
 				'X-HTTP-Method'   => 'MERGE',
 				'IF-MATCH'        => '*',
 				'Content-type'    => 'application/json;odata=verbose',
@@ -216,8 +216,8 @@ class SPItem implements SPItemInterface
 	{
 		$this->list->request("_api/web/Lists(guid'".$this->list->getGUID()."')/items(".$this->id.")", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->list->getAccessToken(),
-				'X-RequestDigest' => (string) $this->list->getFormDigest(),
+				'Authorization'   => 'Bearer '.$this->list->getSPAccessToken(),
+				'X-RequestDigest' => (string) $this->list->getSPFormDigest(),
 				'IF-MATCH'        => '*',
 				'X-HTTP-Method'   => 'DELETE'
 			]
