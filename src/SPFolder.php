@@ -106,6 +106,18 @@ class SPFolder implements SPListInterface
 	}
 
 	/**
+	 * Get URL
+	 *
+	 * @access  public
+	 * @param   string $path Path to append to the URL
+	 * @return  string
+	 */
+	public function getURL($path = null)
+	{
+		return $this->site->getURL($path);
+	}
+
+	/**
 	 * Get all SharePoint Folders
 	 *
 	 * @static
