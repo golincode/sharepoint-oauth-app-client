@@ -29,7 +29,7 @@ trait SPObjectTrait
 	 *
 	 * @access  private
 	 */
-	private $id = null;
+	private $id = 0;
 
 	/**
 	 * SharePoint GUID
