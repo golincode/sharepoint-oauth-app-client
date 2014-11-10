@@ -27,18 +27,18 @@ trait SPListTrait
 	private $parent = null;
 
 	/**
+	 * SharePoint Relative URL
+	 *
+	 * @access  private
+	 */
+	private $relative_url = null;
+
+	/**
 	 * SharePoint Items
 	 *
 	 * @access  private
 	 */
 	private $items = [];
-
-	/**
-	 * Relative URL
-	 *
-	 * @access  private
-	 */
-	private $relative_url = null;
 
 	/**
 	 * Count the SharePoint Items
@@ -123,6 +123,16 @@ trait SPListTrait
 	public function offsetUnset($index = null)
 	{
 		unset($this->items[$index]);
+	}
+
+	/**
+	 * Get Relative URL
+	 *
+	 * @access  public
+	 */
+	public function getRelativeURL()
+	{
+		return $this->relative_url;
 	}
 
 	/**
