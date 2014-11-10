@@ -15,9 +15,16 @@ namespace WeAreArchitect\SharePoint;
 
 use SplFileInfo;
 
-class SPFile
+class SPFile implements SPItemInterface
 {
-	use SPItemTrait;
+	use SPObjectTrait;
+
+	/**
+	 * SharePoint Folder
+	 *
+	 * @access  private
+	 */
+	private $folder = null;
 
 	/**
 	 * File Name
@@ -82,13 +89,13 @@ class SPFile
 	 * SharePoint File constructor
 	 *
 	 * @access  public
-	 * @param   SPListInterface $list SharePoint List
-	 * @param   array           $json JSON response from the SharePoint REST API
+	 * @param   SPFolder $folder SharePoint Folder
+	 * @param   array    $json   JSON response from the SharePoint REST API
 	 * @return  SPFile
 	 */
-	public function __construct(SPListInterface &$list, array $json)
+	public function __construct(SPFolder &$folder, array $json)
 	{
-		$this->container = $list;
+		$this->folder = $folder;
 
 		$this->hydrate($json);
 	}
@@ -145,7 +152,7 @@ class SPFile
 	 */
 	public function getURL()
 	{
-		return $this->container->getURL($this->name);
+		return $this->folder->getURL($this->name);
 	}
 
 	/**
@@ -159,7 +166,6 @@ class SPFile
 		return [
 			'id'    => $this->id,
 			'guid'  => $this->guid,
-			'title' => $this->title,
 			'name'  => $this->name,
 			'size'  => $this->size,
 			'ctime' => $this->ctime,
@@ -169,19 +175,19 @@ class SPFile
 	}
 
 	/**
-	 * Get all SharePoint Files in a SharePoint Container
+	 * Get all SharePoint Files
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPListInterface $list SharePoint List
+	 * @param   SPFolder $folder SharePoint Folder
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPListInterface &$list)
+	public static function getAll(SPFolder &$folder)
 	{
-		$json = $list->request("_api/web/GetFolderByServerRelativeUrl('".$list->getURL(null, true)."')/Files", [
+		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$list->getAccessToken(),
+				'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
@@ -189,7 +195,7 @@ class SPFile
 		$files = [];
 
 		foreach ($json['d']['results'] as $file) {
-			$files[$file['UniqueId']] = new static($list, $file);
+			$files[$file['UniqueId']] = new static($folder, $file);
 		}
 
 		return $files;
@@ -200,25 +206,25 @@ class SPFile
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPListInterface $container SharePoint Container
-	 * @param   string               $name      File Name
+	 * @param   SPFolder $folder SharePoint List
+	 * @param   string   $name   File Name
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function getByName(SPListInterface &$container, $name = null)
+	public static function getByName(SPFolder &$folder, $name = null)
 	{
 		if (empty($name)) {
 			throw new SPException('The SharePoint File Name is empty/not set');
 		}
 
-		$json = $container->request("_api/web/GetFolderByServerRelativeUrl('".$container->getURL(null, true)."')/Files('".$name."')", [
+		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files('".$name."')", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$container->getAccessToken(),
+				'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
 
-		return new static($container, $json['d']);
+		return new static($folder, $json['d']);
 	}
 
 	/**
@@ -226,14 +232,14 @@ class SPFile
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPListInterface    $container SharePoint Folder
-	 * @param   SplFileInfo             $file      File object
-	 * @param   string                  $name      Name for the file being uploaded
-	 * @param   bool                    $overwrite Overwrite if file already exists?
+	 * @param   SPFolder    $folder    SharePoint Folder
+	 * @param   SplFileInfo $file      File object
+	 * @param   string      $name      Name for the file being uploaded
+	 * @param   bool        $overwrite Overwrite if file already exists?
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function create(SPListInterface &$container, SplFileInfo $file, $name = null, $overwrite = false)
+	public static function create(SPFolder &$folder, SplFileInfo $file, $name = null, $overwrite = false)
 	{
 		$body = file_get_contents($file->getRealPath());
 
@@ -246,11 +252,11 @@ class SPFile
 			$name = basename($file->getRealPath());
 		}
 
-		$json = $container->request("_api/web/GetFolderByServerRelativeUrl('".$container->getURL(null, true)."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
+		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$container->getAccessToken(),
+				'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $container->getFormDigest()
+				'X-RequestDigest' => (string) $folder->getSPFormDigest()
 			],
 
 			'query'   => [
@@ -262,7 +268,7 @@ class SPFile
 
 		var_dump($json); // FIXME: remove
 
-		return new static($container, $json['d']['ListItemAllFields']);
+		return new static($folder, $json['d']['ListItemAllFields']);
 	}
 
 	/**
@@ -281,10 +287,10 @@ class SPFile
 			throw new SPException('Could not get file contents for: '.$file);
 		}
 
-		$json = $this->container->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
+		$json = $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->container->getAccessToken(),
-				'X-RequestDigest' => (string) $this->container->getFormDigest(),
+				'Authorization'   => 'Bearer '.$this->folder->getSPAccessToken(),
+				'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
 				'X-HTTP-Method'   => 'PUT',
 				'Content-length'  => strlen($body)
 			]
@@ -301,20 +307,20 @@ class SPFile
 	 * Move a SharePoint File
 	 *
 	 * @access  public
-	 * @param   SPListInterface $container SharePoint Container to move to
-	 * @param   string               $name      SharePoint File name
+	 * @param   SPFolder $folder SharePoint Folder to move to
+	 * @param   string   $name   SharePoint File name
 	 * @throws  SPException
 	 * @return  SPItem
 	 */
-	public function move(SPListInterface &$container, $name = null)
+	public function move(SPFolder &$folder, $name = null)
 	{
-		$new_url = $container->getURL(null, true).'/'.(empty($name) ? $this->name : $name);
+		$new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 
-		$json = $this->container->request("_api/Web/GetFileByServerRelativeUrl('".$this->relative_url."')/moveTo(newUrl='".$new_url."',flags=1)", [
+		$json = $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relative_url."')/moveTo(newUrl='".$new_url."',flags=1)", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$container->getAccessToken(),
+				'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $this->container->getFormDigest()
+				'X-RequestDigest' => (string) $this->folder->getSPFormDigest()
 			]
 		], 'POST');
 
@@ -334,10 +340,10 @@ class SPFile
 	 */
 	public function delete()
 	{
-		$this->container->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')", [
+		$this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->container->getAccessToken(),
-				'X-RequestDigest' => (string) $this->container->getFormDigest(),
+				'Authorization'   => 'Bearer '.$this->folder->getSPAccessToken(),
+				'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
 				'IF-MATCH'        => '*',
 				'X-HTTP-Method'   => 'DELETE'
 			]
