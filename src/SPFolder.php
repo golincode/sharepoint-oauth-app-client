@@ -43,10 +43,9 @@ class SPFolder implements SPListInterface
 	protected function hydrate(array $json, $missing = false)
 	{
 		$this->fill($json, [
-			'type'         => 'ListItemAllFields.__metadata.type',
-			'id'           => 'ListItemAllFields.ID',
-			'guid'         => 'ListItemAllFields.GUID',
+			'guid'         => 'UniqueId',
 			'name'         => 'Name',
+			'title'        => 'Name',
 			'relative_url' => 'ServerRelativeUrl'
 		], $missing);
 	}
@@ -67,7 +66,7 @@ class SPFolder implements SPListInterface
 		$this->hydrate($json);
 
 		if ($fetch) {
-			// get files
+			$this->getSPFiles();
 		}
 	}
 
@@ -122,27 +121,25 @@ class SPFolder implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPFolder $folder SharePoint Folder
-	 * @param   bool     $fetch  Fetch SharePoint Files?
+	 * @param   SPSite $site   SharePoint Site
+	 * @param   string $folder SharePoint Folder relative URL
+	 * @param   bool   $fetch  Fetch SharePoint Files?
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPFolder $folder, $fetch = false)
+	public static function getAll(SPSite $site, $folder = null, $fetch = false)
 	{
-		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Folders", [
+		$json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$folder."')/Folders", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
-			],
-			'query'   => [
-				'$expand' => 'ListItemAllFields'
 			]
 		]);
 
 		$folders = [];
 
 		foreach ($json['d']['results'] as $subfolder) {
-			$folders[$subfolder['ListItemAllFields']['GUID']] = new static($folder->getSite(), $subfolder, $fetch);
+			$folders[$subfolder['UniqueId']] = new static($site, $subfolder, $fetch);
 		}
 
 		return $folders;
@@ -289,5 +286,19 @@ class SPFolder implements SPListInterface
 		]);
 
 		return $json['d']['ItemCount'];
+	}
+
+	/**
+	 * Get all SharePoint Files
+	 *
+	 * @static
+	 * @access  public
+	 * @return  array
+	 */
+	public function getSPFiles()
+	{
+		$this->items = SPFile::getAll($this);
+
+		return $this->items;
 	}
 }
