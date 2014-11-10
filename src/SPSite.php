@@ -171,7 +171,7 @@ class SPSite implements SPRequestInterface
 	 * @throws  SPException
 	 * @return  SPSite
 	 */
-	public function createAccessTokenFromUser($context_token = null)
+	public function createSPAccessTokenFromUser($context_token = null)
 	{
 		$this->token = SPAccessToken::createFromUser($this, $context_token);
 
