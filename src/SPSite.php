@@ -13,15 +13,11 @@
 
 namespace WeAreArchitect\SharePoint;
 
-use ArrayAccess;
-use ArrayIterator;
-use Countable;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
-use IteratorAggregate;
 
-class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInterface
+class SPSite implements SPRequestInterface
 {
 	/**
 	 * HTTP Client object
@@ -50,13 +46,6 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	 * @access  private
 	 */
 	private $config = [];
-
-	/**
-	 * SharePoint Lists
-	 *
-	 * @access  private
-	 */
-	private $lists = [];
 
 	/**
 	 * SharePoint Site constructor
@@ -102,91 +91,6 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	}
 
 	/**
-	 * Count the SharePoint Lists
-	 *
-	 * @access  public
-	 * @return  int
-	 */
-	public function count()
-	{
-		return count($this->lists);
-	}
-
-	/**
-	 * Get the SharePoint List iterator
-	 *
-	 * @access  public
-	 * @return  ArrayIterator
-	 */
-	public function getIterator()
-	{
-		return new ArrayIterator($this->lists);
-	}
-
-	/**
-	 * Check if an SharePoint List exists
-	 *
-	 * @access  public
-	 * @param   string $index SharePoint List index
-	 * @return  bool true if exists, false otherwise
-	 */
-	public function offsetExists($index = null)
-	{
-		return isset($this->lists[$index]);
-	}
-
-	/**
-	 * Get a SharePoint List
-	 *
-	 * @access  public
-	 * @param   string $index SharePoint List index
-	 * @throws  SPException
-	 * @return  SPItem
-	 */
-	public function offsetGet($index = null)
-	{
-		if (isset($this->lists[$index])) {
-			return $this->lists[$index];
-		}
-
-		throw new SPException('Invalid SharePoint List');
-	}
-
-	/**
-	 * Add a SharePoint List
-	 *
-	 * @access  public
-	 * @param   string $index SharePoint List Title
-	 * @param   SPItem $list  SharePoint List
-	 * @throws  SPException
-	 * @return  void
-	 */
-	public function offsetSet($index = null, $list = null)
-	{
-		if ( ! $list instanceof SPList) {
-			throw new SPException('SharePoint List expected');
-		}
-
-		if ($index === null) {
-			$index = $list->getGUID();
-		}
-
-		$this->lists[$index] = $list;
-	}
-
-	/**
-	 * Remove a SharePoint List
-	 *
-	 * @access  public
-	 * @param   string $index SharePoint List index
-	 * @return  void
-	 */
-	public function offsetUnset($index = null)
-	{
-		unset($this->lists[$index]);
-	}
-
-	/**
 	 * Get the SharePoint Site configuration
 	 *
 	 * @access  public
@@ -201,15 +105,15 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	 * Get the URL
 	 *
 	 * @access  public
-	 * @param   string $path Path to append to the URL
-	 * @param   bool   $full Use full URL or only the domain?
+	 * @param   string $path   Path to append to the URL
+	 * @param   bool   $domain Domain only URL?
 	 * @return  string
 	 */
-	public function getURL($path = null, $full = true)
+	public function getURL($path = null, $domain = false)
 	{
 		$parts = parse_url($this->config['url']);
 
-		$url = $parts['scheme'].'://'.$parts['host'].($full ?  $parts['path'] : '');
+		$url = $parts['scheme'].'://'.$parts['host'].($domain ? '' : $parts['path']);
 
 		return $url.($path ? '/'.ltrim($path, '/') : '');
 	}
@@ -260,10 +164,10 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	}
 
 	/**
-	 * Create Access Token (User Context Token)
+	 * Create SharePoint Access Token (User Context Token)
 	 *
 	 * @access  public
-	 * @param   string $context_token Context Token
+	 * @param   string $context_token SharePoint Context Token
 	 * @throws  SPException
 	 * @return  SPSite
 	 */
@@ -275,13 +179,13 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	}
 
 	/**
-	 * Create Access Token (App only policy)
+	 * Create SharePoint Access Token (App only policy)
 	 *
 	 * @access  public
 	 * @throws  SPException
 	 * @return  SPSite
 	 */
-	public function createAccessTokenFromAOP()
+	public function createSPAccessTokenFromAOP()
 	{
 		$this->token = SPAccessToken::createFromAOP($this);
 
@@ -289,50 +193,50 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	}
 
 	/**
-	 * Get the current Access Token object
+	 * Get the current SharePoint Access Token
 	 *
 	 * @access  public
 	 * @throws  SPException
 	 * @return  SPAccessToken
 	 */
-	public function getAccessToken()
+	public function getSPAccessToken()
 	{
 		if ( ! $this->token instanceof SPAccessToken) {
-			throw new SPException('Invalid Access Token');
+			throw new SPException('Invalid SharePoint Access Token');
 		}
 
 		if ($this->token->hasExpired()) {
-			throw new SPException('Expired Access Token');
+			throw new SPException('Expired SharePoint Access Token');
 		}
 
 		return $this->token;
 	}
 
 	/**
-	 * Set the Access Token object
+	 * Set the SharePoint Access Token
 	 *
 	 * @access  public
 	 * @param   SPAccessToken $token SharePoint Access Token
 	 * @throws  SPException
 	 * @return  void
 	 */
-	public function setAccessToken(SPAccessToken $token)
+	public function setSPAccessToken(SPAccessToken $token)
 	{
 		if ($token->hasExpired()) {
-			throw new SPException('Expired Access Token');
+			throw new SPException('Expired SharePoint Access Token');
 		}
 
 		$this->token = $token;
 	}
 
 	/**
-	 * Create a Form Digest
+	 * Create a SharePoint Form Digest
 	 *
 	 * @access  public
 	 * @throws  SPException
 	 * @return  SPSite
 	 */
-	public function createFormDigest()
+	public function createSPFormDigest()
 	{
 		$this->digest = SPFormDigest::create($this);
 
@@ -340,118 +244,39 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	}
 
 	/**
-	 * Get the current Form Digest object
+	 * Get the current SharePoint Form Digest
 	 *
 	 * @access  public
 	 * @throws  SPException
 	 * @return  SPFormDigest
 	 */
-	public function getFormDigest()
+	public function getSPFormDigest()
 	{
 		if ( ! $this->digest instanceof SPFormDigest) {
-			throw new SPException('Invalid Form Digest');
+			throw new SPException('Invalid SharePoint Form Digest');
 		}
 
 		if ($this->digest->hasExpired()) {
-			throw new SPException('Expired Form Digest');
+			throw new SPException('Expired SharePoint Form Digest');
 		}
 
 		return $this->digest;
 	}
 
 	/**
-	 * Set the Form Digest object
+	 * Set the SharePoint Form Digest
 	 *
 	 * @access  public
 	 * @param   SPFormDigest $digest SharePoint Form Digest
 	 * @throws  SPException
 	 * @return  void
 	 */
-	public function setFormDigest(SPFormDigest $digest)
+	public function setSPFormDigest(SPFormDigest $digest)
 	{
 		if ($digest->hasExpired()) {
-			throw new SPException('Expired Form Digest');
+			throw new SPException('Expired SharePoint Form Digest');
 		}
 
 		$this->digest = $digest;
-	}
-
-	/**
-	 * Get all SharePoint Lists
-	 *
-	 * @access  public
-	 * @param   bool   $fetch Fetch SharePoint Items?
-	 * @throws  SPException
-	 * @return  array
-	 */
-	public function getSPLists($fetch = false)
-	{
-		return SPList::getAll($this, $fetch);
-	}
-
-	/**
-	 * Create a SharePoint List
-	 *
-	 * @access  public
-	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
-	 * @throws  SPException
-	 * @return  SPList
-	 */
-	public function createSPList(array $properties)
-	{
-		$list = SPList::create($this, $properties);
-
-		$this[] = $list;
-
-		return $list;
-	}
-
-	/**
-	 * Update a SharePoint List
-	 *
-	 * @access  public
-	 * @param   string $title      SharePoint List Title
-	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
-	 * @return  SPList
-	 */
-	public function updateSPList($title = null, array $properties)
-	{
-		return $this[$title]->update($properties);
-	}
-
-	/**
-	 * Delete a SharePoint List and all it's contents
-	 *
-	 * @access  public
-	 * @param   string $title SharePoint List Title
-	 * @throws  SPException
-	 * @return  boolean true if the SharePoint List was deleted
-	 */
-	public function deleteSPList($title = null)
-	{
-		return $this[$title]->delete();
-	}
-
-	/**
-	 * Get the current (logged) SharePoint User
-	 *
-	 * @access  public
-	 * @return  SPUser
-	 */
-	public function getSPUserCurrent()
-	{
-		return SPUser::getCurrent($this);
-	}
-
-	/**
-	 * Get a SharePoint User by Account
-	 *
-	 * @access  public
-	 * @param   string $account SharePoint User account
-	 * @return  SPUser
-	 */
-	public function getSPUserByAccount($account = null)
-	{
-		return SPUser::getByAccount($this, $account);
 	}
 }
