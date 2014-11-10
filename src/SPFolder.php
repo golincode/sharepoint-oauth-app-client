@@ -262,8 +262,8 @@ class SPFolder implements SPListInterface
 	{
 		$this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relative_url."')", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->site->getSPAccessToken(),
-				'X-RequestDigest' => (string) $this->site->getSPFormDigest(),
+				'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
+				'X-RequestDigest' => (string) $this->getSPFormDigest(),
 				'X-HTTP-Method'   => 'DELETE',
 				'IF-MATCH'        => '*'
 			]
