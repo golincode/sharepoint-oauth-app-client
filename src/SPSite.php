@@ -102,7 +102,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	}
 
 	/**
-	 * Count the Site Lists
+	 * Count the SharePoint Lists
 	 *
 	 * @access  public
 	 * @return  int
@@ -139,14 +139,14 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	 * Get a SharePoint List
 	 *
 	 * @access  public
-	 * @param   string $title SharePoint List Title
+	 * @param   string $index SharePoint List index
 	 * @throws  SPException
 	 * @return  SPItem
 	 */
-	public function offsetGet($title = null)
+	public function offsetGet($index = null)
 	{
-		if (isset($this->lists[$title])) {
-			return $this->lists[$title];
+		if (isset($this->lists[$index])) {
+			return $this->lists[$index];
 		}
 
 		throw new SPException('Invalid SharePoint List');
@@ -163,7 +163,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	 */
 	public function offsetSet($index = null, $list = null)
 	{
-		if ( ! $list instanceof SPListInterface) {
+		if ( ! $list instanceof SPList) {
 			throw new SPException('SharePoint List expected');
 		}
 
@@ -201,17 +201,17 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	 * Get the URL
 	 *
 	 * @access  public
-	 * @param   bool   $include Include path?
-	 * @param   string $path    Path to append to the URL
+	 * @param   string $path Path to append to the URL
+	 * @param   bool   $full Use full URL or only the domain?
 	 * @return  string
 	 */
-	public function getURL($include = true, $path = null)
+	public function getURL($path = null, $full = true)
 	{
-		$components = parse_url($this->config['url']);
+		$parts = parse_url($this->config['url']);
 
-		$url = $components['scheme'].'://'.$components['host'].($include ?  $components['path'] : '');
+		$url = $parts['scheme'].'://'.$parts['host'].($full ?  $parts['path'] : '');
 
-		return rtrim($url, '/').($path ? '/'.ltrim($path, '/') : '');
+		return $url.($path ? '/'.ltrim($path, '/') : '');
 	}
 
 	/**
@@ -386,7 +386,7 @@ class SPSite implements ArrayAccess, Countable, IteratorAggregate, SPRequestInte
 	 */
 	public function getSPLists($fetch = false)
 	{
-		return SPListInterface::getAll($this, $fetch);
+		return SPList::getAll($this, $fetch);
 	}
 
 	/**
