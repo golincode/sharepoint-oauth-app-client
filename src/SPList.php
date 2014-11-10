@@ -339,9 +339,9 @@ class SPList implements SPListInterface
 
 		$this->request("_api/web/Lists(guid'".$this->guid."')", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->getAccessToken(),
+				'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $this->getFormDigest(),
+				'X-RequestDigest' => (string) $this->getSPFormDigest(),
 				'X-HTTP-Method'   => 'MERGE',
 				'IF-MATCH'        => '*',
 				'Content-type'    => 'application/json;odata=verbose',
@@ -372,9 +372,9 @@ class SPList implements SPListInterface
 	{
 		$this->request("_api/web/Lists(guid'".$this->guid."')", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->getAccessToken(),
+				'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $this->getFormDigest(),
+				'X-RequestDigest' => (string) $this->getSPFormDigest(),
 				'X-HTTP-Method'   => 'DELETE',
 				'IF-MATCH'        => '*'
 			]
@@ -409,9 +409,9 @@ class SPList implements SPListInterface
 
 		$json = $this->request("_api/web/Lists(guid'".$this->guid."')/Fields", [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$this->getAccessToken(),
+				'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $this->getFormDigest(),
+				'X-RequestDigest' => (string) $this->getSPFormDigest(),
 				'Content-type'    => 'application/json;odata=verbose',
 				'Content-length'  => strlen($body)
 			],
@@ -433,7 +433,7 @@ class SPList implements SPListInterface
 	{
 		$json = $this->request("_api/web/Lists(guid'".$this->guid."')/itemCount", [
 			'headers' => [
-				'Authorization' => 'Bearer '.$this->getAccessToken(),
+				'Authorization' => 'Bearer '.$this->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
