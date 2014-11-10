@@ -189,6 +189,9 @@ class SPFile implements SPItemInterface
 			'headers' => [
 				'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
+			],
+			'query'   => [
+				'$expand' => 'ListItemAllFields'
 			]
 		]);
 
@@ -221,6 +224,10 @@ class SPFile implements SPItemInterface
 			'headers' => [
 				'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
+			],
+
+			'query'   => [
+				'$expand' => 'ListItemAllFields'
 			]
 		]);
 
@@ -260,7 +267,7 @@ class SPFile implements SPItemInterface
 			],
 
 			'query'   => [
-				'$expand' => 'ListItemAllFields/File'
+				'$expand' => 'ListItemAllFields'
 			],
 
 			'body'    => $body
