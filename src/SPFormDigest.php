@@ -119,7 +119,7 @@ class SPFormDigest implements Serializable
 	{
 		$json = $site->request('_api/contextinfo', [
 			'headers' => [
-				'Authorization' => 'Bearer '.$site->getAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		], 'POST');
