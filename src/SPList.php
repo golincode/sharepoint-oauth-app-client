@@ -238,7 +238,7 @@ class SPList implements SPListInterface
 	 * @param   string $guid  SharePoint List GUID
 	 * @param   bool   $fetch Fetch SharePoint Items?
 	 * @throws  SPException
-	 * @return  array
+	 * @return  SPList
 	 */
 	public static function getByGUID(SPSite &$site, $guid = null, $fetch = false)
 	{
@@ -261,7 +261,7 @@ class SPList implements SPListInterface
 	 * @param   string $title SharePoint List Title
 	 * @param   bool   $fetch Fetch SharePoint Items?
 	 * @throws  SPException
-	 * @return  array
+	 * @return  SPList
 	 */
 	public static function getByTitle(SPSite &$site, $title = null, $fetch = false)
 	{
