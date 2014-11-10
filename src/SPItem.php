@@ -110,10 +110,6 @@ class SPItem implements SPItemInterface
 			'headers' => [
 				'Authorization' => 'Bearer '.$list->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
-			],
-
-			'query' => [
-				'$expand' => 'File'
 			]
 		]);
 
