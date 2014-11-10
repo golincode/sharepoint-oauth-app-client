@@ -83,7 +83,7 @@ class SPItem implements SPItemInterface
 
 		$items = [];
 
-		foreach ($json['d']['Items']['results'] as $item) {
+		foreach ($json['d']['results'] as $item) {
 			$items[$item['GUID']] = new static($list, $item);
 		}
 
