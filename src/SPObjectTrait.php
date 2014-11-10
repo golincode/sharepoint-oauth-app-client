@@ -39,13 +39,6 @@ trait SPObjectTrait
 	private $guid = null;
 
 	/**
-	 * SharePoint Title
-	 *
-	 * @access  private
-	 */
-	private $title = null;
-
-	/**
 	 * Get SharePoint Type
 	 *
 	 * @access  public
@@ -76,16 +69,5 @@ trait SPObjectTrait
 	public function getGUID()
 	{
 		return $this->guid;
-	}
-
-	/**
-	 * Get SharePoint Title
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getTitle()
-	{
-		return $this->title;
 	}
 }
