@@ -304,12 +304,12 @@ class SPFile implements SPItemInterface
 
 		/**
 		 * NOTE: Rehydration is done in a best effort manner,
-		 * since the SharePoint API does not return a response on
-		 * a successful update
+		 * since the SharePoint API doesn't return a response
+		 * on a successful update
 		 */
 		$this->hydrate([
-			'size'  => strlen($body),
-			'mtime' => Carbon::now()
+			'Length'           => strlen($body),
+			'TimeLastModified' => Carbon::now()
 		], true);
 
 		return $this;
@@ -338,12 +338,13 @@ class SPFile implements SPItemInterface
 
 		/**
 		 * NOTE: Rehydration is done in a best effort manner,
-		 * since the SharePoint API does not return a response on
-		 * a successful update
+		 * since the SharePoint API doesn't return a response
+		 * on a successful update
 		 */
 		$this->hydrate([
-			'name'  => $new_url,
-			'mtime' => Carbon::now()
+			'Name'              => empty($name) ? $this->name : $name,
+			'ServerRelativeUrl' => $new_url,
+			'TimeLastModified'  => Carbon::now()
 		], true);
 
 		$this->folder = $folder;
