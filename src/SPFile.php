@@ -380,7 +380,7 @@ class SPFile implements SPItemInterface
 	 * @param   SPFolder $folder SharePoint Folder to move to
 	 * @param   string   $name   SharePoint File name
 	 * @throws  SPException
-	 * @return  SPItem
+	 * @return  SPFile
 	 */
 	public function move(SPFolder &$folder, $name = null)
 	{
@@ -430,7 +430,7 @@ class SPFile implements SPItemInterface
 	 * @param   string   $name      SharePoint File name
 	 * @param   bool     $overwrite Overwrite if file already exists?
 	 * @throws  SPException
-	 * @return  SPItem
+	 * @return  SPFile
 	 */
 	public function copy(SPFolder &$folder, $name = null, $overwrite = false)
 	{
