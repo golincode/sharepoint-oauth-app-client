@@ -301,7 +301,7 @@ class SPFile implements SPItemInterface
 
 		// use original name if none specified
 		if (empty($name)) {
-			$name = basename($file->getRealPath());
+			$name = $file->getFilename();
 		}
 
 		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
