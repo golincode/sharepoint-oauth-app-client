@@ -60,11 +60,8 @@ trait SPHydratorTrait
 	{
 		foreach ($mapper as $property => $map) {
 
-			// is the current property optional?
-			$optional = (strrpos($map, '?', -1) !== false);
-
-			// make spaces SharePoint compatible / remove optional flag
-			$map = str_replace([' ', '?'], ['_x0020_', ''], $map);
+			// make spaces SharePoint compatible
+			$map = str_replace(' ', '_x0020_', $map);
 
 			$current = $json;
 
@@ -72,7 +69,7 @@ trait SPHydratorTrait
 
 				if ( ! is_array($current) || ! array_key_exists($segment, $current)) {
 
-					if ($optional || $missing) {
+					if ($missing) {
 						continue 2;
 					}
 
