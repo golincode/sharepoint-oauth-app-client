@@ -1,6 +1,6 @@
 # SharePoint OAuth App Client
 
-The **SharePoint OAuth App Client** is a set of [PHP](http://www.php.net) classes that allows you to authenticate with SharePoint Online (2013) via [OAuth2](http://oauth.net/2/) and work with a subset of SharePoint's functionality (currently **Lists**, **Items** and **Users**).
+The **SharePoint OAuth App Client** is a set of [PHP](http://www.php.net) classes that allows you to authenticate with SharePoint Online (2013) via [OAuth2](http://oauth.net/2/) and work with a subset of SharePoint's functionality (currently **Lists**, **Folders**, **Items**, **Files** and **Users**).
 
 This library is available to anyone and is licensed under the MIT license.
 
@@ -49,14 +49,14 @@ Add [wearearchitect/sharepoint-oauth-app-client](https://packagist.org/packages/
 		// handle exceptions
 	}
 
-**Attention:** In order to use the methods provided by this class, you need an **Access Token** which can be requested through a logged **User** or an **App only policy**.
+**Attention:** In order to use the classes and methods provided by this package, you need an **Access Token** which can be generated from a logged **User** or an **App only policy**.
 
 
 ### Get an Access Token as a **User**
 
 	try {
 		/**
-		 * Access Token request config requirements as a User:
+		 * SharePoint Access Token request config requirements as a User:
 		 *
 		 * - SharePoint Context Token
 		 * - Secret
@@ -67,7 +67,7 @@ Add [wearearchitect/sharepoint-oauth-app-client](https://packagist.org/packages/
 		 * Using the method provided by the SPSite class
 		 * which will store the Access Token internally
 		 */
-		$site->createAccessTokenFromUser($context_token);
+		$site->createSPAccessTokenFromUser($context_token);
 
 		/**
 		 * Using the static method from the SPAccessToken class
@@ -76,7 +76,7 @@ Add [wearearchitect/sharepoint-oauth-app-client](https://packagist.org/packages/
 		 */
 		$token = SPAccessToken::createFromUser($site, $context_token);
 
-		$site->setAccessToken($token);
+		$site->setSPAccessToken($token);
 
 	} catch(SPException $e) {
 		// handle exceptions
@@ -89,7 +89,7 @@ Add [wearearchitect/sharepoint-oauth-app-client](https://packagist.org/packages/
 
 	try {
 		/**
-		 * Access Token request requirements as an App only policy:
+		 * SharePoint Access Token request requirements as an App only policy:
 		 *
 		 * - ACS
 		 * - Client ID
@@ -101,7 +101,7 @@ Add [wearearchitect/sharepoint-oauth-app-client](https://packagist.org/packages/
 		 * Using the method provided by the SPSite class
 		 * which will store the Access Token internally
 		 */
-		$site->createAccessTokenFromAOP();
+		$site->createSPAccessTokenFromAOP();
 
 		/**
 		 * Using the static method from the SPAccessToken class
@@ -110,7 +110,7 @@ Add [wearearchitect/sharepoint-oauth-app-client](https://packagist.org/packages/
 		 */
 		$token = SPAccessToken::createFromAOP($site);
 
-		$site->setAccessToken($token);
+		$site->setSPAccessToken($token);
 
 	} catch(SPException $e) {
 		// handle exceptions

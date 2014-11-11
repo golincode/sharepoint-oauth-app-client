@@ -15,10 +15,10 @@ namespace WeAreArchitect\SharePoint;
 
 class SPUser
 {
-	use SPObjectTrait;
+	use SPHydratorTrait;
 
 	/**
-	 * User Site
+	 * SharePoint Site
 	 *
 	 * @access  private
 	 */
@@ -32,7 +32,7 @@ class SPUser
 	private $account = null;
 
 	/**
-	 * User email
+	 * User Email
 	 *
 	 * @access  private
 	 */
@@ -81,7 +81,7 @@ class SPUser
 	private $url = null;
 
 	/**
-	 * Object hydration handler
+	 * Hydration handler
 	 *
 	 * @access  protected
 	 * @param   array     $json    JSON response from the SharePoint REST API
@@ -104,15 +104,15 @@ class SPUser
 	}
 
 	/**
-	 * SPUser constructor
+	 * SharePoint User constructor
 	 *
 	 * @access  public
-	 * @param   SPSite $site SharePoint Site object
+	 * @param   SPSite $site SharePoint Site
 	 * @param   array  $json JSON response from the SharePoint REST API
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
-	public function __construct(SPSite $site, array $json)
+	public function __construct(SPSite &$site, array $json)
 	{
 		$this->site = $site;
 
@@ -140,7 +140,7 @@ class SPUser
 	}
 
 	/**
-	 * Get User Account
+	 * Get SharePoint User Account
 	 *
 	 * @access  public
 	 * @return  string
@@ -151,7 +151,7 @@ class SPUser
 	}
 
 	/**
-	 * Get User Email
+	 * Get SharePoint User Email
 	 *
 	 * @access  public
 	 * @return  string
@@ -162,7 +162,7 @@ class SPUser
 	}
 
 	/**
-	 * Get User Full Name
+	 * Get SharePoint User Full Name
 	 *
 	 * @access  public
 	 * @return  string
@@ -173,7 +173,7 @@ class SPUser
 	}
 
 	/**
-	 * Get User First Name
+	 * Get SharePoint User First Name
 	 *
 	 * @access  public
 	 * @return  string
@@ -184,7 +184,7 @@ class SPUser
 	}
 
 	/**
-	 * Get User Last Name
+	 * Get SharePoint User Last Name
 	 *
 	 * @access  public
 	 * @return  string
@@ -195,7 +195,7 @@ class SPUser
 	}
 
 	/**
-	 * Get User Title
+	 * Get SharePoint User Title
 	 *
 	 * @access  public
 	 * @return  string
@@ -206,7 +206,7 @@ class SPUser
 	}
 
 	/**
-	 * Get User Picture (URL)
+	 * Get SharePoint User Picture (URL)
 	 *
 	 * @access  public
 	 * @return  string
@@ -217,7 +217,7 @@ class SPUser
 	}
 
 	/**
-	 * Get User URL (profile)
+	 * Get SharePoint User URL (profile)
 	 *
 	 * @access  public
 	 * @return  string
@@ -235,11 +235,11 @@ class SPUser
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
-	public static function getCurrent(SPSite $site)
+	public static function getCurrent(SPSite &$site)
 	{
 		$json = $site->request('_api/SP.UserProfiles.PeopleManager/GetMyProperties', [
 			'headers' => [
-				'Authorization' => 'Bearer '.$site->getAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			]
 		]);
@@ -256,11 +256,11 @@ class SPUser
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
-	public static function getByAccount(SPSite $site, $account = null)
+	public static function getByAccount(SPSite &$site, $account = null)
 	{
 		$json = $site->request('_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)', [
 			'headers' => [
-				'Authorization' => 'Bearer '.$site->getAccessToken(),
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
 				'Accept'        => 'application/json;odata=verbose'
 			],
 
@@ -280,6 +280,6 @@ class SPUser
 	 */
 	public function getLogoutURL()
 	{
-		return $this->site->getBaseURL('_layouts/SignOut.aspx', false);
+		return $this->site->getURL('_layouts/SignOut.aspx');
 	}
 }
