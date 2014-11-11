@@ -146,6 +146,17 @@ class SPFile implements SPItemInterface
 	}
 
 	/**
+	 * Get File Relative URL
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getRelativeURL()
+	{
+		return $this->relative_url;
+	}
+
+	/**
 	 * Get File URL
 	 *
 	 * @access  public
@@ -301,7 +312,7 @@ class SPFile implements SPItemInterface
 
 		// use original name if none specified
 		if (empty($name)) {
-			$name = basename($file->getRealPath());
+			$name = $file->getFilename();
 		}
 
 		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
@@ -369,7 +380,7 @@ class SPFile implements SPItemInterface
 	 * @param   SPFolder $folder SharePoint Folder to move to
 	 * @param   string   $name   SharePoint File name
 	 * @throws  SPException
-	 * @return  SPItem
+	 * @return  SPFile
 	 */
 	public function move(SPFolder &$folder, $name = null)
 	{
@@ -384,15 +395,27 @@ class SPFile implements SPItemInterface
 		], 'POST');
 
 		/**
-		 * NOTE: Rehydration is done in a best effort manner,
-		 * since the SharePoint API doesn't return a response
-		 * on a successful move operation
+		 * NOTE: Since the SharePoint API doesn't return a proper response on
+		 * a successful move operation, it's best to do a second request and
+		 * get the updated data for rehydration
 		 */
+		$file = static::getByRelativeURL($folder->getSPSite(), $new_url);
+
 		$this->hydrate([
-			'Name'              => empty($name) ? $this->name : $name,
-			'ServerRelativeUrl' => $new_url,
-			'TimeLastModified'  => Carbon::now()
-		], true);
+			'ListItemAllFields' => [
+				'__metadata' => [
+					'type' => $file->getType()
+				],
+				'ID'   => $file->getID(),
+				'GUID' => $file->getGUID()
+			],
+			'Title'             => $file->getTitle(),
+			'Name'              => $file->getName(),
+			'Length'            => $file->getSize(),
+			'TimeCreated'       => $file->getTimeCreated(),
+			'TimeLastModified'  => $file->getTimeModified(),
+			'ServerRelativeUrl' => $file->getRelativeURL()
+		]);
 
 		$this->folder = $folder;
 
@@ -407,7 +430,7 @@ class SPFile implements SPItemInterface
 	 * @param   string   $name      SharePoint File name
 	 * @param   bool     $overwrite Overwrite if file already exists?
 	 * @throws  SPException
-	 * @return  SPItem
+	 * @return  SPFile
 	 */
 	public function copy(SPFolder &$folder, $name = null, $overwrite = false)
 	{
@@ -422,27 +445,11 @@ class SPFile implements SPItemInterface
 		], 'POST');
 
 		/**
-		 * NOTE: The new SPFile object is created in a best effort manner,
-		 * since the SharePoint API doesn't return a response on a successful
-		 * copy operation
+		 * NOTE: Since the SharePoint API doesn't return a proper response on
+		 * a successful copy operation, it's best to do a second request to
+		 * return the copied SPFile
 		 */
-		$properties = [
-			'ListItemAllFields' => [
-				'__metadata' => [
-					'type' => 'SP.File'
-				],
-				'ID'   => 0,
-				'GUID' => null
-			],
-			'Title'             => $this->title,
-			'Name'              => $this->name,
-			'Length'            => $this->size,
-			'TimeCreated'       => Carbon::now(),
-			'TimeLastModified'  => Carbon::now(),
-			'ServerRelativeUrl' => $new_url
-		];
-
-		return new static($folder, $properties);
+		return static::getByRelativeURL($folder->getSPSite(), $new_url);
 	}
 
 	/**
