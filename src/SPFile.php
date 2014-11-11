@@ -176,6 +176,18 @@ class SPFile implements SPItemInterface
 	}
 
 	/**
+	 * Get the SharePoint Item of this File
+	 *
+	 * @access  public
+	 * @throws  SPException
+	 * @return  SPItem
+	 */
+	public function getSPItem()
+	{
+		return $this->folder->getSPList()->getSPItem($this->id);
+	}
+
+	/**
 	 * Get all SharePoint Files
 	 *
 	 * @static
