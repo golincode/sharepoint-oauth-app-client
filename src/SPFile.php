@@ -278,7 +278,7 @@ class SPFile implements SPItemInterface
 	}
 
 	/**
-	 * Update a SharePoint File - FIXME: files are being created with 0 size
+	 * Update a SharePoint File
 	 *
 	 * @access  public
 	 * @param   SplFileInfo $file File object
@@ -299,7 +299,10 @@ class SPFile implements SPItemInterface
 				'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
 				'X-HTTP-Method'   => 'PUT',
 				'Content-length'  => strlen($body)
-			]
+			],
+
+			'body'    => $body
+
 		], 'POST');
 
 		/**
