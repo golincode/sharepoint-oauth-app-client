@@ -76,7 +76,7 @@ class SPFolder implements SPListInterface
 	 * @access  public
 	 * @return  SPSite
 	 */
-	public function getSite()
+	public function getSPSite()
 	{
 		return $this->site;
 	}
@@ -116,6 +116,35 @@ class SPFolder implements SPListInterface
 		$path = ($path ? $this->name.'/'.ltrim($path, '/') : $this->name);
 
 		return $this->site->getURL($path);
+	}
+
+	/**
+	 * Get the SharePoint List of this Folder
+	 *
+	 * @access  public
+	 * @throws  SPException
+	 * @return  SPList
+	 */
+	public function getSPList()
+	{
+		$site_path = preg_quote($this->getSPSite()->getPath(), '/');
+
+		$matches = [];
+
+		/**
+		 * NOTE: regardless of the SharePoint Folder, the associated
+		 * SharePoint List can always be fetched by Title using the
+		 * root Folder Name.
+		 *
+		 * Example:
+		 * For the relative Folder: /sites/mySite/MainFolder/SubFolder
+		 * The List Title will be: MainFolder
+		 */
+		if (preg_match('/'.$site_path.'([^\/]+)\/?.*/', $this->relative_url, $matches) !== 1) {
+			throw new SPException('Unable to get the root SharePoint Folder name');
+		}
+
+		return SPList::getByTitle($this->site, $matches[1]);
 	}
 
 	/**
@@ -184,26 +213,26 @@ class SPFolder implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPFolder $parent Parent SharePoint Folder
+	 * @param   SPFolder $folder Parent SharePoint Folder
 	 * @param   array    $name   SharePoint Folder name
 	 * @throws  SPException
 	 * @return  SPFolder
 	 */
-	public static function create(SPFolder &$parent, $name)
+	public static function create(SPFolder &$folder, $name)
 	{
 		$body = json_encode([
 			'__metadata' => [
 				'type' => 'SP.Folder'
 			],
 
-			'ServerRelativeUrl' => $parent->getRelativeURL($name)
+			'ServerRelativeUrl' => $folder->getRelativeURL($name)
 		]);
 
-		$json = $parent->request('_api/web/Folders', [
+		$json = $folder->request('_api/web/Folders', [
 			'headers' => [
-				'Authorization'   => 'Bearer '.$parent->getSPAccessToken(),
+				'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
 				'Accept'          => 'application/json;odata=verbose',
-				'X-RequestDigest' => (string) $parent->getSPFormDigest(),
+				'X-RequestDigest' => (string) $folder->getSPFormDigest(),
 				'Content-type'    => 'application/json;odata=verbose',
 				'Content-length'  => strlen($body)
 			],
@@ -211,7 +240,7 @@ class SPFolder implements SPListInterface
 			'body'    => $body
 		], 'POST');
 
-		return new static($parent->getSite(), $json['d']);
+		return new static($folder->getSPSite(), $json['d']);
 	}
 
 	/**
