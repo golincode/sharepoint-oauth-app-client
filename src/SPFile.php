@@ -218,6 +218,38 @@ class SPFile implements SPItemInterface
 	}
 
 	/**
+	 * Get a SharePoint File by Relative URL
+	 *
+	 * @static
+	 * @access  public
+	 * @param   SPSite $site         SharePoint Site
+	 * @param   string $relative_url SharePoint Folder relative URL
+	 * @throws  SPException
+	 * @return  SPFile
+	 */
+	public static function getByRelativeURL(SPSite &$site, $relative_url = null)
+	{
+		if (empty($relative_url)) {
+			throw new SPException('The SharePoint File Relative URL is empty/not set');
+		}
+
+		$json = $site->request("_api/web/GetFileByServerRelativeUrl('".$relative_url."')", [
+			'headers' => [
+				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
+				'Accept'        => 'application/json;odata=verbose'
+			],
+
+			'query'   => [
+				'$expand' => 'ListItemAllFields'
+			]
+		]);
+
+		$folder = SPFolder::getByRelativeURL($site, dirname($relative_url));
+
+		return new static($folder, $json['d']);
+	}
+
+	/**
 	 * Get a SharePoint File by Name
 	 *
 	 * @static
