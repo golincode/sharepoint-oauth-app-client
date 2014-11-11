@@ -41,6 +41,20 @@ class SPSite implements SPRequestInterface
 	private $digest = null;
 
 	/**
+	 * Site Host
+	 *
+	 * @access  private
+	 */
+	private $host = null;
+
+	/**
+	 * Site Path
+	 *
+	 * @access  private
+	 */
+	private $path = null;
+
+	/**
 	 * Site Configuration
 	 *
 	 * @access  private
@@ -74,6 +88,13 @@ class SPSite implements SPRequestInterface
 
 		$this->config = $config;
 
+		// set Site Host and Path
+		$components = parse_url($this->config['url']);
+
+		$this->host = $components['scheme'].'://'.$components['host'];
+		$this->path = rtrim($components['path'], '/');
+
+		// create Guzzle HTTP client
 		$this->http = new Client([
 			'base_url' => $config['url']
 		]);
@@ -102,20 +123,39 @@ class SPSite implements SPRequestInterface
 	}
 
 	/**
-	 * Get the URL
+	 * Get SharePoint Site Host
 	 *
 	 * @access  public
-	 * @param   string $path   Path to append to the URL
-	 * @param   bool   $domain Domain only URL?
+	 * @param   string $path Path to append to the Host
 	 * @return  string
 	 */
-	public function getURL($path = null, $domain = false)
+	public function getHost($path = null)
 	{
-		$parts = parse_url($this->config['url']);
+		return $this->host.($path ? '/'.ltrim($path, '/') : '/');
+	}
 
-		$url = $parts['scheme'].'://'.$parts['host'].($domain ? '' : $parts['path']);
+	/**
+	 * Get SharePoint Site Path
+	 *
+	 * @access  public
+	 * @param   string $path Path to append to the Path
+	 * @return  string
+	 */
+	public function getPath($path = null)
+	{
+		return $this->path.($path ? '/'.ltrim($path, '/') : '/');
+	}
 
-		return rtrim($url, '/').($path ? '/'.ltrim($path, '/') : '/');
+	/**
+	 * Get SharePoint Site URL
+	 *
+	 * @access  public
+	 * @param   string $path Path to append to the URL
+	 * @return  string
+	 */
+	public function getURL($path = null)
+	{
+		return $this->host.$this->path.($path ? '/'.ltrim($path, '/') : '/');
 	}
 
 	/**
