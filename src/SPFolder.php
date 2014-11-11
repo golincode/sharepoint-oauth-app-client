@@ -180,7 +180,7 @@ class SPFolder implements SPListInterface
 	}
 
 	/**
-	 * Get a SharePoint Folder by Name
+	 * Get a SharePoint Folder by Relative URL
 	 *
 	 * @static
 	 * @access  public
@@ -190,8 +190,12 @@ class SPFolder implements SPListInterface
 	 * @throws  SPException
 	 * @return  SPFolder
 	 */
-	public static function getByName(SPSite &$site, $relative_url = null, $fetch = false)
+	public static function getByRelativeURL(SPSite &$site, $relative_url = null, $fetch = false)
 	{
+		if (empty($relative_url)) {
+			throw new SPException('The SharePoint Folder Relative URL is empty/not set');
+		}
+
 		$name = basename($relative_url);
 
 		if (strtolower($name) == 'forms') {
