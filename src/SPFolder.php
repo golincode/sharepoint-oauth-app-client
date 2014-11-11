@@ -113,6 +113,8 @@ class SPFolder implements SPListInterface
 	 */
 	public function getURL($path = null)
 	{
+		$path = ($path ? $this->name.'/'.ltrim($path, '/') : $this->name);
+
 		return $this->site->getURL($path);
 	}
 
