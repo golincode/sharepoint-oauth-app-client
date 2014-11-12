@@ -13,7 +13,7 @@
 
 namespace WeAreArchitect\SharePoint;
 
-class SPFolder implements SPListInterface
+class SPFolder implements SPListInterface, SPItemInterface
 {
 	use SPListTrait;
 
@@ -66,7 +66,7 @@ class SPFolder implements SPListInterface
 		$this->hydrate($json);
 
 		if ($fetch) {
-			$this->getSPFiles();
+			$this->getSPItems();
 		}
 	}
 
@@ -333,15 +333,18 @@ class SPFolder implements SPListInterface
 	}
 
 	/**
-	 * Get all SharePoint Files
+	 * Get all SharePoint Items (Folders/Files)
 	 *
 	 * @static
 	 * @access  public
 	 * @return  array
 	 */
-	public function getSPFiles()
+	public function getSPItems()
 	{
-		$this->items = SPFile::getAll($this);
+		$folders = static::getAll($this->site, $this->relative_url);
+		$files = SPFile::getAll($this);
+
+		$this->items = array_merge($folders, $files);
 
 		return $this->items;
 	}
