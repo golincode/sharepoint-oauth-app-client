@@ -165,10 +165,11 @@ class SPSite implements SPRequestInterface
 	 * @param   string $url     URL to make the request to
 	 * @param   array  $options HTTP client options (see GuzzleHttp\Client options)
 	 * @param   string $method  HTTP method name (GET, POST, PUT, DELETE, ...)
+	 * @param   bool   $debug   Return the Response object in debug mode
 	 * @throws  SPException
-	 * @return  array JSON data in an array structure
+	 * @return  \GuzzleHttp\Message\Response|array
 	 */
-	public function request($url = null, array $options = [], $method = 'GET')
+	public function request($url = null, array $options = [], $method = 'GET', $debug = false)
 	{
 		try {
 			// avoid throwing exceptions when we get HTTP errors (4XX, 5XX)
@@ -180,6 +181,10 @@ class SPSite implements SPRequestInterface
 			$options = array_merge($options, $defaults);
 
 			$response = $this->http->send($this->http->createRequest($method, $url, $options));
+
+			if ($debug) {
+				return $response;
+			}
 
 			$json = $response->json();
 
