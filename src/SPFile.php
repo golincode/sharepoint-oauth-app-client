@@ -168,6 +168,23 @@ class SPFile implements SPItemInterface
 	}
 
 	/**
+	 * Get File raw data
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public function getRaw()
+	{
+		$response = $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
+			'headers' => [
+				'Authorization' => 'Bearer '.$this->folder->getSPAccessToken()
+			]
+		], 'GET', true);
+
+		return (string) $response->getBody();
+	}
+
+	/**
 	 * Get File Metadata
 	 *
 	 * @access  public
