@@ -22,7 +22,7 @@ interface SPRequestInterface
 	 * @param   string $url     URL to make the request to
 	 * @param   array  $options HTTP client options (see GuzzleHttp\Client options)
 	 * @param   string $method  HTTP method name (GET, POST, PUT, DELETE, ...)
-	 * @param   bool   $debug   Return the Response object
+	 * @param   bool   $debug   Return the Response object in debug mode
 	 * @throws  SPException
 	 * @return  \GuzzleHttp\Message\Response|array
 	 */
