@@ -14,7 +14,7 @@
 namespace WeAreArchitect\SharePoint;
 
 use Carbon\Carbon;
-use SplFileInfo;
+use SplFileObject;
 
 class SPFile implements SPItemInterface
 {
@@ -312,24 +312,33 @@ class SPFile implements SPItemInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPFolder    $folder    SharePoint Folder
-	 * @param   SplFileInfo $file      File object
-	 * @param   string      $name      Name for the file being uploaded
-	 * @param   bool        $overwrite Overwrite if file already exists?
+	 * @param   SPFolder $folder    SharePoint Folder
+	 * @param   mixed    $contents  File contents
+	 * @param   string   $name      Name for the file being uploaded
+	 * @param   bool     $overwrite Overwrite if file already exists?
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function create(SPFolder &$folder, SplFileInfo $file, $name = null, $overwrite = false)
+	public static function create(SPFolder &$folder, $contents = null, $name = null, $overwrite = false)
 	{
-		$body = file_get_contents($file->getRealPath());
+		if ($contents instanceof SplFileObject) {
+			$body = $contents->fread($contents->getSize());
 
-		if ($body === false) {
-			throw new SPException('Could not get file contents for: '.$file);
-		}
+			if ($body === false) {
+				throw new SPException('Unable to get file contents');
+			}
 
-		// use original name if none specified
-		if (empty($name)) {
-			$name = $file->getFilename();
+			// use original name if none specified
+			if (empty($name)) {
+				$name = $contents->getFilename();
+			}
+
+		} else {
+			$body = $contents;
+
+			if (empty($name)) {
+				throw new SPException('SharePoint File Name is empty/not set');
+			}
 		}
 
 		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
@@ -353,16 +362,21 @@ class SPFile implements SPItemInterface
 	 * Update a SharePoint File
 	 *
 	 * @access  public
-	 * @param   SplFileInfo $file File object
+	 * @param   mixed $contents File contents
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public function update(SplFileInfo $file)
+	public function update($contents = null)
 	{
-		$body = file_get_contents($file->getRealPath());
+		if ($contents instanceof SplFileObject) {
+			$body = $contents->fread($contents->getSize());
 
-		if ($body === false) {
-			throw new SPException('Could not get file contents for: '.$file);
+			if ($body === false) {
+				throw new SPException('Unable to get file contents');
+			}
+
+		} else {
+			$body = $contents;
 		}
 
 		$this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
