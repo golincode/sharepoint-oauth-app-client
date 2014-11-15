@@ -65,50 +65,32 @@ class SPSite implements SPRequestInterface
 	 * SharePoint Site constructor
 	 *
 	 * @access  public
-	 * @param   array  $config
+	 * @param   \GuzzleHttp\Client $http   Guzzle HTTP client
+	 * @param   array              $config SharePoint Site configuration
 	 * @throws  SPException
 	 * @return  SPSite
 	 */
-	public function __construct(array $config)
+	public function __construct(Client $http, array $config)
 	{
 		$defaults = [
 			'acs' => 'https://accounts.accesscontrol.windows.net/tokens/OAuth/2'
 		];
 
 		// overwrite defaults with config
-		$config = array_merge($defaults, $config);
+		$this->config = array_merge($defaults, $config);
 
-		if (empty($config['url'])) {
-			throw new SPException('The URL is empty/not set');
-		}
-
-		if ( ! filter_var($config['url'], FILTER_VALIDATE_URL)) {
-			throw new SPException('The URL is invalid');
-		}
-
-		$this->config = $config;
+		// set Guzzle HTTP client
+		$this->http = $http;
 
 		// set Site Host and Path
-		$components = parse_url($this->config['url']);
+		$components = parse_url($this->http->getBaseUrl());
+
+		if ( ! isset($components['scheme'], $components['host'], $components['path'])) {
+			throw new SPException('The SharePoint Site URL is invalid');
+		}
 
 		$this->host = $components['scheme'].'://'.$components['host'];
 		$this->path = rtrim($components['path'], '/');
-
-		// create Guzzle HTTP client
-		$this->http = new Client([
-			'base_url' => $config['url']
-		]);
-
-		/**
-		 * Set default cURL options
-		 */
-		$this->http->setDefaultOption('config', [
-			'curl' => [
-				CURLOPT_SSLVERSION     => 3,
-				CURLOPT_SSL_VERIFYHOST => 0,
-				CURLOPT_SSL_VERIFYPEER => 0
-			]
-		]);
 	}
 
 	/**
@@ -156,6 +138,30 @@ class SPSite implements SPRequestInterface
 	public function getURL($path = null)
 	{
 		return $this->host.$this->path.($path ? '/'.ltrim($path, '/') : '/');
+	}
+
+	/**
+	 * Create a SharePoint Site
+	 *
+	 * @static
+	 * @access  public
+	 * @param   string $url      SharePoint Site URL
+	 * @param   array  $site_cfg SharePoint Site configuration
+	 * @param   array  $http_cfg Guzzle HTTP Client settings
+	 * @return  SPSite
+	 */
+	public static function create($url = null, array $site_cfg, array $http_cfg = [])
+	{
+		$defaults = [
+			'base_url' => $url
+		];
+
+		// overwrite config with defaults
+		$http_cfg = array_merge($http_cfg, $defaults);
+
+		$http = new Client($http_cfg);
+
+		return new static($http, $site_cfg);
 	}
 
 	/**
