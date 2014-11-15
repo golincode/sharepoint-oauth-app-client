@@ -51,7 +51,7 @@ class SPItem implements SPItemInterface
 	 * @param   array  $json JSON response from the SharePoint REST API
 	 * @return  SPItem
 	 */
-	public function __construct(SPList &$list, array $json)
+	public function __construct(SPList $list, array $json)
 	{
 		$this->list = $list;
 
@@ -68,7 +68,7 @@ class SPItem implements SPItemInterface
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPList &$list, $top = 5000)
+	public static function getAll(SPList $list, $top = 5000)
 	{
 		$json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
 			'headers' => [
@@ -100,7 +100,7 @@ class SPItem implements SPItemInterface
 	 * @throws  SPException
 	 * @return  SPItem
 	 */
-	public static function getByID(SPList &$list, $id = 0)
+	public static function getByID(SPList $list, $id = 0)
 	{
 		if (empty($id)) {
 			throw new SPException('The Item ID is empty/not set');
@@ -126,7 +126,7 @@ class SPItem implements SPItemInterface
 	 * @throws  SPException
 	 * @return  SPItem
 	 */
-	public static function create(SPList &$list, array $properties)
+	public static function create(SPList $list, array $properties)
 	{
 		$defaults = [
 			'__metadata' => [

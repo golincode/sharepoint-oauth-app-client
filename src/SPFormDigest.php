@@ -115,7 +115,7 @@ class SPFormDigest implements Serializable
 	 * @throws  SPException
 	 * @return  SPFormDigest
 	 */
-	public static function create(SPSite &$site)
+	public static function create(SPSite $site)
 	{
 		$json = $site->request('_api/contextinfo', [
 			'headers' => [

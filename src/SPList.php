@@ -143,7 +143,7 @@ class SPList implements SPListInterface
 	 * @param   bool   $fetch Fetch SharePoint Items?
 	 * @return  SPList
 	 */
-	public function __construct(SPSite &$site, array $json, $fetch = false)
+	public function __construct(SPSite $site, array $json, $fetch = false)
 	{
 		$this->site = $site;
 
@@ -208,7 +208,7 @@ class SPList implements SPListInterface
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPSite &$site, $fetch = false)
+	public static function getAll(SPSite $site, $fetch = false)
 	{
 		$json = $site->request('_api/web/Lists', [
 			'headers' => [
@@ -240,7 +240,7 @@ class SPList implements SPListInterface
 	 * @throws  SPException
 	 * @return  SPList
 	 */
-	public static function getByGUID(SPSite &$site, $guid = null, $fetch = false)
+	public static function getByGUID(SPSite $site, $guid = null, $fetch = false)
 	{
 		$json = $site->request("_api/web/Lists(guid'".$guid."')", [
 			'headers' => [
@@ -263,7 +263,7 @@ class SPList implements SPListInterface
 	 * @throws  SPException
 	 * @return  SPList
 	 */
-	public static function getByTitle(SPSite &$site, $title = null, $fetch = false)
+	public static function getByTitle(SPSite $site, $title = null, $fetch = false)
 	{
 		$json = $site->request("_api/web/Lists/GetByTitle('".$title."')", [
 			'headers' => [
@@ -285,7 +285,7 @@ class SPList implements SPListInterface
 	 * @throws  SPException
 	 * @return  SPList
 	 */
-	public static function create(SPSite &$site, array $properties)
+	public static function create(SPSite $site, array $properties)
 	{
 		$defaults = [
 			'__metadata' => [

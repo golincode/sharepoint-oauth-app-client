@@ -118,7 +118,7 @@ class SPAccessToken implements Serializable
 	 * @throws  SPException
 	 * @return  SPAccessToken
 	 */
-	public static function createFromUser(SPSite &$site, $context_token = null)
+	public static function createFromUser(SPSite $site, $context_token = null)
 	{
 		$config = $site->getConfig();
 
@@ -173,7 +173,7 @@ class SPAccessToken implements Serializable
 	 * @throws  SPException
 	 * @return  SPAccessToken
 	 */
-	public static function createFromAOP(SPSite &$site)
+	public static function createFromAOP(SPSite $site)
 	{
 		$config = $site->getConfig();
 

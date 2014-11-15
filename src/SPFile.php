@@ -94,7 +94,7 @@ class SPFile implements SPItemInterface
 	 * @param   array    $json   JSON response from the SharePoint REST API
 	 * @return  SPFile
 	 */
-	public function __construct(SPFolder &$folder, array $json)
+	public function __construct(SPFolder $folder, array $json)
 	{
 		$this->folder = $folder;
 
@@ -224,7 +224,7 @@ class SPFile implements SPItemInterface
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPFolder &$folder)
+	public static function getAll(SPFolder $folder)
 	{
 		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files", [
 			'headers' => [
@@ -255,7 +255,7 @@ class SPFile implements SPItemInterface
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function getByRelativeURL(SPSite &$site, $relative_url = null)
+	public static function getByRelativeURL(SPSite $site, $relative_url = null)
 	{
 		if (empty($relative_url)) {
 			throw new SPException('The SharePoint File Relative URL is empty/not set');
@@ -287,7 +287,7 @@ class SPFile implements SPItemInterface
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function getByName(SPFolder &$folder, $name = null)
+	public static function getByName(SPFolder $folder, $name = null)
 	{
 		if (empty($name)) {
 			throw new SPException('The SharePoint File Name is empty/not set');
@@ -319,7 +319,7 @@ class SPFile implements SPItemInterface
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function create(SPFolder &$folder, $contents = null, $name = null, $overwrite = false)
+	public static function create(SPFolder $folder, $contents = null, $name = null, $overwrite = false)
 	{
 		if ($contents instanceof SplFileObject) {
 			$body = $contents->fread($contents->getSize());
@@ -413,7 +413,7 @@ class SPFile implements SPItemInterface
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public function move(SPFolder &$folder, $name = null)
+	public function move(SPFolder $folder, $name = null)
 	{
 		$new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 
@@ -463,7 +463,7 @@ class SPFile implements SPItemInterface
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public function copy(SPFolder &$folder, $name = null, $overwrite = false)
+	public function copy(SPFolder $folder, $name = null, $overwrite = false)
 	{
 		$new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 

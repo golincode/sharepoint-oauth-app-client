@@ -59,7 +59,7 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 * @param   bool   $fetch Fetch SharePoint Files?
 	 * @return  SPFolder
 	 */
-	public function __construct(SPSite &$site, array $json, $fetch = false)
+	public function __construct(SPSite $site, array $json, $fetch = false)
 	{
 		$this->site = $site;
 
@@ -190,7 +190,7 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 * @throws  SPException
 	 * @return  SPFolder
 	 */
-	public static function getByRelativeURL(SPSite &$site, $relative_url = null, $fetch = false)
+	public static function getByRelativeURL(SPSite $site, $relative_url = null, $fetch = false)
 	{
 		if (empty($relative_url)) {
 			throw new SPException('The SharePoint Folder Relative URL is empty/not set');
@@ -222,7 +222,7 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 * @throws  SPException
 	 * @return  SPFolder
 	 */
-	public static function create(SPFolder &$folder, $name)
+	public static function create(SPFolder $folder, $name)
 	{
 		$body = json_encode([
 			'__metadata' => [
