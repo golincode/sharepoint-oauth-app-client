@@ -41,11 +41,11 @@ class SPSite implements SPRequestInterface
 	private $digest = null;
 
 	/**
-	 * Site Host
+	 * Site Hostname
 	 *
 	 * @access  private
 	 */
-	private $host = null;
+	private $hostname = null;
 
 	/**
 	 * Site Path
@@ -82,14 +82,14 @@ class SPSite implements SPRequestInterface
 		// set Guzzle HTTP client
 		$this->http = $http;
 
-		// set Site Host and Path
+		// set Site Hostname and Path
 		$components = parse_url($this->http->getBaseUrl());
 
 		if ( ! isset($components['scheme'], $components['host'], $components['path'])) {
 			throw new SPException('The SharePoint Site URL is invalid');
 		}
 
-		$this->host = $components['scheme'].'://'.$components['host'];
+		$this->hostname = $components['scheme'].'://'.$components['host'];
 		$this->path = rtrim($components['path'], '/');
 	}
 
@@ -105,15 +105,15 @@ class SPSite implements SPRequestInterface
 	}
 
 	/**
-	 * Get SharePoint Site Host
+	 * Get SharePoint Site Hostname
 	 *
 	 * @access  public
-	 * @param   string $path Path to append to the Host
+	 * @param   string $path Path to append to the Hostname
 	 * @return  string
 	 */
-	public function getHost($path = null)
+	public function getHostname($path = null)
 	{
-		return $this->host.($path ? '/'.ltrim($path, '/') : '/');
+		return $this->hostname.($path ? '/'.ltrim($path, '/') : '/');
 	}
 
 	/**
@@ -137,7 +137,7 @@ class SPSite implements SPRequestInterface
 	 */
 	public function getURL($path = null)
 	{
-		return $this->host.$this->path.($path ? '/'.ltrim($path, '/') : '/');
+		return $this->hostname.$this->path.($path ? '/'.ltrim($path, '/') : '/');
 	}
 
 	/**
@@ -147,7 +147,7 @@ class SPSite implements SPRequestInterface
 	 * @access  public
 	 * @param   string $url      SharePoint Site URL
 	 * @param   array  $site_cfg SharePoint Site configuration
-	 * @param   array  $http_cfg Guzzle HTTP Client settings
+	 * @param   array  $http_cfg Guzzle HTTP Client configuration
 	 * @return  SPSite
 	 */
 	public static function create($url = null, array $site_cfg, array $http_cfg = [])
