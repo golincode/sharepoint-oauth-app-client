@@ -13,10 +13,8 @@
 
 namespace WeAreArchitect\SharePoint;
 
-trait SPObjectTrait
+trait SPCommonPropertiesTrait
 {
-	use SPHydratorTrait;
-
 	/**
 	 * SharePoint Type
 	 *
