@@ -146,22 +146,23 @@ class SPSite implements SPRequestInterface
 	 * @static
 	 * @access  public
 	 * @param   string $url      SharePoint Site URL
-	 * @param   array  $site_cfg SharePoint Site configuration
-	 * @param   array  $http_cfg Guzzle HTTP Client configuration
+	 * @param   array  $settings Instantiation settings
 	 * @return  SPSite
 	 */
-	public static function create($url = null, array $site_cfg, array $http_cfg = [])
+	public static function create($url = null, array $settings = [])
 	{
 		$defaults = [
-			'base_url' => $url
+			'site' => [], // SharePoint Site configuration
+			'http' => []  // Guzzle HTTP Client configuration
 		];
 
-		// overwrite config with defaults
-		$http_cfg = array_merge($http_cfg, $defaults);
+		// overwrite defaults with settings
+		$settings = array_merge_recursive($defaults, $settings);
 
-		$http = new Client($http_cfg);
+		// no matter what, the base URL used is always the one passed as first argument
+		$http = new Client(array_merge($settings['http'], ['base_url' => $url]));
 
-		return new static($http, $site_cfg);
+		return new static($http, $settings['site']);
 	}
 
 	/**
