@@ -13,9 +13,9 @@
 
 namespace WeAreArchitect\SharePoint;
 
-class SPItem implements SPItemInterface
+class SPItem extends SPObject implements SPItemInterface
 {
-	use SPObjectTrait;
+	use SPCommonPropertiesTrait;
 
 	/**
 	 * SharePoint List
@@ -25,34 +25,23 @@ class SPItem implements SPItemInterface
 	private $list = null;
 
 	/**
-	 * Hydration handler
+	 * SharePoint Item constructor
 	 *
-	 * @access  protected
-	 * @param   array     $json    JSON response from the SharePoint REST API
-	 * @param   bool      $missing Allow missing properties?
-	 * @throws  SPException
-	 * @return  void
+	 * @access  public
+	 * @param   SPList $list  SharePoint List object
+	 * @param   array  $json  JSON response from the SharePoint REST API
+	 * @param   array  $extra Extra SharePoint Item properties to map
+	 * @return  SPItem
 	 */
-	protected function hydrate(array $json, $missing = false)
+	public function __construct(SPList $list, array $json, array $extra = [])
 	{
-		$this->fill($json, [
+		parent::__construct([
 			'type'  => '__metadata.type',
 			'id'    => 'Id',
 			'guid'  => 'GUID',
 			'title' => 'Title'
-		], $missing);
-	}
+		], $extra);
 
-	/**
-	 * SharePoint Item constructor
-	 *
-	 * @access  public
-	 * @param   SPList $list SharePoint List object
-	 * @param   array  $json JSON response from the SharePoint REST API
-	 * @return  SPItem
-	 */
-	public function __construct(SPList $list, array $json)
-	{
 		$this->list = $list;
 
 		$this->hydrate($json);
@@ -63,13 +52,21 @@ class SPItem implements SPItemInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPList $list SharePoint List
-	 * @param   int    $top  SharePoint Item threshold
+	 * @param   SPList $list     SharePoint List
+	 * @param   array  $settings Instantiation settings
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPList $list, $top = 5000)
+	public static function getAll(SPList $list, array $settings = [])
 	{
+		$defaults = [
+			'extra' => [],  // extra SharePoint Item properties to map
+			'top'   => 5000 // SharePoint Item threshold
+		];
+
+		// overwrite defaults with settings
+		$settings = array_merge($defaults, $settings);
+
 		$json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
 			'headers' => [
 				'Authorization' => 'Bearer '.$list->getSPAccessToken(),
@@ -77,14 +74,14 @@ class SPItem implements SPItemInterface
 			],
 
 			'query'   => [
-				'top' => $top
+				'top' => $settings['top']
 			]
 		]);
 
 		$items = [];
 
 		foreach ($json['d']['results'] as $item) {
-			$items[$item['GUID']] = new static($list, $item);
+			$items[$item['GUID']] = new static($list, $item, $settings['extra']);
 		}
 
 		return $items;
@@ -95,12 +92,13 @@ class SPItem implements SPItemInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPList $list SharePoint List
-	 * @param   int    $id   Item ID
+	 * @param   SPList $list  SharePoint List
+	 * @param   int    $id    Item ID
+	 * @param   array  $extra Extra SharePoint Item properties to map
 	 * @throws  SPException
 	 * @return  SPItem
 	 */
-	public static function getByID(SPList $list, $id = 0)
+	public static function getByID(SPList $list, $id = 0, array $extra = [])
 	{
 		if (empty($id)) {
 			throw new SPException('The Item ID is empty/not set');
@@ -113,7 +111,7 @@ class SPItem implements SPItemInterface
 			]
 		]);
 
-		return new static($list, $json['d']);
+		return new static($list, $json['d'], $extra);
 	}
 
 	/**
@@ -123,10 +121,11 @@ class SPItem implements SPItemInterface
 	 * @access  public
 	 * @param   SPList $list       SharePoint List
 	 * @param   array  $properties SharePoint Item properties (Title, ...)
+	 * @param   array  $extra      Extra SharePoint Item properties to map
 	 * @throws  SPException
 	 * @return  SPItem
 	 */
-	public static function create(SPList $list, array $properties)
+	public static function create(SPList $list, array $properties, array $extra = [])
 	{
 		$defaults = [
 			'__metadata' => [
@@ -152,7 +151,7 @@ class SPItem implements SPItemInterface
 
 		], 'POST');
 
-		return new static($list, $json['d']);
+		return new static($list, $json['d'], $extra);
 	}
 
 	/**
@@ -206,7 +205,7 @@ class SPItem implements SPItemInterface
 	 *
 	 * @access  public
 	 * @throws  SPException
-	 * @return  bool true if the SharePoint Item was deleted
+	 * @return  bool
 	 */
 	public function delete()
 	{
