@@ -16,9 +16,9 @@ namespace WeAreArchitect\SharePoint;
 use Carbon\Carbon;
 use SplFileObject;
 
-class SPFile implements SPItemInterface
+class SPFile extends SPObject implements SPItemInterface
 {
-	use SPObjectTrait;
+	use SPCommonPropertiesTrait;
 
 	/**
 	 * SharePoint Folder
@@ -30,61 +30,37 @@ class SPFile implements SPItemInterface
 	/**
 	 * File Name
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $name = null;
+	protected $name = null;
 
 	/**
 	 * File Size
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $size = 0;
+	protected $size = 0;
 
 	/**
 	 * File Creation Time
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $ctime = null;
+	protected $created = null;
 
 	/**
 	 * File Modification Time
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $mtime = null;
+	protected $modified = null;
 
 	/**
 	 * File Relative URL
 	 *
-	 * @access  private
-	 */
-	private $relative_url = null;
-
-	/**
-	 * Object hydration handler
-	 *
 	 * @access  protected
-	 * @param   array     $json    JSON response from the SharePoint REST API
-	 * @param   bool      $missing Allow missing properties?
-	 * @throws  SPException
-	 * @return  void
 	 */
-	protected function hydrate(array $json, $missing = false)
-	{
-		$this->fill($json, [
-			'type'         => 'ListItemAllFields.__metadata.type',
-			'id'           => 'ListItemAllFields.ID',
-			'guid'         => 'ListItemAllFields.GUID',
-			'title'        => 'Title',
-			'name'         => 'Name',
-			'size'         => 'Length',
-			'ctime'        => 'TimeCreated',
-			'mtime'        => 'TimeLastModified',
-			'relative_url' => 'ServerRelativeUrl'
-		], $missing);
-	}
+	protected $relative_url = null;
 
 	/**
 	 * SharePoint File constructor
@@ -92,10 +68,23 @@ class SPFile implements SPItemInterface
 	 * @access  public
 	 * @param   SPFolder $folder SharePoint Folder
 	 * @param   array    $json   JSON response from the SharePoint REST API
+	 * @param   array    $extra  Extra properties for mapping
 	 * @return  SPFile
 	 */
-	public function __construct(SPFolder $folder, array $json)
+	public function __construct(SPFolder $folder, array $json, array $extra = [])
 	{
+		parent::__construct([
+			'type'         => 'ListItemAllFields.__metadata.type',
+			'id'           => 'ListItemAllFields.ID',
+			'guid'         => 'ListItemAllFields.GUID',
+			'title'        => 'Title',
+			'name'         => 'Name',
+			'size'         => 'Length',
+			'created'      => 'TimeCreated',
+			'modified'     => 'TimeLastModified',
+			'relative_url' => 'ServerRelativeUrl'
+		], $extra);
+
 		$this->folder = $folder;
 
 		$this->hydrate($json);
@@ -131,7 +120,7 @@ class SPFile implements SPItemInterface
 	 */
 	public function getTimeCreated()
 	{
-		return $this->ctime;
+		return $this->created;
 	}
 
 	/**
@@ -142,7 +131,7 @@ class SPFile implements SPItemInterface
 	 */
 	public function getTimeModified()
 	{
-		return $this->ctime;
+		return $this->modified;
 	}
 
 	/**
@@ -193,13 +182,13 @@ class SPFile implements SPItemInterface
 	public function getMetadata()
 	{
 		return [
-			'id'    => $this->id,
-			'guid'  => $this->guid,
-			'name'  => $this->name,
-			'size'  => $this->size,
-			'ctime' => $this->ctime,
-			'mtime' => $this->mtime,
-			'url'   => $this->getURL()
+			'id'       => $this->id,
+			'guid'     => $this->guid,
+			'name'     => $this->name,
+			'size'     => $this->size,
+			'created'  => $this->created,
+			'modified' => $this->modified,
+			'url'      => $this->getURL()
 		];
 	}
 
@@ -207,12 +196,13 @@ class SPFile implements SPItemInterface
 	 * Get the SharePoint Item of this File
 	 *
 	 * @access  public
+	 * @param   array  $extra Extra properties for mapping
 	 * @throws  SPException
 	 * @return  SPItem
 	 */
-	public function getSPItem()
+	public function getSPItem(array $extra = [])
 	{
-		return $this->folder->getSPList()->getSPItem($this->id);
+		return $this->folder->getSPList()->getSPItem($this->id, $extra);
 	}
 
 	/**
@@ -221,10 +211,11 @@ class SPFile implements SPItemInterface
 	 * @static
 	 * @access  public
 	 * @param   SPFolder $folder SharePoint Folder
+	 * @param   array    $extra  Extra properties for mapping
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPFolder $folder)
+	public static function getAll(SPFolder $folder, array $extra = [])
 	{
 		$json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files", [
 			'headers' => [
@@ -239,7 +230,7 @@ class SPFile implements SPItemInterface
 		$files = [];
 
 		foreach ($json['d']['results'] as $file) {
-			$files[$file['UniqueId']] = new static($folder, $file);
+			$files[$file['UniqueId']] = new static($folder, $file, $extra);
 		}
 
 		return $files;
@@ -252,10 +243,11 @@ class SPFile implements SPItemInterface
 	 * @access  public
 	 * @param   SPSite $site         SharePoint Site
 	 * @param   string $relative_url SharePoint Folder relative URL
+	 * @param   array  $extra        Extra properties for mapping
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function getByRelativeURL(SPSite $site, $relative_url = null)
+	public static function getByRelativeURL(SPSite $site, $relative_url = null, array $extra = [])
 	{
 		if (empty($relative_url)) {
 			throw new SPException('The SharePoint File Relative URL is empty/not set');
@@ -274,7 +266,7 @@ class SPFile implements SPItemInterface
 
 		$folder = SPFolder::getByRelativeURL($site, dirname($relative_url));
 
-		return new static($folder, $json['d']);
+		return new static($folder, $json['d'], $extra);
 	}
 
 	/**
@@ -284,10 +276,11 @@ class SPFile implements SPItemInterface
 	 * @access  public
 	 * @param   SPFolder $folder SharePoint List
 	 * @param   string   $name   File Name
+	 * @param   array    $extra  Extra properties for mapping
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function getByName(SPFolder $folder, $name = null)
+	public static function getByName(SPFolder $folder, $name = null, array $extra = [])
 	{
 		if (empty($name)) {
 			throw new SPException('The SharePoint File Name is empty/not set');
@@ -304,7 +297,7 @@ class SPFile implements SPItemInterface
 			]
 		]);
 
-		return new static($folder, $json['d']);
+		return new static($folder, $json['d'], $extra);
 	}
 
 	/**
@@ -316,10 +309,11 @@ class SPFile implements SPItemInterface
 	 * @param   mixed    $contents  File contents
 	 * @param   string   $name      Name for the file being uploaded
 	 * @param   bool     $overwrite Overwrite if file already exists?
+	 * @param   array    $extra     Extra properties for mapping
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public static function create(SPFolder $folder, $contents = null, $name = null, $overwrite = false)
+	public static function create(SPFolder $folder, $contents = null, $name = null, $overwrite = false, array $extra = [])
 	{
 		if ($contents instanceof SplFileObject) {
 			$body = $contents->fread($contents->getSize());
@@ -355,7 +349,7 @@ class SPFile implements SPItemInterface
 			'body'    => $body
 		], 'POST');
 
-		return new static($folder, $json['d']);
+		return new static($folder, $json['d'], $extra);
 	}
 
 	/**
@@ -410,10 +404,11 @@ class SPFile implements SPItemInterface
 	 * @access  public
 	 * @param   SPFolder $folder SharePoint Folder to move to
 	 * @param   string   $name   SharePoint File name
+	 * @param   array    $extra  Extra properties for mapping
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public function move(SPFolder $folder, $name = null)
+	public function move(SPFolder $folder, $name = null, array $extra = [])
 	{
 		$new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 
@@ -427,28 +422,12 @@ class SPFile implements SPItemInterface
 
 		/**
 		 * NOTE: Since the SharePoint API doesn't return a proper response on
-		 * a successful move operation, it's best to do a second request and
-		 * get the updated data for rehydration
+		 * a successful move operation, we do a second request to get an updated
+		 * SPFile to rehydrate the current object
 		 */
-		$file = static::getByRelativeURL($folder->getSPSite(), $new_url);
+		$file = static::getByRelativeURL($folder->getSPSite(), $new_url, $extra);
 
-		$this->hydrate([
-			'ListItemAllFields' => [
-				'__metadata' => [
-					'type' => $file->getType()
-				],
-				'ID'   => $file->getID(),
-				'GUID' => $file->getGUID()
-			],
-			'Title'             => $file->getTitle(),
-			'Name'              => $file->getName(),
-			'Length'            => $file->getSize(),
-			'TimeCreated'       => $file->getTimeCreated(),
-			'TimeLastModified'  => $file->getTimeModified(),
-			'ServerRelativeUrl' => $file->getRelativeURL()
-		]);
-
-		$this->folder = $folder;
+		$this->hydrate($file);
 
 		return $this;
 	}
@@ -460,10 +439,11 @@ class SPFile implements SPItemInterface
 	 * @param   SPFolder $folder    SharePoint Folder to move to
 	 * @param   string   $name      SharePoint File name
 	 * @param   bool     $overwrite Overwrite if file already exists?
+	 * @param   array    $extra     Extra properties for mapping
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
-	public function copy(SPFolder $folder, $name = null, $overwrite = false)
+	public function copy(SPFolder $folder, $name = null, $overwrite = false, array $extra = [])
 	{
 		$new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 
@@ -477,10 +457,10 @@ class SPFile implements SPItemInterface
 
 		/**
 		 * NOTE: Since the SharePoint API doesn't return a proper response on
-		 * a successful copy operation, it's best to do a second request to
-		 * return the copied SPFile
+		 * a successful copy operation, we do a second request to return the
+		 * copied SPFile
 		 */
-		return static::getByRelativeURL($folder->getSPSite(), $new_url);
+		return static::getByRelativeURL($folder->getSPSite(), $new_url, $extra);
 	}
 
 	/**
@@ -488,7 +468,7 @@ class SPFile implements SPItemInterface
 	 *
 	 * @access  public
 	 * @throws  SPException
-	 * @return  bool true if the SharePoint File was deleted
+	 * @return  bool
 	 */
 	public function delete()
 	{
