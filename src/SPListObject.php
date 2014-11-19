@@ -13,25 +13,28 @@
 
 namespace WeAreArchitect\SharePoint;
 
+use ArrayAccess;
 use ArrayIterator;
+use Countable;
+use IteratorAggregate;
 
-trait SPListTrait
+abstract class SPListObject extends SPObject implements ArrayAccess, Countable, IteratorAggregate, SPRequestInterface
 {
-	use SPObjectTrait;
+	use SPCommonPropertiesTrait;
 
 	/**
 	 * SharePoint Site
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $site = null;
+	protected $site = null;
 
 	/**
 	 * SharePoint Items
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $items = [];
+	protected  $items = [];
 
 	/**
 	 * Count the SharePoint Items
@@ -60,7 +63,7 @@ trait SPListTrait
 	 *
 	 * @access  public
 	 * @param   string $index SharePoint Item index
-	 * @return  bool true if exists, false otherwise
+	 * @return  bool
 	 */
 	public function offsetExists($index = null)
 	{

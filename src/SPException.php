@@ -15,4 +15,18 @@ namespace WeAreArchitect\SharePoint;
 
 use RuntimeException;
 
-class SPException extends RuntimeException {};
+class SPException extends RuntimeException
+{
+	/**
+	 * Get the previous Exception message
+	 *
+	 * @access public
+	 * @return string|null Previous exception message or null if no previous Exception exists
+	 */
+	public function getPreviousMessage()
+	{
+		$previous = $this->getPrevious();
+
+		return ($previous === null) ? null : $previous->getMessage();
+	}
+}

@@ -1,13 +1,13 @@
 # SharePoint OAuth App Client
 
-The **SharePoint OAuth App Client** is a set of [PHP](http://www.php.net) classes that allows you to authenticate with SharePoint Online (2013) via [OAuth2](http://oauth.net/2/) and work with a subset of SharePoint's functionality (currently **Lists**, **Folders**, **Items**, **Files** and **Users**).
+The **SharePoint OAuth App Client** is a set of [PHP](http://www.php.net) classes that allow SharePoint Online (2013) authentication via [OAuth2](http://oauth.net/2/) and work with a subset of it's functionality (currently **Lists**, **Folders**, **Items**, **Files** and **Users**).
 
 This library is available to anyone and is licensed under the MIT license.
 
 ## Installation
 
 ### Requirements
-* PHP 5.4+
+* [PHP](http://www.php.net) 5.4+
 * [Guzzle](https://packagist.org/packages/guzzlehttp/guzzle)
 * [PHP-JWT](https://packagist.org/packages/nixilla/php-jwt)
 * [Carbon](https://packagist.org/packages/nesbot/carbon)
@@ -17,103 +17,120 @@ This library is available to anyone and is licensed under the MIT license.
 
 Add [wearearchitect/sharepoint-oauth-app-client](https://packagist.org/packages/wearearchitect/sharepoint-oauth-app-client) to your `composer.json` and run **composer install** or **composer update**.
 
-	{
-		"require": {
-			"wearearchitect/sharepoint-oauth-app-client": "0.9.*"
-		}
+```
+{
+	"require": {
+		"wearearchitect/sharepoint-oauth-app-client": "0.9.*"
 	}
-
+}
+```
 
 ## Basic usage
 
-### Class instantiation
+### SharePoint Site Class instantiation
 
-	<?php
+```php
+<?php
 
-	require 'vendor/autoload.php';
+require 'vendor/autoload.php';
 
-	use WeAreArchitect\SharePoint\SPException;
-	use WeAreArchitect\SharePoint\SPSite;
+use WeAreArchitect\SharePoint\SPException;
+use WeAreArchitect\SharePoint\SPSite;
 
-	try {
-			$config = [
-				'url'       => 'https://example.sharepoint.com/sites/mySite',
-				'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-				'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-				'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE=',
-			];
+try {
+	$settings = [
+		'site' => [
+			'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+			'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+			'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
+		]
+	];
 
-		$site = new SPSite($config);
+	// using the static create() method
+	$site = SPSite::create('https://example.sharepoint.com/sites/mySite', $settings);
 
-	} catch(SPException $e) {
-		// handle exceptions
-	}
+	// normal class instantiation
+	$http = new \GuzzleHttp\Client([
+		'base_url' => 'https://example.sharepoint.com/sites/mySite/'
+	]);
+
+	$site = new SPSite($http, $settings);
+
+} catch(SPException $e) {
+	// handle exceptions
+}
+```
 
 **Attention:** In order to use the classes and methods provided by this package, you need an **Access Token** which can be generated from a logged **User** or an **App only policy**.
 
 
 ### Get an Access Token as a **User**
 
-	try {
-		/**
-		 * SharePoint Access Token request config requirements as a User:
-		 *
-		 * - SharePoint Context Token
-		 * - Secret
-		 */
-		$context_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTQyNGR...';
+```php
+try {
+	/**
+	 * SharePoint Access Token request config requirements as a User:
+	 *
+	 * - SharePoint Context Token
+	 * - Secret
+	 */
+	$context_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTQyNGR...';
 
-		/**
-		 * Using the method provided by the SPSite class
-		 * which will store the Access Token internally
-		 */
-		$site->createSPAccessTokenFromUser($context_token);
+	/**
+	 * Using the method provided by the SPSite class
+	 * which will store the Access Token internally
+	 */
+	$site->createSPAccessTokenFromUser($context_token);
 
-		/**
-		 * Using the static method from the SPAccessToken class
-		 * which will require manually setting the Access Token
-		 * in the SPSite object
-		 */
-		$token = SPAccessToken::createFromUser($site, $context_token);
+	/**
+	 * Using the static method from the SPAccessToken class
+	 * which will require manually setting the Access Token
+	 * in the SPSite object
+	 */
+	$token = SPAccessToken::createFromUser($site, $context_token);
 
-		$site->setSPAccessToken($token);
+	$site->setSPAccessToken($token);
 
-	} catch(SPException $e) {
-		// handle exceptions
-	}
+} catch(SPException $e) {
+	// handle exceptions
+}
+```
 
 **Note:** The context token is accessible from the **SPAppToken** input (via POST) when SharePoint redirects to the Application.
 
 
 ### Get an Access Token as an **AOP (App only policy)**
 
-	try {
-		/**
-		 * SharePoint Access Token request requirements as an App only policy:
-		 *
-		 * - ACS
-		 * - Client ID
-		 * - Secret
-		 * - Resource
-		 */
+```php
+try {
+	/**
+	 * SharePoint Access Token request requirements as an App only policy:
+	 *
+	 * - ACS
+	 * - Client ID
+	 * - Secret
+	 * - Resource
+	 */
 
-		/**
-		 * Using the method provided by the SPSite class
-		 * which will store the Access Token internally
-		 */
-		$site->createSPAccessTokenFromAOP();
+	/**
+	 * Using the method provided by the SPSite class
+	 * which will store the Access Token internally
+	 */
+	$site->createSPAccessTokenFromAOP();
 
-		/**
-		 * Using the static method from the SPAccessToken class
-		 * which will require manually setting the Access Token
-		 * in the SPSite object
-		 */
-		$token = SPAccessToken::createFromAOP($site);
+	/**
+	 * Using the static method from the SPAccessToken class
+	 * which will require manually setting the Access Token
+	 * in the SPSite object
+	 */
+	$token = SPAccessToken::createFromAOP($site);
 
-		$site->setSPAccessToken($token);
+	$site->setSPAccessToken($token);
 
-	} catch(SPException $e) {
-		// handle exceptions
-	}
+} catch(SPException $e) {
+	// handle exceptions
+}
+```
 
-# More documentation soon #
+## More documentation to follow
+### But in the mean time, use the source code as reference

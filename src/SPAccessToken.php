@@ -18,23 +18,21 @@ use Exception;
 use JWT\Authentication\JWT;
 use Serializable;
 
-class SPAccessToken implements Serializable
+class SPAccessToken extends SPObject implements Serializable
 {
-	use SPHydratorTrait;
-
 	/**
 	 * Access token
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $token = '';
+	protected $token = null;
 
 	/**
 	 * Expire date
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $expires = null;
+	protected $expires = null;
 
 	/**
 	 * Hydration handler
@@ -47,10 +45,7 @@ class SPAccessToken implements Serializable
 	 */
 	protected function hydrate(array $json, $missing = false)
 	{
-		$this->fill($json, [
-			'token'   => 'access_token',
-			'expires' => 'expires_on'
-		], $missing);
+		parent::hydrate($json, $missing);
 
 		$this->expires = Carbon::createFromTimestamp($this->expires);
 	}
@@ -59,12 +54,18 @@ class SPAccessToken implements Serializable
 	 * SharePoint Access Token constructor
 	 *
 	 * @access  public
-	 * @param   array  $json JSON response from the SharePoint REST API
+	 * @param   array  $json  JSON response from the SharePoint REST API
+	 * @param   array  $extra Extra SharePoint Access Token properties to map
 	 * @throws  SPException
 	 * @return  SPAccessToken
 	 */
-	public function __construct(array $json)
+	public function __construct(array $json, array $extra = [])
 	{
+		parent::__construct([
+			'token'   => 'access_token',
+			'expires' => 'expires_on'
+		], $extra);
+
 		$this->hydrate($json);
 	}
 
@@ -115,10 +116,11 @@ class SPAccessToken implements Serializable
 	 * @access  public
 	 * @param   SPSite $site          SharePoint Site
 	 * @param   string $context_token Context Token
+	 * @param   array  $extra         Extra SharePoint Access Token properties to map
 	 * @throws  SPException
 	 * @return  SPAccessToken
 	 */
-	public static function createFromUser(SPSite &$site, $context_token = null)
+	public static function createFromUser(SPSite $site, $context_token = null, array $extra = [])
 	{
 		$config = $site->getConfig();
 
@@ -161,7 +163,7 @@ class SPAccessToken implements Serializable
 			])
 		], 'POST');
 
-		return new static($json);
+		return new static($json, $extra);
 	}
 
 	/**
@@ -169,11 +171,12 @@ class SPAccessToken implements Serializable
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPSite $site SharePoint Site
+	 * @param   SPSite $site  SharePoint Site
+	 * @param   array  $extra Extra SharePoint Access Token properties to map
 	 * @throws  SPException
 	 * @return  SPAccessToken
 	 */
-	public static function createFromAOP(SPSite &$site)
+	public static function createFromAOP(SPSite $site, array $extra = [])
 	{
 		$config = $site->getConfig();
 
@@ -211,7 +214,7 @@ class SPAccessToken implements Serializable
 			])
 		], 'POST');
 
-		return new static($json);
+		return new static($json, $extra);
 	}
 
 	/**
