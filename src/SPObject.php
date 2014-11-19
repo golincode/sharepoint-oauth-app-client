@@ -32,7 +32,7 @@ abstract class SPObject
 	protected $extra = [];
 
 	/**
-	 * SharePoint Abstract Object constructor
+	 * SharePoint Object constructor
 	 *
 	 * @access  public
 	 * @param   array  $mapper Dot notation property mapper
@@ -67,7 +67,7 @@ abstract class SPObject
 			return $this->extra[$property];
 		}
 
-		throw new SPException('Invalid Extra property: '.$property);
+		throw new SPException('Invalid property: '.$property);
 	}
 
 	/**
@@ -96,35 +96,50 @@ abstract class SPObject
 	 * Hydration handler
 	 *
 	 * @access  protected
-	 * @param   array     $json    JSON response from the SharePoint REST API
-	 * @param   bool      $missing Allow missing properties?
+	 * @param   mixed     $data    SPObject / JSON response from the SharePoint REST API
+	 * @param   bool      $missing Allow missing properties when hydrating from JSON?
 	 * @throws  SPException
 	 * @return  void
 	 */
-	protected function hydrate(array $json, $missing = false)
+	protected function hydrate($data, $missing = false)
 	{
-		foreach ($this->mapper as $property => $map) {
+		switch (true) {
+			// hydrate from SPObject
+			case ($data instanceof $this):
+				foreach (get_object_vars($data) as $key => $value) {
+					$this->$key = $value;
+				}
+				break;
 
-			// make spaces SharePoint compatible
-			$map = str_replace(' ', '_x0020_', $map);
+			// hydrate from JSON
+			case (is_array($data)):
+				foreach ($this->mapper as $property => $map) {
 
-			$current = $json;
+					// make spaces SharePoint compatible
+					$map = str_replace(' ', '_x0020_', $map);
 
-			foreach (explode('.', $map) as $segment) {
+					$current = $data;
 
-				if ( ! is_array($current) || ! array_key_exists($segment, $current)) {
+					foreach (explode('.', $map) as $segment) {
 
-					if ($missing) {
-						continue 2;
+						if ( ! is_array($current) || ! array_key_exists($segment, $current)) {
+
+							if ($missing) {
+								continue 2;
+							}
+
+							throw new SPException('Invalid property mapper: '.$map);
+						}
+
+						$current = $current[$segment];
 					}
 
-					throw new SPException('Invalid property mapper: '.$map);
+					$this->assign(strtolower($property), $current);
 				}
+				break;
 
-				$current = $current[$segment];
-			}
-
-			$this->assign(strtolower($property), $current);
+			default:
+				throw new SPException('Could not hydrate '.get_class($this));
 		}
 	}
 }
