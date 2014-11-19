@@ -13,12 +13,10 @@
 
 namespace WeAreArchitect\SharePoint;
 
-class SPList implements SPListInterface
+class SPList extends SPListObject
 {
-	use SPListTrait;
-
 	/**
-	 * List Template Types (SharePoint 2013)
+	 * SharePoint List Template Types (SharePoint 2013)
 	 *
 	 * @link http://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.client.listtemplatetype%28v=office.15%29.aspx
 	 */
@@ -34,9 +32,9 @@ class SPList implements SPListInterface
 	const TPL_PICTURELIBRARY  = 109; // Picture library
 
 	/**
-	 * Fetchable List Types
+	 * Allowed SharePoint List Types
 	 */
-	public static $fetchable = [
+	public static $allowed = [
 		self::TPL_GENERICLIST,
 		self::TPL_DOCUMENTLIBRARY,
 		self::TPL_SURVEY,
@@ -50,7 +48,7 @@ class SPList implements SPListInterface
 	];
 
 	/**
-	 * List Field Types (SharePoint 2013)
+	 * SharePoint List Field Types (SharePoint 2013)
 	 *
 	 * @link http://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.client.fieldtype%28v=office.15%29.aspx
 	 */
@@ -88,69 +86,59 @@ class SPList implements SPListInterface
 	/**
 	 * List Template Type
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $template = 0;
+	protected $template = 0;
 
 	/**
 	 * List Item Entity Type Full Name
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $item_type = null;
-
-	/**
-	 * List Title
-	 *
-	 * @access  private
-	 */
-	private $title = null;
+	protected $item_type = null;
 
 	/**
 	 * List Description
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $description = null;
+	protected $description = null;
 
 	/**
-	 * Hydration handler
+	 * SharePoint List constructor
 	 *
-	 * @access  protected
-	 * @param   array     $json    JSON response from the SharePoint REST API
-	 * @param   bool      $missing Allow missing properties?
-	 * @throws  SPException
-	 * @return  void
+	 * @access  public
+	 * @param   SPSite $site     SharePoint Site
+	 * @param   array  $json     JSON response from the SharePoint REST API
+	 * @param   array  $settings Instantiation settings
+	 * @return  SPList
 	 */
-	protected function hydrate(array $json, $missing = false)
+	public function __construct(SPSite $site, array $json, array $settings = [])
 	{
-		$this->fill($json, [
+		$defaults = [
+			'extra' => [],    // extra SharePoint List properties to map
+			'fetch' => false, // fetch SharePoint Items?
+			'items' => []     // SharePoint Item instantiation settings
+		];
+
+		// overwrite defaults with settings
+		$settings = array_merge_recursive($defaults, $settings);
+
+		parent::__construct([
 			'template'    => 'BaseTemplate',
 			'type'        => '__metadata.type',
 			'item_type'   => 'ListItemEntityTypeFullName',
 			'guid'        => 'Id',
 			'title'       => 'Title',
 			'description' => 'Description'
-		], $missing);
-	}
+		], $settings['extra']);
 
-	/**
-	 * SharePoint List constructor
-	 *
-	 * @access  public
-	 * @param   SPSite $site  SharePoint Site
-	 * @param   array  $json  JSON response from the SharePoint REST API
-	 * @param   bool   $fetch Fetch SharePoint Items?
-	 * @return  SPList
-	 */
-	public function __construct(SPSite $site, array $json, $fetch = false)
-	{
 		$this->site = $site;
 
 		$this->hydrate($json);
 
-		if ($fetch) {
-			$this->getSPItems();
+		if ($settings['fetch']) {
+			$this->getSPItems($settings['items']);
 		}
 	}
 
@@ -163,17 +151,6 @@ class SPList implements SPListInterface
 	public function getTemplate()
 	{
 		return $this->template;
-	}
-
-	/**
-	 * Get SharePoint Title
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getTitle()
-	{
-		return $this->title;
 	}
 
 	/**
@@ -203,12 +180,12 @@ class SPList implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPSite $site  SharePoint Site
-	 * @param   bool   $fetch Fetch SharePoint Items?
+	 * @param   SPSite $site     SharePoint Site
+	 * @param   array  $settings Instantiation settings
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPSite $site, $fetch = false)
+	public static function getAll(SPSite $site, array $settings = [])
 	{
 		$json = $site->request('_api/web/Lists', [
 			'headers' => [
@@ -220,9 +197,9 @@ class SPList implements SPListInterface
 		$lists = [];
 
 		foreach ($json['d']['results'] as $list) {
-			// exclude lists the user shouldn't work with
-			if (in_array($list['BaseTemplate'], static::$fetchable)) {
-				$lists[$list['Id']] = new static($site, $list, $fetch);
+			// allowed SharePoint List Types only
+			if (in_array($list['BaseTemplate'], static::$allowed)) {
+				$lists[$list['Id']] = new static($site, $list, $settings);
 			}
 		}
 
@@ -234,13 +211,13 @@ class SPList implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPSite $site  SharePoint Site
-	 * @param   string $guid  SharePoint List GUID
-	 * @param   bool   $fetch Fetch SharePoint Items?
+	 * @param   SPSite $site     SharePoint Site
+	 * @param   string $guid     SharePoint List GUID
+	 * @param   array  $settings Instantiation settings
 	 * @throws  SPException
 	 * @return  SPList
 	 */
-	public static function getByGUID(SPSite $site, $guid = null, $fetch = false)
+	public static function getByGUID(SPSite $site, $guid = null, array $settings = [])
 	{
 		$json = $site->request("_api/web/Lists(guid'".$guid."')", [
 			'headers' => [
@@ -249,7 +226,7 @@ class SPList implements SPListInterface
 			]
 		]);
 
-		return new static($site, $json['d'], $fetch);
+		return new static($site, $json['d'], $settings);
 	}
 
 	/**
@@ -257,13 +234,13 @@ class SPList implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPSite $site  SharePoint Site
-	 * @param   string $title SharePoint List Title
-	 * @param   bool   $fetch Fetch SharePoint Items?
+	 * @param   SPSite $site     SharePoint Site
+	 * @param   string $title    SharePoint List Title
+	 * @param   array  $settings Instantiation settings
 	 * @throws  SPException
 	 * @return  SPList
 	 */
-	public static function getByTitle(SPSite $site, $title = null, $fetch = false)
+	public static function getByTitle(SPSite $site, $title = null, array $settings = [])
 	{
 		$json = $site->request("_api/web/Lists/GetByTitle('".$title."')", [
 			'headers' => [
@@ -272,7 +249,7 @@ class SPList implements SPListInterface
 			]
 		]);
 
-		return new static($site, $json['d'], $fetch);
+		return new static($site, $json['d'], $settings);
 	}
 
 	/**
@@ -282,10 +259,11 @@ class SPList implements SPListInterface
 	 * @access  public
 	 * @param   SPSite $site       SharePoint Site
 	 * @param   array  $properties SharePoint List properties (Title, Description, ...)
+	 * @param   array  $settings   Instantiation settings
 	 * @throws  SPException
 	 * @return  SPList
 	 */
-	public static function create(SPSite $site, array $properties)
+	public static function create(SPSite $site, array $properties, array $settings = [])
 	{
 		$defaults = [
 			'__metadata' => [
@@ -313,7 +291,7 @@ class SPList implements SPListInterface
 			'body'    => $body
 		], 'POST');
 
-		return new static($site, $json['d']);
+		return new static($site, $json['d'], $settings);
 	}
 
 	/**
@@ -366,7 +344,7 @@ class SPList implements SPListInterface
 	 *
 	 * @access  public
 	 * @throws  SPException
-	 * @return  bool true if the List was deleted
+	 * @return  bool
 	 */
 	public function delete()
 	{
@@ -389,7 +367,7 @@ class SPList implements SPListInterface
 	 * @access  public
 	 * @param   array  $properties Field properties (Title, FieldTypeKind, ...)
 	 * @throws  SPException
-	 * @return  string SharePoint List Field id
+	 * @return  string
 	 */
 	public function createSPField(array $properties)
 	{
@@ -397,9 +375,7 @@ class SPList implements SPListInterface
 			'__metadata' => [
 				'type' => 'SP.Field'
 			],
-			'FieldTypeKind'       => static::FLD_TEXT,
-			'Required'            => false,
-			'EnforceUniqueValues' => false
+			'FieldTypeKind' => static::FLD_TEXT
 		];
 
 		// overwrite defaults with properties
@@ -427,7 +403,7 @@ class SPList implements SPListInterface
 	 *
 	 * @access  public
 	 * @throws  SPException
-	 * @return  int SharePoint Item count
+	 * @return  int
 	 */
 	public function getSPItemCount()
 	{
@@ -446,11 +422,20 @@ class SPList implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
+	 * @param   array  $settings Instantiation settings
 	 * @return  array
 	 */
-	public function getSPItems()
+	public function getSPItems(array $settings = [])
 	{
-		$this->items = SPItem::getAll($this);
+		$defaults = [
+			'extra' => [],  // extra SharePoint Item properties to map
+			'top'   => 5000 // SharePoint Item threshold
+		];
+
+		// overwrite defaults with settings
+		$settings = array_merge_recursive($defaults, $settings);
+
+		$this->items = SPItem::getAll($this, $settings);
 
 		return $this->items;
 	}
@@ -460,12 +445,13 @@ class SPList implements SPListInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   int    $id Item ID
+	 * @param   int    $id    Item ID
+	 * @param   array  $extra Extra SharePoint Item properties to map
 	 * @return  SPItem
 	 */
-	public function getSPItem($id = 0)
+	public function getSPItem($id = 0, array $extra = [])
 	{
-		$item = SPItem::getByID($this, $id);
+		$item = SPItem::getByID($this, $id, $extra);
 
 		$this[] = $item;
 
@@ -512,7 +498,7 @@ class SPList implements SPListInterface
 	 * @access  public
 	 * @param   string $index SharePoint Item index
 	 * @throws  SPException
-	 * @return  boolean true if the SharePoint Item was deleted
+	 * @return  bool
 	 */
 	public function deleteSPItem($index = null)
 	{
