@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the SharePoint OAuth App Client package.
+ * This file is part of the SharePoint OAuth App Client library.
  *
  * @author     Quetzy Garcia <qgarcia@wearearchitect.com>
  * @copyright  2014 Architect 365
@@ -70,7 +70,7 @@ class SPAccessToken extends SPObject implements Serializable
 	}
 
 	/**
-	 * Serialize SharePoint Access Token object
+	 * Serialize SharePoint Access Token
 	 *
 	 * @access  public
 	 * @return  string
@@ -84,7 +84,7 @@ class SPAccessToken extends SPObject implements Serializable
 	}
 
 	/**
-	 * Recreate SharePoint Access Token object
+	 * Recreate SharePoint Access Token
 	 *
 	 * @access  public
 	 * @param   string $serialized

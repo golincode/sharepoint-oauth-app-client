@@ -18,7 +18,7 @@
     </filter>
 
     <testsuites>
-        <testsuite name="SharePoint OAuth App Client Test Suite">
+        <testsuite name="SharePoint OAuth App Client library Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
