@@ -57,7 +57,7 @@ try {
 }
 ```
 
-## Class documentation:
+## Class documentation
 - [SPSite](docs/SPSite.md)
 - [SPAccessToken](docs/SPAccessToken.md)
 - [SPFormDigest](docs/SPFormDigest.md)
