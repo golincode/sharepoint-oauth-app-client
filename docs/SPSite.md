@@ -1,9 +1,9 @@
 # SharePoint Site
 The **SPSite** class is the foundation for all the other classes of the **SharePoint OAuth App Client** library.
-It handles the HTTP requests and manages [Access Tokens](docs/SPAccessToken.md) and [Form Digests](docs/SPFormDigest.md). 
+It handles HTTP requests and manages [Access Tokens](SPAccessToken.md) and [Form Digests](SPFormDigest.md).
 
 ## Instantiation
-There are two ways to create a **SPSite** instance.
+There are two ways to create an **SPSite** instance.
 
 ### via constructor
 ```php
