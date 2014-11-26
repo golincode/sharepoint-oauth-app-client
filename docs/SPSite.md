@@ -3,7 +3,7 @@ The **SPSite** class is the foundation for all the other classes of the **ShareP
 It handles the HTTP requests and manages [Access Tokens](docs/SPAccessToken.md) and [Form Digests](docs/SPFormDigest.md). 
 
 ## Instantiation
-There are two ways to create a new SPSite instance.
+There are two ways to create a **SPSite** instance.
 
 ### via constructor
 ```php

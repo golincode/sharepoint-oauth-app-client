@@ -1,5 +1,5 @@
 # SharePoint OAuth App Client
-The **SharePoint OAuth App Client** is a [PHP](http://www.php.net) library that makes it easy to authenticate via [OAuth2](http://oauth.net/2/) with the SharePoint Online (2013) REST API and use **Lists**, **Folders**, **Items**, **Files** and **Users**.
+The **SharePoint OAuth App Client** is a [PHP](http://www.php.net) library that makes it easy to authenticate via [OAuth2](http://oauth.net/2/) with the SharePoint Online (2013) REST API and work with **Lists**, **Folders**, **Items**, **Files** and **Users**.
  
 ## Requirements
 * [PHP](http://www.php.net) 5.4+
@@ -66,6 +66,9 @@ try {
 - [SPFolder](docs/SPFolder.md)
 - [SPFile](docs/SPFile.md)
 - [SPUser](docs/SPUser.md)
+
+## Warning
+Until a major version of the library gets released, the API may **change**!
 
 ## License
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
