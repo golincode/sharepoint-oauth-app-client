@@ -157,12 +157,12 @@ class SPFile extends SPObject implements SPItemInterface
 	}
 
 	/**
-	 * Get File raw data
+	 * Get File Contents
 	 *
 	 * @access  public
 	 * @return  string
 	 */
-	public function getRaw()
+	public function getContents()
 	{
 		$response = $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
 			'headers' => [
