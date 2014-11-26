@@ -149,7 +149,7 @@ class SPFolder extends SPListObject implements SPItemInterface
 	{
 		$site_path = preg_quote($this->site->getPath(), '/');
 
-		$matches = [];
+		$match = [];
 
 		/**
 		 * NOTE: regardless of the SharePoint Folder, the associated
@@ -160,11 +160,11 @@ class SPFolder extends SPListObject implements SPItemInterface
 		 * For the relative Folder: /sites/mySite/MainFolder/SubFolder
 		 * The List Title will be: MainFolder
 		 */
-		if (preg_match('/'.$site_path.'([^\/]+)\/?.*/', $this->relative_url, $matches) !== 1) {
+		if (preg_match('/'.$site_path.'(?<title>[^\/]+)\/?.*/', $this->relative_url, $match) !== 1) {
 			throw new SPException('Unable to get the SharePoint List Title for the Folder: '.$this->name);
 		}
 
-		return SPList::getByTitle($this->site, $matches[1], $settings);
+		return SPList::getByTitle($this->site, $match['title'], $settings);
 	}
 
 	/**

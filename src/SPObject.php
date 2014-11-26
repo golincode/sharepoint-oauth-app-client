@@ -55,13 +55,13 @@ abstract class SPObject
 	 */
 	public function __call($name, $arguments)
 	{
-		$matches = [];
+		$match = [];
 
-		if (preg_match('/^get([a-zA-Z0-9_\x7f-\xff]+)$/', $name, $matches) !== 1) {
+		if (preg_match('/^get(?<property>[a-zA-Z0-9_\x7f-\xff]+)$/', $name, $match) !== 1) {
 			throw new SPException('Invalid method: '.$name);
 		}
 
-		$property = strtolower($matches[1]);
+		$property = strtolower($match['property']);
 
 		if (array_key_exists($property, $this->extra)) {
 			return $this->extra[$property];
