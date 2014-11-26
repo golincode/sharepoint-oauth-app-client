@@ -76,8 +76,8 @@ class SPFormDigest extends SPObject implements Serializable
 	public function serialize()
 	{
 		return serialize([
-			'digest'  => $this->digest,
-			'expires' => $this->expires->getTimestamp()
+			$this->digest,
+			$this->expires->getTimestamp()
 		]);
 	}
 
@@ -90,10 +90,9 @@ class SPFormDigest extends SPObject implements Serializable
 	 */
 	public function unserialize($serialized = null)
 	{
-		$data = unserialize($serialized);
+		list($this->digest, $this->expires) = unserialize($serialized);
 
-		$this->digest = $data['digest'];
-		$this->expires = Carbon::createFromTimeStamp($data['expires']);
+		$this->expires = Carbon::createFromTimeStamp($this->expires);
 	}
 
 	/**
