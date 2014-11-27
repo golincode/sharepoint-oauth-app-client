@@ -36,7 +36,7 @@ abstract class SPObject
 	 *
 	 * @access  public
 	 * @param   array  $mapper Dot notation property mapper
-	 * @param   array  $extra  Extra properties for mapping
+	 * @param   array  $extra  Extra properties to map
 	 * @return  SPObject
 	 */
 	public function __construct(array $mapper, array $extra = [])

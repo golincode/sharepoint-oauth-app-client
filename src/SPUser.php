@@ -84,7 +84,7 @@ class SPUser extends SPObject
 	 * @access  public
 	 * @param   SPSite $site  SharePoint Site
 	 * @param   array  $json  JSON response from the SharePoint REST API
-	 * @param   array  $extra Extra properties for mapping
+	 * @param   array  $extra Extra properties to map
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
@@ -219,7 +219,7 @@ class SPUser extends SPObject
 	 *
 	 * @access  public
 	 * @param   SPSite $site  SharePoint Site object
-	 * @param   array  $extra Extra properties for mapping
+	 * @param   array  $extra Extra properties to map
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
@@ -241,7 +241,7 @@ class SPUser extends SPObject
 	 * @access  public
 	 * @param   SPSite $site    SharePoint Site object
 	 * @param   string $account SharePoint User account
-	 * @param   array  $extra   Extra properties for mapping
+	 * @param   array  $extra   Extra properties to map
 	 * @throws  SPException
 	 * @return  SPUser
 	 */

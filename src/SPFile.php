@@ -68,7 +68,7 @@ class SPFile extends SPObject implements SPItemInterface
 	 * @access  public
 	 * @param   SPFolder $folder SharePoint Folder
 	 * @param   array    $json   JSON response from the SharePoint REST API
-	 * @param   array    $extra  Extra properties for mapping
+	 * @param   array    $extra  Extra properties to map
 	 * @return  SPFile
 	 */
 	public function __construct(SPFolder $folder, array $json, array $extra = [])
@@ -196,7 +196,7 @@ class SPFile extends SPObject implements SPItemInterface
 	 * Get the SharePoint Item of this File
 	 *
 	 * @access  public
-	 * @param   array  $extra Extra properties for mapping
+	 * @param   array  $extra Extra properties to map
 	 * @throws  SPException
 	 * @return  SPItem
 	 */
@@ -211,7 +211,7 @@ class SPFile extends SPObject implements SPItemInterface
 	 * @static
 	 * @access  public
 	 * @param   SPFolder $folder SharePoint Folder
-	 * @param   array    $extra  Extra properties for mapping
+	 * @param   array    $extra  Extra properties to map
 	 * @throws  SPException
 	 * @return  array
 	 */
@@ -243,7 +243,7 @@ class SPFile extends SPObject implements SPItemInterface
 	 * @access  public
 	 * @param   SPSite $site         SharePoint Site
 	 * @param   string $relative_url SharePoint Folder relative URL
-	 * @param   array  $extra        Extra properties for mapping
+	 * @param   array  $extra        Extra properties to map
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
@@ -276,7 +276,7 @@ class SPFile extends SPObject implements SPItemInterface
 	 * @access  public
 	 * @param   SPFolder $folder SharePoint List
 	 * @param   string   $name   File Name
-	 * @param   array    $extra  Extra properties for mapping
+	 * @param   array    $extra  Extra properties to map
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
@@ -309,7 +309,7 @@ class SPFile extends SPObject implements SPItemInterface
 	 * @param   mixed    $contents  File contents
 	 * @param   string   $name      Name for the file being uploaded
 	 * @param   bool     $overwrite Overwrite if file already exists?
-	 * @param   array    $extra     Extra properties for mapping
+	 * @param   array    $extra     Extra properties to map
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
@@ -404,7 +404,7 @@ class SPFile extends SPObject implements SPItemInterface
 	 * @access  public
 	 * @param   SPFolder $folder SharePoint Folder to move to
 	 * @param   string   $name   SharePoint File name
-	 * @param   array    $extra  Extra properties for mapping
+	 * @param   array    $extra  Extra properties to map
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
@@ -439,7 +439,7 @@ class SPFile extends SPObject implements SPItemInterface
 	 * @param   SPFolder $folder    SharePoint Folder to move to
 	 * @param   string   $name      SharePoint File name
 	 * @param   bool     $overwrite Overwrite if file already exists?
-	 * @param   array    $extra     Extra properties for mapping
+	 * @param   array    $extra     Extra properties to map
 	 * @throws  SPException
 	 * @return  SPFile
 	 */
