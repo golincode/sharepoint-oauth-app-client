@@ -59,13 +59,10 @@ class SPItem extends SPObject implements SPItemInterface
 	 */
 	public static function getAll(SPList $list, array $settings = [])
 	{
-		$defaults = [
+		$settings = array_replace_recursive([
 			'extra' => [],  // extra SharePoint Item properties to map
 			'top'   => 5000 // SharePoint Item threshold
-		];
-
-		// overwrite defaults with settings
-		$settings = array_merge($defaults, $settings);
+		], $settings);
 
 		$json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
 			'headers' => [
@@ -127,14 +124,11 @@ class SPItem extends SPObject implements SPItemInterface
 	 */
 	public static function create(SPList $list, array $properties, array $extra = [])
 	{
-		$defaults = [
+		$properties = array_replace_recursive($properties, [
 			'__metadata' => [
 				'type' => $list->getItemType()
 			]
-		];
-
-		// overwrite properties with defaults
-		$properties = array_merge($properties, $defaults);
+		]);
 
 		$body = json_encode($properties);
 
@@ -164,14 +158,11 @@ class SPItem extends SPObject implements SPItemInterface
 	 */
 	public function update(array $properties)
 	{
-		$defaults = [
+		$properties = array_replace_recursive($properties, [
 			'__metadata' => [
 				'type' => $this->type
 			]
-		];
-
-		// overwrite properties with defaults
-		$properties = array_merge($properties, $defaults);
+		], $properties);
 
 		$body = json_encode($properties);
 

@@ -115,14 +115,11 @@ class SPList extends SPListObject
 	 */
 	public function __construct(SPSite $site, array $json, array $settings = [])
 	{
-		$defaults = [
+		$settings = array_replace_recursive([
 			'extra' => [],    // extra SharePoint List properties to map
 			'fetch' => false, // fetch SharePoint Items?
 			'items' => []     // SharePoint Item instantiation settings
-		];
-
-		// overwrite defaults with settings
-		$settings = array_merge_recursive($defaults, $settings);
+		], $settings);
 
 		parent::__construct([
 			'template'    => 'BaseTemplate',
@@ -265,17 +262,13 @@ class SPList extends SPListObject
 	 */
 	public static function create(SPSite $site, array $properties, array $settings = [])
 	{
-		$defaults = [
+		$properties = array_replace_recursive([
+			'BaseTemplate' => static::TPL_DOCUMENTLIBRARY
+		], $properties, [
 			'__metadata' => [
 				'type' => 'SP.List'
 			],
-			'AllowContentTypes'   => true,
-			'ContentTypesEnabled' => true,
-			'BaseTemplate'        => static::TPL_DOCUMENTLIBRARY
-		];
-
-		// overwrite defaults with properties
-		$properties = array_merge($defaults, $properties);
+		]);
 
 		$body = json_encode($properties);
 
@@ -304,14 +297,11 @@ class SPList extends SPListObject
 	 */
 	public function update(array $properties)
 	{
-		$defaults = [
+		$properties = array_replace_recursive($properties, [
 			'__metadata' => [
 				'type' => 'SP.List'
 			]
-		];
-
-		// overwrite properties with defaults
-		$properties = array_merge($properties, $defaults);
+		]);
 
 		$body = json_encode($properties);
 
@@ -371,15 +361,13 @@ class SPList extends SPListObject
 	 */
 	public function createSPField(array $properties)
 	{
-		$defaults = [
+		$properties = array_replace_recursive([
+			'FieldTypeKind' => static::FLD_TEXT
+		], $properties, [
 			'__metadata' => [
 				'type' => 'SP.Field'
-			],
-			'FieldTypeKind' => static::FLD_TEXT
-		];
-
-		// overwrite defaults with properties
-		$properties = array_merge($defaults, $properties);
+			]
+		]);
 
 		$body = json_encode($properties);
 
@@ -427,13 +415,10 @@ class SPList extends SPListObject
 	 */
 	public function getSPItems(array $settings = [])
 	{
-		$defaults = [
+		$settings = array_replace_recursive([
 			'extra' => [],  // extra SharePoint Item properties to map
 			'top'   => 5000 // SharePoint Item threshold
-		];
-
-		// overwrite defaults with settings
-		$settings = array_merge_recursive($defaults, $settings);
+		], $settings);
 
 		$this->items = SPItem::getAll($this, $settings);
 

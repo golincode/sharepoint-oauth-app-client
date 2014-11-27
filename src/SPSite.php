@@ -72,12 +72,9 @@ class SPSite implements SPRequestInterface
 	 */
 	public function __construct(Client $http, array $config)
 	{
-		$defaults = [
+		$this->config = array_replace([
 			'acs' => 'https://accounts.accesscontrol.windows.net/tokens/OAuth/2'
-		];
-
-		// overwrite defaults with config
-		$this->config = array_merge($defaults, $config);
+		], $config);
 
 		// set Guzzle HTTP client
 		$this->http = $http;
@@ -151,16 +148,15 @@ class SPSite implements SPRequestInterface
 	 */
 	public static function create($url = null, array $settings = [])
 	{
-		$defaults = [
+		$settings = array_replace_recursive([
 			'site' => [], // SharePoint Site configuration
-			'http' => []  // Guzzle HTTP Client configuration
-		];
+		], $settings, [
+			'http' => [   // Guzzle HTTP Client configuration
+				'base_url' => $url
+			]
+		]);
 
-		// overwrite defaults with settings
-		$settings = array_merge_recursive($defaults, $settings);
-
-		// no matter what, the base URL used is always the one passed as first argument
-		$http = new Client(array_merge($settings['http'], ['base_url' => $url]));
+		$http = new Client($settings['http']);
 
 		return new static($http, $settings['site']);
 	}
@@ -179,13 +175,9 @@ class SPSite implements SPRequestInterface
 	public function request($url = null, array $options = [], $method = 'GET', $debug = false)
 	{
 		try {
-			// avoid throwing exceptions when we get HTTP errors (4XX, 5XX)
-			$defaults = [
-				'exceptions' => false
-			];
-
-			// overwrite options with defaults
-			$options = array_merge($options, $defaults);
+			$options = array_replace_recursive($options, [
+				'exceptions' => false // avoid throwing exceptions when we get HTTP errors (4XX, 5XX)
+			]);
 
 			$response = $this->http->send($this->http->createRequest($method, $url, $options));
 
