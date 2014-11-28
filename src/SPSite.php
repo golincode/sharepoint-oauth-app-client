@@ -208,30 +208,20 @@ class SPSite implements SPRequestInterface
 	}
 
 	/**
-	 * Create SharePoint Access Token (User Context Token)
+	 * Create SharePoint Access Token
 	 *
 	 * @access  public
 	 * @param   string $context_token SharePoint Context Token
 	 * @throws  SPException
 	 * @return  SPSite
 	 */
-	public function createSPAccessTokenFromUser($context_token = null)
+	public function createSPAccessToken($context_token = null)
 	{
-		$this->token = SPAccessToken::createFromUser($this, $context_token);
-
-		return $this;
-	}
-
-	/**
-	 * Create SharePoint Access Token (App only policy)
-	 *
-	 * @access  public
-	 * @throws  SPException
-	 * @return  SPSite
-	 */
-	public function createSPAccessTokenFromAOP()
-	{
-		$this->token = SPAccessToken::createFromAOP($this);
+		if (empty($context_token)) {
+			$this->token = SPAccessToken::createFromAOP($this);
+		} else {
+			$this->token = SPAccessToken::createFromUser($this, $context_token);
+		}
 
 		return $this;
 	}
