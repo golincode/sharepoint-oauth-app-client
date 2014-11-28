@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the SharePoint OAuth App Client package.
+ * This file is part of the SharePoint OAuth App Client library.
  *
  * @author     Quetzy Garcia <qgarcia@wearearchitect.com>
  * @copyright  2014 Architect 365
@@ -13,37 +13,35 @@
 
 namespace WeAreArchitect\SharePoint;
 
-trait SPObjectTrait
+trait SPCommonPropertiesTrait
 {
-	use SPHydratorTrait;
-
 	/**
 	 * SharePoint Type
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $type = null;
+	protected $type = null;
 
 	/**
 	 * SharePoint ID
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $id = 0;
+	protected $id = 0;
 
 	/**
 	 * SharePoint GUID
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $guid = null;
+	protected $guid = null;
 
 	/**
 	 * SharePoint Title
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $title = null;
+	protected $title = null;
 
 	/**
 	 * Get SharePoint Type

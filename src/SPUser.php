@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the SharePoint OAuth App Client package.
+ * This file is part of the SharePoint OAuth App Client library.
  *
  * @author     Quetzy Garcia <qgarcia@wearearchitect.com>
  * @copyright  2014 Architect 365
@@ -13,10 +13,8 @@
 
 namespace WeAreArchitect\SharePoint;
 
-class SPUser
+class SPUser extends SPObject
 {
-	use SPHydratorTrait;
-
 	/**
 	 * SharePoint Site
 	 *
@@ -43,21 +41,21 @@ class SPUser
 	 *
 	 * @access  private
 	 */
-	private $fullname = null;
+	private $full_name = null;
 
 	/**
 	 * User First Name
 	 *
 	 * @access  private
 	 */
-	private $firstname = null;
+	private $first_name = null;
 
 	/**
 	 * User Last Name
 	 *
 	 * @access  private
 	 */
-	private $lastname = null;
+	private $last_name = null;
 
 	/**
 	 * User Title
@@ -81,39 +79,28 @@ class SPUser
 	private $url = null;
 
 	/**
-	 * Hydration handler
-	 *
-	 * @access  protected
-	 * @param   array     $json    JSON response from the SharePoint REST API
-	 * @param   bool      $missing Allow missing properties?
-	 * @throws  SPException
-	 * @return  void
-	 */
-	protected function hydrate(array $json, $missing = false)
-	{
-		$this->fill($json, [
-			'account'   => 'AccountName',
-			'email'     => 'Email',
-			'fullname'  => 'DisplayName',
-			'firstname' => 'UserProfileProperties.results.4.Value',
-			'lastname'  => 'UserProfileProperties.results.6.Value',
-			'title'     => 'Title',
-			'picture'   => 'PictureUrl',
-			'url'       => 'PersonalUrl'
-		], $missing);
-	}
-
-	/**
 	 * SharePoint User constructor
 	 *
 	 * @access  public
-	 * @param   SPSite $site SharePoint Site
-	 * @param   array  $json JSON response from the SharePoint REST API
+	 * @param   SPSite $site  SharePoint Site
+	 * @param   array  $json  JSON response from the SharePoint REST API
+	 * @param   array  $extra Extra properties to map
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
-	public function __construct(SPSite &$site, array $json)
+	public function __construct(SPSite $site, array $json, array $extra = [])
 	{
+		parent::__construct([
+			'account'    => 'AccountName',
+			'email'      => 'Email',
+			'full_name'  => 'DisplayName',
+			'first_name' => 'UserProfileProperties.results.4.Value',
+			'last_name'  => 'UserProfileProperties.results.6.Value',
+			'title'      => 'Title',
+			'picture'    => 'PictureUrl',
+			'url'        => 'PersonalUrl'
+		], $extra);
+
 		$this->site = $site;
 
 		$this->hydrate($json);
@@ -128,14 +115,14 @@ class SPUser
 	public function toArray()
 	{
 		return [
-			'account'   => $this->account,
-			'email'     => $this->email,
-			'fullname'  => $this->fullname,
-			'firstname' => $this->firstname,
-			'lastname'  => $this->lastname,
-			'title'     => $this->title,
-			'picture'   => $this->picture,
-			'url'       => $this->url
+			'account'    => $this->account,
+			'email'      => $this->email,
+			'full_name'  => $this->full_name,
+			'first_name' => $this->first_name,
+			'last_name'  => $this->last_name,
+			'title'      => $this->title,
+			'picture'    => $this->picture,
+			'url'        => $this->url
 		];
 	}
 
@@ -169,7 +156,7 @@ class SPUser
 	 */
 	public function getFullName()
 	{
-		return $this->fullname;
+		return $this->full_name;
 	}
 
 	/**
@@ -180,7 +167,7 @@ class SPUser
 	 */
 	public function getFirstName()
 	{
-		return $this->firstname;
+		return $this->first_name;
 	}
 
 	/**
@@ -191,7 +178,7 @@ class SPUser
 	 */
 	public function getLastName()
 	{
-		return $this->lastname;
+		return $this->last_name;
 	}
 
 	/**
@@ -231,11 +218,12 @@ class SPUser
 	 * Get the current (logged) SharePoint User
 	 *
 	 * @access  public
-	 * @param   SPSite $site SharePoint Site object
+	 * @param   SPSite $site  SharePoint Site object
+	 * @param   array  $extra Extra properties to map
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
-	public static function getCurrent(SPSite &$site)
+	public static function getCurrent(SPSite $site, array $extra = [])
 	{
 		$json = $site->request('_api/SP.UserProfiles.PeopleManager/GetMyProperties', [
 			'headers' => [
@@ -244,7 +232,7 @@ class SPUser
 			]
 		]);
 
-		return new static($site, $json['d']);
+		return new static($site, $json['d'], $extra);
 	}
 
 	/**
@@ -253,10 +241,11 @@ class SPUser
 	 * @access  public
 	 * @param   SPSite $site    SharePoint Site object
 	 * @param   string $account SharePoint User account
+	 * @param   array  $extra   Extra properties to map
 	 * @throws  SPException
 	 * @return  SPUser
 	 */
-	public static function getByAccount(SPSite &$site, $account = null)
+	public static function getByAccount(SPSite $site, $account = null, array $extra = [])
 	{
 		$json = $site->request('_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)', [
 			'headers' => [
@@ -269,7 +258,7 @@ class SPUser
 			]
 		], 'POST');
 
-		return new static($site, $json['d']);
+		return new static($site, $json['d'], $extra);
 	}
 
 	/**

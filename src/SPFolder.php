@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the SharePoint OAuth App Client package.
+ * This file is part of the SharePoint OAuth App Client library.
  *
  * @author     Quetzy Garcia <qgarcia@wearearchitect.com>
  * @copyright  2014 Architect 365
@@ -13,60 +13,61 @@
 
 namespace WeAreArchitect\SharePoint;
 
-class SPFolder implements SPListInterface, SPItemInterface
+class SPFolder extends SPListObject implements SPItemInterface
 {
-	use SPListTrait;
+	/**
+	 * System Folder names
+	 *
+	 * @access  public
+	 */
+	public static $system_folders = [
+		'forms'
+	];
 
 	/**
 	 * Folder Name
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $name = null;
+	protected $name = null;
 
 	/**
 	 * Folder Relative URL
 	 *
-	 * @access  private
-	 */
-	private $relative_url = null;
-
-	/**
-	 * Hydration handler
-	 *
 	 * @access  protected
-	 * @param   array     $json    JSON response from the SharePoint REST API
-	 * @param   bool      $missing Allow missing properties?
-	 * @throws  SPException
-	 * @return  void
 	 */
-	protected function hydrate(array $json, $missing = false)
-	{
-		$this->fill($json, [
-			'guid'         => 'UniqueId',
-			'name'         => 'Name',
-			'title'        => 'Name',
-			'relative_url' => 'ServerRelativeUrl'
-		], $missing);
-	}
+	protected $relative_url = null;
 
 	/**
 	 * SharePoint Folder constructor
 	 *
 	 * @access  public
-	 * @param   SPSite $site  SharePoint Site
-	 * @param   array  $json  JSON response from the SharePoint REST API
-	 * @param   bool   $fetch Fetch SharePoint Files?
+	 * @param   SPSite $site     SharePoint Site
+	 * @param   array  $json     JSON response from the SharePoint REST API
+	 * @param   array  $settings Instantiation settings
 	 * @return  SPFolder
 	 */
-	public function __construct(SPSite &$site, array $json, $fetch = false)
+	public function __construct(SPSite $site, array $json, array $settings = [])
 	{
+		$settings = array_replace_recursive([
+			'extra' => [],    // extra SharePoint Folder properties to map
+			'fetch' => false, // fetch SharePoint Items (Folders/Files)?
+			'items' => []     // SharePoint Item instantiation settings
+		], $settings);
+
+		parent::__construct([
+			'guid'         => 'UniqueId',
+			'name'         => 'Name',
+			'title'        => 'Name',
+			'relative_url' => 'ServerRelativeUrl'
+		], $settings['extra']);
+
 		$this->site = $site;
 
 		$this->hydrate($json);
 
-		if ($fetch) {
-			$this->getSPItems();
+		if ($settings['fetch']) {
+			$this->getSPItems($settings['items']);
 		}
 	}
 
@@ -119,32 +120,48 @@ class SPFolder implements SPListInterface, SPItemInterface
 	}
 
 	/**
+	 * Check if a name matches a SharePoint System Folder
+	 *
+	 * @static
+	 * @access  public
+	 * @param   string $name SharePoint Folder name
+	 * @return  bool
+	 */
+	public static function isSystemFolder($name = null)
+	{
+		$normalized = strtolower(basename($name));
+
+		return in_array($normalized, static::$system_folders);
+	}
+
+	/**
 	 * Get the SharePoint List of this Folder
 	 *
 	 * @access  public
+	 * @param   array  $settings Instantiation settings
 	 * @throws  SPException
 	 * @return  SPList
 	 */
-	public function getSPList()
+	public function getSPList(array $settings = [])
 	{
-		$site_path = preg_quote($this->getSPSite()->getPath(), '/');
+		$site_path = preg_quote($this->site->getPath(), '/');
 
-		$matches = [];
+		$match = [];
 
 		/**
 		 * NOTE: regardless of the SharePoint Folder, the associated
-		 * SharePoint List can always be fetched by Title using the
+		 * SharePoint List can be always fetched by Title using the
 		 * root Folder Name.
 		 *
 		 * Example:
 		 * For the relative Folder: /sites/mySite/MainFolder/SubFolder
 		 * The List Title will be: MainFolder
 		 */
-		if (preg_match('/'.$site_path.'([^\/]+)\/?.*/', $this->relative_url, $matches) !== 1) {
-			throw new SPException('Unable to get the root SharePoint Folder name');
+		if (preg_match('/'.$site_path.'(?<title>[^\/]+)\/?.*/', $this->relative_url, $match) !== 1) {
+			throw new SPException('Unable to get the SharePoint List Title for the Folder: '.$this->name);
 		}
 
-		return SPList::getByTitle($this->site, $matches[1]);
+		return SPList::getByTitle($this->site, $match['title'], $settings);
 	}
 
 	/**
@@ -154,11 +171,11 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 * @access  public
 	 * @param   SPSite $site         SharePoint Site
 	 * @param   string $relative_url SharePoint Folder relative URL
-	 * @param   bool   $fetch        Fetch SharePoint Files?
+	 * @param   array  $settings     Instantiation settings
 	 * @throws  SPException
 	 * @return  array
 	 */
-	public static function getAll(SPSite $site, $relative_url = null, $fetch = false)
+	public static function getAll(SPSite $site, $relative_url = null, array $settings = [])
 	{
 		$json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relative_url."')/Folders", [
 			'headers' => [
@@ -170,9 +187,9 @@ class SPFolder implements SPListInterface, SPItemInterface
 		$folders = [];
 
 		foreach ($json['d']['results'] as $subfolder) {
-			// NOTE: "Forms" is a system folder and should not be messed with
-			if ($subfolder['Name'] != 'Forms') {
-				$folders[$subfolder['UniqueId']] = new static($site, $subfolder, $fetch);
+			// skip System Folders
+			if ( ! static::isSystemFolder($subfolder['Name'])) {
+				$folders[$subfolder['UniqueId']] = new static($site, $subfolder, $settings);
 			}
 		}
 
@@ -186,20 +203,18 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 * @access  public
 	 * @param   SPSite $site         SharePoint Site
 	 * @param   string $relative_url SharePoint Folder relative URL
-	 * @param   bool   $fetch        Fetch SharePoint Files?
+	 * @param   array  $settings     Instantiation settings
 	 * @throws  SPException
 	 * @return  SPFolder
 	 */
-	public static function getByRelativeURL(SPSite &$site, $relative_url = null, $fetch = false)
+	public static function getByRelativeURL(SPSite $site, $relative_url = null, array $settings = [])
 	{
 		if (empty($relative_url)) {
 			throw new SPException('The SharePoint Folder Relative URL is empty/not set');
 		}
 
-		$name = basename($relative_url);
-
-		if (strtolower($name) == 'forms') {
-			throw new SPException('The SharePoint Folder "Forms" is a system folder');
+		if (static::isSystemFolder(basename($relative_url))) {
+			throw new SPException('Trying to get a SharePoint System Folder');
 		}
 
 		$json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relative_url."')", [
@@ -209,7 +224,7 @@ class SPFolder implements SPListInterface, SPItemInterface
 			]
 		]);
 
-		return new static($site, $json['d'], $fetch);
+		return new static($site, $json['d'], $settings);
 	}
 
 	/**
@@ -217,12 +232,13 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPFolder $folder Parent SharePoint Folder
-	 * @param   array    $name   SharePoint Folder name
+	 * @param   SPFolder $folder   Parent SharePoint Folder
+	 * @param   array    $name     SharePoint Folder name
+	 * @param   array    $settings Instantiation settings
 	 * @throws  SPException
 	 * @return  SPFolder
 	 */
-	public static function create(SPFolder &$folder, $name)
+	public static function create(SPFolder $folder, $name, array $settings = [])
 	{
 		$body = json_encode([
 			'__metadata' => [
@@ -244,7 +260,7 @@ class SPFolder implements SPListInterface, SPItemInterface
 			'body'    => $body
 		], 'POST');
 
-		return new static($folder->getSPSite(), $json['d']);
+		return new static($folder->getSPSite(), $json['d'], $settings);
 	}
 
 	/**
@@ -257,14 +273,11 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 */
 	public function update(array $properties)
 	{
-		$defaults = [
+		$properties = array_replace_recursive($properties, [
 			'__metadata' => [
 				'type' => 'SP.Folder'
 			]
-		];
-
-		// overwrite properties with defaults
-		$properties = array_merge($properties, $defaults);
+		]);
 
 		$body = json_encode($properties);
 
@@ -297,7 +310,7 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 *
 	 * @access  public
 	 * @throws  SPException
-	 * @return  bool true if the SharePoint Folder was deleted
+	 * @return  bool
 	 */
 	public function delete()
 	{
@@ -318,7 +331,7 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 *
 	 * @access  public
 	 * @throws  SPException
-	 * @return  int SharePoint Folder and File count
+	 * @return  int
 	 */
 	public function getSPItemCount()
 	{
@@ -337,12 +350,22 @@ class SPFolder implements SPListInterface, SPItemInterface
 	 *
 	 * @static
 	 * @access  public
+	 * @param   array $settings Instantiation settings
 	 * @return  array
 	 */
-	public function getSPItems()
+	public function getSPItems(array $settings = [])
 	{
-		$folders = static::getAll($this->site, $this->relative_url);
-		$files = SPFile::getAll($this);
+		$settings = array_replace_recursive([
+			'folders' => [
+				'extra' => [] // extra SharePoint Folder properties to map
+			],
+			'files' => [
+				'extra' => [] // extra SharePoint File properties to map
+			]
+		], $settings);
+
+		$folders = static::getAll($this->site, $this->relative_url, $settings['folders']);
+		$files = SPFile::getAll($this, $settings['files']['extra']);
 
 		$this->items = array_merge($folders, $files);
 

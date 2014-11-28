@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the SharePoint OAuth App Client package.
+ * This file is part of the SharePoint OAuth App Client library.
  *
  * @author     Quetzy Garcia <qgarcia@wearearchitect.com>
  * @copyright  2014 Architect 365
@@ -41,11 +41,11 @@ class SPSite implements SPRequestInterface
 	private $digest = null;
 
 	/**
-	 * Site Host
+	 * Site Hostname
 	 *
 	 * @access  private
 	 */
-	private $host = null;
+	private $hostname = null;
 
 	/**
 	 * Site Path
@@ -65,50 +65,29 @@ class SPSite implements SPRequestInterface
 	 * SharePoint Site constructor
 	 *
 	 * @access  public
-	 * @param   array  $config
+	 * @param   \GuzzleHttp\Client $http   Guzzle HTTP client
+	 * @param   array              $config SharePoint Site configuration
 	 * @throws  SPException
 	 * @return  SPSite
 	 */
-	public function __construct(array $config)
+	public function __construct(Client $http, array $config)
 	{
-		$defaults = [
+		$this->config = array_replace([
 			'acs' => 'https://accounts.accesscontrol.windows.net/tokens/OAuth/2'
-		];
+		], $config);
 
-		// overwrite defaults with config
-		$config = array_merge($defaults, $config);
+		// set Guzzle HTTP client
+		$this->http = $http;
 
-		if (empty($config['url'])) {
-			throw new SPException('The URL is empty/not set');
+		// set Site Hostname and Path
+		$components = parse_url($this->http->getBaseUrl());
+
+		if ( ! isset($components['scheme'], $components['host'], $components['path'])) {
+			throw new SPException('The SharePoint Site URL is invalid');
 		}
 
-		if ( ! filter_var($config['url'], FILTER_VALIDATE_URL)) {
-			throw new SPException('The URL is invalid');
-		}
-
-		$this->config = $config;
-
-		// set Site Host and Path
-		$components = parse_url($this->config['url']);
-
-		$this->host = $components['scheme'].'://'.$components['host'];
+		$this->hostname = $components['scheme'].'://'.$components['host'];
 		$this->path = rtrim($components['path'], '/');
-
-		// create Guzzle HTTP client
-		$this->http = new Client([
-			'base_url' => $config['url']
-		]);
-
-		/**
-		 * Set default cURL options
-		 */
-		$this->http->setDefaultOption('config', [
-			'curl' => [
-				CURLOPT_SSLVERSION     => 3,
-				CURLOPT_SSL_VERIFYHOST => 0,
-				CURLOPT_SSL_VERIFYPEER => 0
-			]
-		]);
 	}
 
 	/**
@@ -123,15 +102,15 @@ class SPSite implements SPRequestInterface
 	}
 
 	/**
-	 * Get SharePoint Site Host
+	 * Get SharePoint Site Hostname
 	 *
 	 * @access  public
-	 * @param   string $path Path to append to the Host
+	 * @param   string $path Path to append to the Hostname
 	 * @return  string
 	 */
-	public function getHost($path = null)
+	public function getHostname($path = null)
 	{
-		return $this->host.($path ? '/'.ltrim($path, '/') : '/');
+		return $this->hostname.($path ? '/'.ltrim($path, '/') : '/');
 	}
 
 	/**
@@ -155,7 +134,31 @@ class SPSite implements SPRequestInterface
 	 */
 	public function getURL($path = null)
 	{
-		return $this->host.$this->path.($path ? '/'.ltrim($path, '/') : '/');
+		return $this->hostname.$this->path.($path ? '/'.ltrim($path, '/') : '/');
+	}
+
+	/**
+	 * Create a SharePoint Site
+	 *
+	 * @static
+	 * @access  public
+	 * @param   string $url      SharePoint Site URL
+	 * @param   array  $settings Instantiation settings
+	 * @return  SPSite
+	 */
+	public static function create($url = null, array $settings = [])
+	{
+		$settings = array_replace_recursive([
+			'site' => [], // SharePoint Site configuration
+		], $settings, [
+			'http' => [   // Guzzle HTTP Client configuration
+				'base_url' => $url
+			]
+		]);
+
+		$http = new Client($settings['http']);
+
+		return new static($http, $settings['site']);
 	}
 
 	/**
@@ -172,13 +175,9 @@ class SPSite implements SPRequestInterface
 	public function request($url = null, array $options = [], $method = 'GET', $debug = false)
 	{
 		try {
-			// avoid throwing exceptions when we get HTTP errors (4XX, 5XX)
-			$defaults = [
-				'exceptions' => false
-			];
-
-			// overwrite options with defaults
-			$options = array_merge($options, $defaults);
+			$options = array_replace_recursive($options, [
+				'exceptions' => false // avoid throwing exceptions when we get HTTP errors (4XX, 5XX)
+			]);
 
 			$response = $this->http->send($this->http->createRequest($method, $url, $options));
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the SharePoint OAuth App Client package.
+ * This file is part of the SharePoint OAuth App Client library.
  *
  * @author     Quetzy Garcia <qgarcia@wearearchitect.com>
  * @copyright  2014 Architect 365
@@ -16,23 +16,21 @@ namespace WeAreArchitect\SharePoint;
 use Carbon\Carbon;
 use Serializable;
 
-class SPFormDigest implements Serializable
+class SPFormDigest extends SPObject implements Serializable
 {
-	use SPHydratorTrait;
-
 	/**
 	 * Form digest
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $digest = null;
+	protected $digest = null;
 
 	/**
 	 * Expire date
 	 *
-	 * @access  private
+	 * @access  protected
 	 */
-	private $expires = null;
+	protected $expires = null;
 
 	/**
 	 * Hydration handler
@@ -45,10 +43,7 @@ class SPFormDigest implements Serializable
 	 */
 	protected function hydrate(array $json, $missing = false)
 	{
-		$this->fill($json, [
-			'digest'  => 'GetContextWebInformation.FormDigestValue',
-			'expires' => 'GetContextWebInformation.FormDigestTimeoutSeconds'
-		], $missing);
+		parent::hydrate($json, $missing);
 
 		$this->expires = Carbon::now()->addSeconds($this->expires);
 	}
@@ -57,17 +52,23 @@ class SPFormDigest implements Serializable
 	 * SharePoint Form Digest constructor
 	 *
 	 * @access  public
-	 * @param   array  $json JSON response from the SharePoint REST API
+	 * @param   array  $json  JSON response from the SharePoint REST API
+	 * @param   array  $extra Extra SharePoint Form Digest properties to map
 	 * @throws  SPException
 	 * @return  SPFormDigest
 	 */
-	public function __construct(array $json)
+	public function __construct(array $json, array $extra = [])
 	{
+		parent::__construct([
+			'digest'  => 'GetContextWebInformation.FormDigestValue',
+			'expires' => 'GetContextWebInformation.FormDigestTimeoutSeconds'
+		], $extra);
+
 		$this->hydrate($json);
 	}
 
 	/**
-	 * Serialize SharePoint Form Digest object
+	 * Serialize SharePoint Form Digest
 	 *
 	 * @access  public
 	 * @return  string
@@ -75,13 +76,13 @@ class SPFormDigest implements Serializable
 	public function serialize()
 	{
 		return serialize([
-			'digest'  => $this->digest,
-			'expires' => $this->expires->getTimestamp()
+			$this->digest,
+			$this->expires->getTimestamp()
 		]);
 	}
 
 	/**
-	 * Recreate SharePoint Form Digest object
+	 * Recreate SharePoint Form Digest
 	 *
 	 * @access  public
 	 * @param   string $serialized
@@ -89,10 +90,9 @@ class SPFormDigest implements Serializable
 	 */
 	public function unserialize($serialized = null)
 	{
-		$data = unserialize($serialized);
+		list($this->digest, $this->expires) = unserialize($serialized);
 
-		$this->digest = $data['digest'];
-		$this->expires = Carbon::createFromTimeStamp($data['expires']);
+		$this->expires = Carbon::createFromTimeStamp($this->expires);
 	}
 
 	/**
@@ -111,11 +111,12 @@ class SPFormDigest implements Serializable
 	 *
 	 * @static
 	 * @access  public
-	 * @param   SPSite $site SharePoint List
+	 * @param   SPSite $site  SharePoint List
+	 * @param   array  $extra Extra SharePoint Form Digest properties to map
 	 * @throws  SPException
 	 * @return  SPFormDigest
 	 */
-	public static function create(SPSite &$site)
+	public static function create(SPSite $site, array $extra = [])
 	{
 		$json = $site->request('_api/contextinfo', [
 			'headers' => [
@@ -124,7 +125,7 @@ class SPFormDigest implements Serializable
 			]
 		], 'POST');
 
-		return new static($json['d']);
+		return new static($json['d'], $extra);
 	}
 
 	/**
