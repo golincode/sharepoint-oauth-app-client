@@ -20,7 +20,7 @@ use IteratorAggregate;
 
 abstract class SPListObject extends SPObject implements ArrayAccess, Countable, IteratorAggregate, SPRequestInterface
 {
-	use SPCommonPropertiesTrait;
+	use SPPropertiesTrait;
 
 	/**
 	 * SharePoint Site
