@@ -70,6 +70,18 @@ class SPAccessToken extends SPObject implements Serializable
 	}
 
 	/**
+	 * @{inheritdoc}
+	 */
+	public function toArray()
+	{
+		return [
+			'token'   => $this->token,
+			'expires' => $this->expires,
+			'extra'   => $this->extra
+		];
+	}
+
+	/**
 	 * Serialize SharePoint Access Token
 	 *
 	 * @access  public

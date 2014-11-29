@@ -68,6 +68,18 @@ class SPFormDigest extends SPObject implements Serializable
 	}
 
 	/**
+	 * @{inheritdoc}
+	 */
+	public function toArray()
+	{
+		return [
+			'digest'  => $this->digest,
+			'expires' => $this->expires,
+			'extra'   => $this->extra
+		];
+	}
+
+	/**
 	 * Serialize SharePoint Form Digest
 	 *
 	 * @access  public
