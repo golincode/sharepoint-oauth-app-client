@@ -13,7 +13,7 @@
 
 namespace WeAreArchitect\SharePoint;
 
-trait SPCommonPropertiesTrait
+trait SPPropertiesTrait
 {
 	/**
 	 * SharePoint Type
