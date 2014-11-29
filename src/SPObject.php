@@ -142,4 +142,12 @@ abstract class SPObject
 				throw new SPException('Could not hydrate '.get_class($this));
 		}
 	}
+
+	/**
+	 * Get the SPObject as an Array
+	 *
+	 * @access  public
+	 * @return  array
+	 */
+	abstract public function toArray();
 }
