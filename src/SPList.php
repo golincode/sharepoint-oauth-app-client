@@ -140,6 +140,23 @@ class SPList extends SPListObject
 	}
 
 	/**
+	 * @{inheritdoc}
+	 */
+	public function toArray()
+	{
+		return [
+			'type'        => $this->type,
+			'id'          => $this->id,
+			'guid'        => $this->guid,
+			'title'       => $this->title,
+			'template'    => $this->template,
+			'item_type'   => $this->item_type,
+			'description' => $this->description,
+			'items'       => $this->items
+		];
+	}
+
+	/**
 	 * Get List Template Type
 	 *
 	 * @access  public
