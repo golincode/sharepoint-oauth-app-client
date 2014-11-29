@@ -107,10 +107,7 @@ class SPUser extends SPObject
 	}
 
 	/**
-	 * Get the SharePoint User as a plain array
-	 *
-	 * @access  public
-	 * @return  array
+	 * @{inheritdoc}
 	 */
 	public function toArray()
 	{
