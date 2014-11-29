@@ -18,7 +18,7 @@ use SplFileObject;
 
 class SPFile extends SPObject implements SPItemInterface
 {
-	use SPCommonPropertiesTrait;
+	use SPPropertiesTrait;
 
 	/**
 	 * SharePoint Folder
@@ -88,6 +88,24 @@ class SPFile extends SPObject implements SPItemInterface
 		$this->folder = $folder;
 
 		$this->hydrate($json);
+	}
+
+	/**
+	 * @{inheritdoc}
+	 */
+	public function toArray()
+	{
+		return [
+			'type'         => $this->type,
+			'id'           => $this->id,
+			'guid'         => $this->guid,
+			'title'        => $this->title,
+			'name'         => $this->name,
+			'size'         => $this->size,
+			'created'      => $this->created,
+			'modified'     => $this->modified,
+			'relative_url' => $this->relative_url
+		];
 	}
 
 	/**

@@ -15,7 +15,7 @@ namespace WeAreArchitect\SharePoint;
 
 class SPItem extends SPObject implements SPItemInterface
 {
-	use SPCommonPropertiesTrait;
+	use SPPropertiesTrait;
 
 	/**
 	 * SharePoint List
@@ -45,6 +45,19 @@ class SPItem extends SPObject implements SPItemInterface
 		$this->list = $list;
 
 		$this->hydrate($json);
+	}
+
+	/**
+	 * @{inheritdoc}
+	 */
+	public function toArray()
+	{
+		return [
+			'type'  => $this->type,
+			'id'    => $this->id,
+			'guid'  => $this->guid,
+			'title' => $this->title
+		];
 	}
 
 	/**
