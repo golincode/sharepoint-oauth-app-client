@@ -72,6 +72,22 @@ class SPFolder extends SPListObject implements SPItemInterface
 	}
 
 	/**
+	 * @{inheritdoc}
+	 */
+	public function toArray()
+	{
+		return [
+			'type'         => $this->type,
+			'id'           => $this->id,
+			'guid'         => $this->guid,
+			'title'        => $this->title,
+			'name'         => $this->name,
+			'relative_url' => $this->relative_url,
+			'items'        => $this->items
+		];
+	}
+
+	/**
 	 * Get SharePoint Site
 	 *
 	 * @access  public
