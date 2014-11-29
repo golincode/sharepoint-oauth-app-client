@@ -17,16 +17,16 @@ use RuntimeException;
 
 class SPException extends RuntimeException
 {
-	/**
-	 * Get the previous Exception message
-	 *
-	 * @access public
-	 * @return string|null Previous exception message or null if no previous Exception exists
-	 */
-	public function getPreviousMessage()
-	{
-		$previous = $this->getPrevious();
+    /**
+     * Get the previous Exception message
+     *
+     * @access public
+     * @return string|null Previous exception message or null if no previous Exception exists
+     */
+    public function getPreviousMessage()
+    {
+        $previous = $this->getPrevious();
 
-		return ($previous === null) ? null : $previous->getMessage();
-	}
+        return ($previous === null) ? null : $previous->getMessage();
+    }
 }

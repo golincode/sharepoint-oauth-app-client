@@ -15,75 +15,75 @@ namespace WeAreArchitect\SharePoint;
 
 trait SPPropertiesTrait
 {
-	/**
-	 * SharePoint Type
-	 *
-	 * @access  protected
-	 */
-	protected $type = null;
+    /**
+     * SharePoint Type
+     *
+     * @access  protected
+     */
+    protected $type = null;
 
-	/**
-	 * SharePoint ID
-	 *
-	 * @access  protected
-	 */
-	protected $id = 0;
+    /**
+     * SharePoint ID
+     *
+     * @access  protected
+     */
+    protected $id = 0;
 
-	/**
-	 * SharePoint GUID
-	 *
-	 * @access  protected
-	 */
-	protected $guid = null;
+    /**
+     * SharePoint GUID
+     *
+     * @access  protected
+     */
+    protected $guid = null;
 
-	/**
-	 * SharePoint Title
-	 *
-	 * @access  protected
-	 */
-	protected $title = null;
+    /**
+     * SharePoint Title
+     *
+     * @access  protected
+     */
+    protected $title = null;
 
-	/**
-	 * Get SharePoint Type
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getType()
-	{
-		return $this->type;
-	}
+    /**
+     * Get SharePoint Type
+     *
+     * @access  public
+     * @return  string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
 
-	/**
-	 * Get SharePoint ID
-	 *
-	 * @access  public
-	 * @return  int
-	 */
-	public function getID()
-	{
-		return $this->id;
-	}
+    /**
+     * Get SharePoint ID
+     *
+     * @access  public
+     * @return  int
+     */
+    public function getID()
+    {
+        return $this->id;
+    }
 
-	/**
-	 * Get SharePoint GUID
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getGUID()
-	{
-		return $this->guid;
-	}
+    /**
+     * Get SharePoint GUID
+     *
+     * @access  public
+     * @return  string
+     */
+    public function getGUID()
+    {
+        return $this->guid;
+    }
 
-	/**
-	 * Get SharePoint Title
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getTitle()
-	{
-		return $this->title;
-	}
+    /**
+     * Get SharePoint Title
+     *
+     * @access  public
+     * @return  string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
 }

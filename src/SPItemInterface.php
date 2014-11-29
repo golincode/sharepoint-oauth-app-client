@@ -15,19 +15,19 @@ namespace WeAreArchitect\SharePoint;
 
 interface SPItemInterface
 {
-	/**
-	 * Get SharePoint GUID
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getGUID();
+    /**
+     * Get SharePoint GUID
+     *
+     * @access  public
+     * @return  string
+     */
+    public function getGUID();
 
-	/**
-	 * Get SharePoint Title
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function getTitle();
+    /**
+     * Get SharePoint Title
+     *
+     * @access  public
+     * @return  string
+     */
+    public function getTitle();
 }

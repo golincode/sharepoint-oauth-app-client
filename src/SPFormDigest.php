@@ -18,147 +18,147 @@ use Serializable;
 
 class SPFormDigest extends SPObject implements Serializable
 {
-	/**
-	 * Form digest
-	 *
-	 * @access  protected
-	 */
-	protected $digest = null;
+    /**
+     * Form digest
+     *
+     * @access  protected
+     */
+    protected $digest = null;
 
-	/**
-	 * Expire date
-	 *
-	 * @access  protected
-	 */
-	protected $expires = null;
+    /**
+     * Expire date
+     *
+     * @access  protected
+     */
+    protected $expires = null;
 
-	/**
-	 * Hydration handler
-	 *
-	 * @access  protected
-	 * @param   array     $json    JSON response from the SharePoint REST API
-	 * @param   bool      $missing Allow missing properties?
-	 * @throws  SPException
-	 * @return  void
-	 */
-	protected function hydrate(array $json, $missing = false)
-	{
-		parent::hydrate($json, $missing);
+    /**
+     * Hydration handler
+     *
+     * @access  protected
+     * @param   array     $json    JSON response from the SharePoint REST API
+     * @param   bool      $missing Allow missing properties?
+     * @throws  SPException
+     * @return  void
+     */
+    protected function hydrate(array $json, $missing = false)
+    {
+        parent::hydrate($json, $missing);
 
-		$this->expires = Carbon::now()->addSeconds($this->expires);
-	}
+        $this->expires = Carbon::now()->addSeconds($this->expires);
+    }
 
-	/**
-	 * SharePoint Form Digest constructor
-	 *
-	 * @access  public
-	 * @param   array  $json  JSON response from the SharePoint REST API
-	 * @param   array  $extra Extra SharePoint Form Digest properties to map
-	 * @throws  SPException
-	 * @return  SPFormDigest
-	 */
-	public function __construct(array $json, array $extra = [])
-	{
-		parent::__construct([
-			'digest'  => 'GetContextWebInformation.FormDigestValue',
-			'expires' => 'GetContextWebInformation.FormDigestTimeoutSeconds'
-		], $extra);
+    /**
+     * SharePoint Form Digest constructor
+     *
+     * @access  public
+     * @param   array  $json  JSON response from the SharePoint REST API
+     * @param   array  $extra Extra SharePoint Form Digest properties to map
+     * @throws  SPException
+     * @return  SPFormDigest
+     */
+    public function __construct(array $json, array $extra = [])
+    {
+        parent::__construct([
+            'digest'  => 'GetContextWebInformation.FormDigestValue',
+            'expires' => 'GetContextWebInformation.FormDigestTimeoutSeconds'
+        ], $extra);
 
-		$this->hydrate($json);
-	}
+        $this->hydrate($json);
+    }
 
-	/**
-	 * @{inheritdoc}
-	 */
-	public function toArray()
-	{
-		return [
-			'digest'  => $this->digest,
-			'expires' => $this->expires,
-			'extra'   => $this->extra
-		];
-	}
+    /**
+     * @{inheritdoc}
+     */
+    public function toArray()
+    {
+        return [
+            'digest'  => $this->digest,
+            'expires' => $this->expires,
+            'extra'   => $this->extra
+        ];
+    }
 
-	/**
-	 * Serialize SharePoint Form Digest
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function serialize()
-	{
-		return serialize([
-			$this->digest,
-			$this->expires->getTimestamp()
-		]);
-	}
+    /**
+     * Serialize SharePoint Form Digest
+     *
+     * @access  public
+     * @return  string
+     */
+    public function serialize()
+    {
+        return serialize([
+            $this->digest,
+            $this->expires->getTimestamp()
+        ]);
+    }
 
-	/**
-	 * Recreate SharePoint Form Digest
-	 *
-	 * @access  public
-	 * @param   string $serialized
-	 * @return  void
-	 */
-	public function unserialize($serialized = null)
-	{
-		list($this->digest, $this->expires) = unserialize($serialized);
+    /**
+     * Recreate SharePoint Form Digest
+     *
+     * @access  public
+     * @param   string $serialized
+     * @return  void
+     */
+    public function unserialize($serialized = null)
+    {
+        list($this->digest, $this->expires) = unserialize($serialized);
 
-		$this->expires = Carbon::createFromTimeStamp($this->expires);
-	}
+        $this->expires = Carbon::createFromTimeStamp($this->expires);
+    }
 
-	/**
-	 * SharePoint Form Digest string value
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function __toString()
-	{
-		return $this->digest;
-	}
+    /**
+     * SharePoint Form Digest string value
+     *
+     * @access  public
+     * @return  string
+     */
+    public function __toString()
+    {
+        return $this->digest;
+    }
 
-	/**
-	 * Create a SharePoint Form Digest
-	 *
-	 * @static
-	 * @access  public
-	 * @param   SPSite $site  SharePoint List
-	 * @param   array  $extra Extra SharePoint Form Digest properties to map
-	 * @throws  SPException
-	 * @return  SPFormDigest
-	 */
-	public static function create(SPSite $site, array $extra = [])
-	{
-		$json = $site->request('_api/contextinfo', [
-			'headers' => [
-				'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-				'Accept'        => 'application/json;odata=verbose'
-			]
-		], 'POST');
+    /**
+     * Create a SharePoint Form Digest
+     *
+     * @static
+     * @access  public
+     * @param   SPSite $site  SharePoint List
+     * @param   array  $extra Extra SharePoint Form Digest properties to map
+     * @throws  SPException
+     * @return  SPFormDigest
+     */
+    public static function create(SPSite $site, array $extra = [])
+    {
+        $json = $site->request('_api/contextinfo', [
+            'headers' => [
+                'Authorization' => 'Bearer '.$site->getSPAccessToken(),
+                'Accept'        => 'application/json;odata=verbose'
+            ]
+        ], 'POST');
 
-		return new static($json['d'], $extra);
-	}
+        return new static($json['d'], $extra);
+    }
 
-	/**
-	 * Check if the SharePoint Form Digest has expired
-	 *
-	 * @access  public
-	 * @return  bool
-	 */
-	public function hasExpired()
-	{
-		return $this->expires->isPast();
-	}
+    /**
+     * Check if the SharePoint Form Digest has expired
+     *
+     * @access  public
+     * @return  bool
+     */
+    public function hasExpired()
+    {
+        return $this->expires->isPast();
+    }
 
-	/**
-	 * Get the SharePoint Form Digest expire date
-	 *
-	 * @access  public
-	 * @return  Carbon
-	 */
-	public function expireDate()
-	{
-		return $this->expires;
-	}
+    /**
+     * Get the SharePoint Form Digest expire date
+     *
+     * @access  public
+     * @return  Carbon
+     */
+    public function expireDate()
+    {
+        return $this->expires;
+    }
 }

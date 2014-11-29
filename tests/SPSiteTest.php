@@ -18,58 +18,58 @@ use PHPUnit_Framework_TestCase;
 
 class SPSiteTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * Test SPSite constructor to FAIL (invalid URL)
-	 *
-	 * @expectedException         \WeAreArchitect\SharePoint\SPException
-	 * @expectedExceptionMessage  The SharePoint Site URL is invalid
-	 *
-	 * @access  public
-	 * @return  void
-	 */
-	public function testSPSiteConstructorFailInvalidURL()
-	{
-		$http = new Client();
+    /**
+     * Test SPSite constructor to FAIL (invalid URL)
+     *
+     * @expectedException         \WeAreArchitect\SharePoint\SPException
+     * @expectedExceptionMessage  The SharePoint Site URL is invalid
+     *
+     * @access  public
+     * @return  void
+     */
+    public function testSPSiteConstructorFailInvalidURL()
+    {
+        $http = new Client();
 
-		$this->assertInstanceOf('\GuzzleHttp\Client', $http);
+        $this->assertInstanceOf('\GuzzleHttp\Client', $http);
 
-		new SPSite($http, []);
-	}
+        new SPSite($http, []);
+    }
 
-	/**
-	 * Test SPSite constructor to PASS
-	 *
-	 * @access  public
-	 * @return  SPSite
-	 */
-	public function testSPSiteConstructorPass()
-	{
-		$http = new Client([
-			'base_url' => 'https://example.sharepoint.com/sites/mySite/'
-		]);
+    /**
+     * Test SPSite constructor to PASS
+     *
+     * @access  public
+     * @return  SPSite
+     */
+    public function testSPSiteConstructorPass()
+    {
+        $http = new Client([
+            'base_url' => 'https://example.sharepoint.com/sites/mySite/'
+        ]);
 
-		$this->assertInstanceOf('\GuzzleHttp\Client', $http);
+        $this->assertInstanceOf('\GuzzleHttp\Client', $http);
 
-		$site = new SPSite($http, []);
+        $site = new SPSite($http, []);
 
-		$this->assertInstanceOf('\WeAreArchitect\SharePoint\SPSite', $site);
+        $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPSite', $site);
 
-		return $site;
-	}
+        return $site;
+    }
 
-	/**
-	 * Test SPSite getSPAccessToken() method to FAIL (invalid token)
-	 *
-	 * @depends                   testSPSiteConstructorPass
-	 * @expectedException         \WeAreArchitect\SharePoint\SPException
-	 * @expectedExceptionMessage  Invalid SharePoint Access Token
-	 *
-	 * @access  public
-	 * @param   SPSite  $site SharePoint Site
-	 * @return  void
-	 */
-	public function testSPSiteGetSPAccessTokenFailInvalidToken(SPSite $site = null)
-	{
-		$site->getSPAccessToken();
-	}
+    /**
+     * Test SPSite getSPAccessToken() method to FAIL (invalid token)
+     *
+     * @depends                   testSPSiteConstructorPass
+     * @expectedException         \WeAreArchitect\SharePoint\SPException
+     * @expectedExceptionMessage  Invalid SharePoint Access Token
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteGetSPAccessTokenFailInvalidToken(SPSite $site = null)
+    {
+        $site->getSPAccessToken();
+    }
 }
