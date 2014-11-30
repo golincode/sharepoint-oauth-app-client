@@ -104,7 +104,8 @@ class SPFile extends SPObject implements SPItemInterface
             'size'         => $this->size,
             'created'      => $this->created,
             'modified'     => $this->modified,
-            'relative_url' => $this->relative_url
+            'relative_url' => $this->relative_url,
+            'extra'        => $this->extra
         ];
     }
 

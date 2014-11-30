@@ -152,7 +152,8 @@ class SPList extends SPListObject
             'template'    => $this->template,
             'item_type'   => $this->item_type,
             'description' => $this->description,
-            'items'       => $this->items
+            'items'       => $this->items,
+            'extra'       => $this->extra
         ];
     }
 

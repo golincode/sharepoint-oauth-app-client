@@ -119,7 +119,8 @@ class SPUser extends SPObject
             'last_name'  => $this->last_name,
             'title'      => $this->title,
             'picture'    => $this->picture,
-            'url'        => $this->url
+            'url'        => $this->url,
+            'extra'      => $this->extra
         ];
     }
 

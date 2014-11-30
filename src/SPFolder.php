@@ -83,7 +83,8 @@ class SPFolder extends SPListObject implements SPItemInterface
             'title'        => $this->title,
             'name'         => $this->name,
             'relative_url' => $this->relative_url,
-            'items'        => $this->items
+            'items'        => $this->items,
+            'extra'        => $this->extra
         ];
     }
 
