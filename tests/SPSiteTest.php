@@ -153,4 +153,20 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPFormDigest', $digest);
     }
+
+    /**
+     * Test SPSite getConfig() method to PASS
+     *
+     * @depends testSPSiteConstructorPass
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteGetConfigPass(SPSite $site = null)
+    {
+        $this->assertArrayHasKey('resource', $site->getConfig());
+        $this->assertArrayHasKey('client_id', $site->getConfig());
+        $this->assertArrayHasKey('secret', $site->getConfig());
+    }
 }
