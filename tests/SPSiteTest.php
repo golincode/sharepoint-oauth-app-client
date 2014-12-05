@@ -103,6 +103,32 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test SPSite getSPAccessToken() method to FAIL (expired token)
+     *
+     * @depends                   testSPSiteConstructorPass
+     * @expectedException         \WeAreArchitect\SharePoint\SPException
+     * @expectedExceptionMessage  Expired SharePoint Access Token
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteGetSPAccessTokenFailExpiredToken(SPSite $site = null)
+    {
+        $serialized = sprintf('C:39:"WeAreArchitect\SharePoint\SPAccessToken":34:{a:2:{i:0;s:0:"";i:1;i:%d;}}', time());
+        $token = unserialize($serialized);
+
+        $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPAccessToken', $token);
+        $this->assertFalse($token->hasExpired());
+
+        $site->setSPAccessToken($token);
+
+        sleep(1); // wait 1 sec for token expiration
+
+        $site->getSPAccessToken();
+    }
+
+    /**
      * Test SPSite getSPAccessToken() method to PASS
      *
      * @depends testSPSiteConstructorPass
@@ -118,6 +144,46 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
         $token = $site->getSPAccessToken();
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPAccessToken', $token);
+    }
+
+    /**
+     * Test SPSite setSPAccessToken() method to FAIL (invalid token)
+     *
+     * @depends                   testSPSiteConstructorPass
+     * @expectedException         \WeAreArchitect\SharePoint\SPException
+     * @expectedExceptionMessage  Expired SharePoint Access Token
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteSetSPAccessTokenFailInvalidToken(SPSite $site = null)
+    {
+        $token = unserialize('C:39:"WeAreArchitect\SharePoint\SPAccessToken":25:{a:2:{i:0;s:0:"";i:1;i:0;}}');
+
+        $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPAccessToken', $token);
+        $this->assertTrue($token->hasExpired());
+
+        $site->setSPAccessToken($token);
+    }
+
+    /**
+     * Test SPSite setSPAccessToken() method to PASS
+     *
+     * @depends testSPSiteConstructorPass
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteSetSPAccessTokenPass(SPSite $site = null)
+    {
+        $token = unserialize('C:39:"WeAreArchitect\SharePoint\SPAccessToken":34:{a:2:{i:0;s:0:"";i:1;i:2147483647;}}');
+
+        $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPAccessToken', $token);
+        $this->assertFalse($token->hasExpired());
+
+        $site->setSPAccessToken($token);
     }
 
     /**
@@ -137,6 +203,32 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test SPSite getSPFormDigest() method to FAIL (expired digest)
+     *
+     * @depends                   testSPSiteConstructorPass
+     * @expectedException         \WeAreArchitect\SharePoint\SPException
+     * @expectedExceptionMessage  Expired SharePoint Form Digest
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteGetSPFormDigestFailExpiredDigest(SPSite $site = null)
+    {
+        $serialized = sprintf('C:38:"WeAreArchitect\SharePoint\SPFormDigest":34:{a:2:{i:0;s:0:"";i:1;i:%d;}}', time());
+        $digest = unserialize($serialized);
+
+        $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPFormDigest', $digest);
+        $this->assertFalse($digest->hasExpired());
+
+        $site->setSPFormDigest($digest);
+
+        sleep(1); // wait 1 sec for digest expiration
+
+        $site->getSPFormDigest();
+    }
+
+    /**
      * Test SPSite getSPFormDigest() method to PASS
      *
      * @depends testSPSiteConstructorPass
@@ -152,6 +244,46 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
         $digest = $site->getSPFormDigest();
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPFormDigest', $digest);
+    }
+
+    /**
+     * Test SPSite setSPFormDigest() method to FAIL (invalid digest)
+     *
+     * @depends                   testSPSiteConstructorPass
+     * @expectedException         \WeAreArchitect\SharePoint\SPException
+     * @expectedExceptionMessage  Expired SharePoint Form Digest
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteSetSPFormDigestInvalidDigest(SPSite $site = null)
+    {
+        $digest = unserialize('C:38:"WeAreArchitect\SharePoint\SPFormDigest":25:{a:2:{i:0;s:0:"";i:1;i:0;}}');
+
+        $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPFormDigest', $digest);
+        $this->assertTrue($digest->hasExpired());
+
+        $site->setSPFormDigest($digest);
+    }
+
+    /**
+     * Test SPSite setSPFormDigest() method to PASS
+     *
+     * @depends testSPSiteConstructorPass
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteSetSPFormDigestPass(SPSite $site = null)
+    {
+        $digest = unserialize('C:38:"WeAreArchitect\SharePoint\SPFormDigest":34:{a:2:{i:0;s:0:"";i:1;i:2147483647;}}');
+
+        $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPFormDigest', $digest);
+        $this->assertFalse($digest->hasExpired());
+
+        $site->setSPFormDigest($digest);
     }
 
     /**
