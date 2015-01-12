@@ -66,6 +66,15 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
                         'FormDigestTimeoutSeconds' => 1800
                     ]
                 ]
+            ]))),
+
+            new Response(200, [], Stream::factory(json_encode([
+                'd' => [
+                    'GetContextWebInformation' => [
+                        'FormDigestValue'          => '1D98CAC834A6139426DF168F2E8ED',
+                        'FormDigestTimeoutSeconds' => 1800
+                    ]
+                ]
             ])))
         ]);
 
@@ -129,7 +138,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test SPSite getSPAccessToken() method to PASS
+     * Test SPSite getSPAccessToken() method to PASS (without context)
      *
      * @depends testSPSiteConstructorPass
      *
@@ -137,7 +146,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite  $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetSPAccessTokenPass(SPSite $site = null)
+    public function testSPSiteGetSPAccessTokenWithoutContextPass(SPSite $site = null)
     {
         $site->createSPAccessToken();
 
