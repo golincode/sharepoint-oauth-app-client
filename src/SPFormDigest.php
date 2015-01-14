@@ -3,7 +3,7 @@
  * This file is part of the SharePoint OAuth App Client library.
  *
  * @author     Quetzy Garcia <qgarcia@wearearchitect.com>
- * @copyright  2014 Architect 365
+ * @copyright  2014-2015 Architect 365
  * @link       http://architect365.co.uk
  *
  * For the full copyright and license information,
