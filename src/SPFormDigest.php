@@ -33,17 +33,11 @@ class SPFormDigest extends SPObject implements Serializable
     protected $expires = null;
 
     /**
-     * Hydration handler
-     *
-     * @access  protected
-     * @param   array     $json    JSON response from the SharePoint REST API
-     * @param   bool      $missing Allow missing properties?
-     * @throws  SPException
-     * @return  void
+     * @{inheritdoc}
      */
-    protected function hydrate(array $json, $missing = false)
+    protected function hydrate($data, $missing = false)
     {
-        parent::hydrate($json, $missing);
+        parent::hydrate($data, $missing);
 
         $this->expires = Carbon::now()->addSeconds($this->expires);
     }
