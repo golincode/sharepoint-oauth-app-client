@@ -25,5 +25,6 @@
 		"psr-4": {
 			"WeAreArchitect\\SharePoint\\": "src/"
 		}
-	}
+	},
+	"minimum-stability": "stable"
 }
