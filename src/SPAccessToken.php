@@ -144,7 +144,7 @@ class SPAccessToken extends SPObject implements Serializable
         }
 
         // get URL hostname
-        $hostname = parse_url($config['url'], PHP_URL_HOST);
+        $hostname = parse_url($site->getURL(), PHP_URL_HOST);
 
         // build resource
         $resource = str_replace('@', '/'.$hostname.'@', $jwt->appctxsender);
