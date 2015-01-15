@@ -25,58 +25,58 @@ class SPUser extends SPObject
     /**
      * User Account
      *
-     * @access  private
+     * @access  protected
      */
-    private $account = null;
+    protected $account = null;
 
     /**
      * User Email
      *
-     * @access  private
+     * @access  protected
      */
-    private $email = null;
+    protected $email = null;
 
     /**
      * User Full Name
      *
-     * @access  private
+     * @access  protected
      */
-    private $full_name = null;
+    protected $full_name = null;
 
     /**
      * User First Name
      *
-     * @access  private
+     * @access  protected
      */
-    private $first_name = null;
+    protected $first_name = null;
 
     /**
      * User Last Name
      *
-     * @access  private
+     * @access  protected
      */
-    private $last_name = null;
+    protected $last_name = null;
 
     /**
      * User Title
      *
-     * @access  private
+     * @access  protected
      */
-    private $title = null;
+    protected $title = null;
 
     /**
      * User Picture (URL)
      *
-     * @access  private
+     * @access  protected
      */
-    private $picture = null;
+    protected $picture = null;
 
     /**
      * User URL (profile)
      *
-     * @access  private
+     * @access  protected
      */
-    private $url = null;
+    protected $url = null;
 
     /**
      * SharePoint User constructor
