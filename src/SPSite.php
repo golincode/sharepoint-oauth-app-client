@@ -138,7 +138,7 @@ class SPSite implements SPRequestInterface
     }
 
     /**
-     * Get the SharePoint logout URL
+     * Get the SharePoint Site logout URL
      *
      * @access  public
      * @return  string

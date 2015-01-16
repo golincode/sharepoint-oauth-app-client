@@ -334,23 +334,34 @@ class SPFile extends SPObject implements SPItemInterface
      */
     public static function create(SPFolder $folder, $contents = null, $name = null, $overwrite = false, array $extra = [])
     {
-        if ($contents instanceof SplFileObject) {
-            $body = $contents->fread($contents->getSize());
+        switch (true) {
+            case $contents instanceof SplFileObject:
+                $body = $contents->fread($contents->getSize());
 
-            if ($body === false) {
-                throw new SPException('Unable to get file contents');
-            }
+                if ($body === false) {
+                    throw new SPException('Unable to get file contents');
+                }
 
-            // use original name if none specified
-            if (empty($name)) {
-                $name = $contents->getFilename();
-            }
-        } else {
-            $body = $contents;
+                // use original name if none specified
+                if (empty($name)) {
+                    $name = $contents->getFilename();
+                }
+                break;
 
-            if (empty($name)) {
-                throw new SPException('SharePoint File Name is empty/not set');
-            }
+            case is_resource($contents):
+                $body = stream_get_contents($contents);
+
+                if ($body === false) {
+                    throw new SPException('Unable to get file contents');
+                }
+                break;
+
+            default:
+                $body = $contents;
+
+                if (empty($name)) {
+                    throw new SPException('SharePoint File Name is empty/not set');
+                }
         }
 
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
@@ -380,14 +391,26 @@ class SPFile extends SPObject implements SPItemInterface
      */
     public function update($contents = null)
     {
-        if ($contents instanceof SplFileObject) {
-            $body = $contents->fread($contents->getSize());
+        switch (true) {
+            case $contents instanceof SplFileObject:
+                $body = $contents->fread($contents->getSize());
 
-            if ($body === false) {
-                throw new SPException('Unable to get file contents');
-            }
-        } else {
-            $body = $contents;
+                if ($body === false) {
+                    throw new SPException('Unable to get file contents');
+                }
+                break;
+
+            case is_resource($contents):
+                $body = stream_get_contents($contents);
+
+                if ($body === false) {
+                    throw new SPException('Unable to get file contents');
+                }
+                break;
+
+            default:
+                $body = $contents;
+                break;
         }
 
         $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
