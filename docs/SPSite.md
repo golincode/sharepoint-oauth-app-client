@@ -27,7 +27,7 @@ try {
 	$http = new Client([
 		'base_url' => 'https://example.sharepoint.com/sites/mySite/'
 	]);
-	
+
 	$site = new SPSite($http, $settings);
 
 } catch(SPException $e) {
@@ -35,7 +35,7 @@ try {
 }
 ```
 
-### via create() method
+### via factory
 ```php
 <?php
 
@@ -53,7 +53,7 @@ try {
 		]
 	];
 
-	$site = SPSite::create('https://example.sharepoint.com/sites/mySite', $settings);
+	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
 } catch(SPException $e) {
 	// handle exceptions

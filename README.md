@@ -38,7 +38,7 @@ try {
 	];
 
 	// create a SharePoint Site instance
-	$site = SPSite::create('https://example.sharepoint.com/sites/mySite', $settings);
+	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
 	// generate an Access Token
 	$site->createSPAccessToken();
@@ -72,6 +72,9 @@ try {
 - [SPFolder](docs/SPFolder.md)
 - [SPFile](docs/SPFile.md)
 - [SPUser](docs/SPUser.md)
+
+## Troubleshooting
+Check for common issues with the library and how to [solve them](docs/troubleshooting.md)
 
 ## Warning
 Until a major version of the library gets released, the API may **change**!
