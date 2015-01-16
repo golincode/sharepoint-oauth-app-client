@@ -258,15 +258,4 @@ class SPUser extends SPObject
 
         return new static($site, $json['d'], $extra);
     }
-
-    /**
-     * Get a URL to logout from SharePoint
-     *
-     * @access  public
-     * @return  string
-     */
-    public function getLogoutURL()
-    {
-        return $this->site->getURL('_layouts/SignOut.aspx');
-    }
 }

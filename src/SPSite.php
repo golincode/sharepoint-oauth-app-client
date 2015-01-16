@@ -138,6 +138,17 @@ class SPSite implements SPRequestInterface
     }
 
     /**
+     * Get the SharePoint logout URL
+     *
+     * @access  public
+     * @return  string
+     */
+    public function getLogoutURL()
+    {
+        return $this->getURL('_layouts/SignOut.aspx');
+    }
+
+    /**
      * Create a SharePoint Site
      *
      * @static
