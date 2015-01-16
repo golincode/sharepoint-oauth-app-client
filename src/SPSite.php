@@ -148,6 +148,11 @@ class SPSite implements SPRequestInterface
      */
     public static function create($url = null, array $settings = [])
     {
+        // add trailing slash when missing
+        if (is_string($url)) {
+            $url = rtrim($url, '/').'/';
+        }
+
         $settings = array_replace_recursive([
             'site' => [], // SharePoint Site configuration
         ], $settings, [
