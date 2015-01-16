@@ -74,7 +74,7 @@ try {
 - [SPUser](docs/SPUser.md)
 
 ## Troubleshooting
-Check for common issues with the library and how to [solve them](docs/Troubleshooting.md)
+Check for common library issues and how to [solve them](docs/Troubleshooting.md)
 
 ## Warning
 Until a major version of the library gets released, the API may **change**!
