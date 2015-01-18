@@ -310,4 +310,19 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('client_id', $site->getConfig());
         $this->assertArrayHasKey('secret', $site->getConfig());
     }
+
+    /**
+     * Test SPSite getLogoutURL() method to PASS
+     *
+     * @depends testSPSiteConstructorPass
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteGetLogoutURLPass(SPSite $site = null)
+    {
+        $this->assertNotFalse(filter_var($site->getLogoutURL(), FILTER_VALIDATE_URL));
+        $this->assertStringEndsWith('_layouts/SignOut.aspx', $site->getLogoutURL());
+    }
 }
