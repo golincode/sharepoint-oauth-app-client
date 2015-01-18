@@ -22,11 +22,11 @@ interface SPRequestInterface
      * @param   string $url     URL to make the request to
      * @param   array  $options HTTP client options (see GuzzleHttp\Client options)
      * @param   string $method  HTTP method name (GET, POST, PUT, DELETE, ...)
-     * @param   bool   $debug   Return the Response object in debug mode
+     * @param   bool   $process Process the Response if true, return the object otherwise
      * @throws  SPException
      * @return  \GuzzleHttp\Message\Response|array
      */
-    public function request($url = null, array $options = [], $method = 'GET', $debug = false);
+    public function request($url = null, array $options = [], $method = 'GET', $process = true);
 
     /**
      * Get the current SharePoint Access Token

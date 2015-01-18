@@ -178,15 +178,7 @@ class SPSite implements SPRequestInterface
     }
 
     /**
-     * Send an HTTP request
-     *
-     * @access  public
-     * @param   string $url     URL to make the request to
-     * @param   array  $options HTTP client options (see GuzzleHttp\Client options)
-     * @param   string $method  HTTP method name (GET, POST, PUT, DELETE, ...)
-     * @param   bool   $process Process the Response if true, return the object otherwise
-     * @throws  SPException
-     * @return  \GuzzleHttp\Message\Response|array
+     * {@inheritdoc}
      */
     public function request($url = null, array $options = [], $method = 'GET', $process = true)
     {
@@ -241,11 +233,7 @@ class SPSite implements SPRequestInterface
     }
 
     /**
-     * Get the current SharePoint Access Token
-     *
-     * @access  public
-     * @throws  SPException
-     * @return  SPAccessToken
+     * {@inheritdoc}
      */
     public function getSPAccessToken()
     {
@@ -292,11 +280,7 @@ class SPSite implements SPRequestInterface
     }
 
     /**
-     * Get the current SharePoint Form Digest
-     *
-     * @access  public
-     * @throws  SPException
-     * @return  SPFormDigest
+     * {@inheritdoc}
      */
     public function getSPFormDigest()
     {

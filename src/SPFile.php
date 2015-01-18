@@ -187,7 +187,7 @@ class SPFile extends SPObject implements SPItemInterface
             'headers' => [
                 'Authorization' => 'Bearer '.$this->folder->getSPAccessToken()
             ]
-        ], 'GET', true);
+        ], 'GET', false);
 
         return (string) $response->getBody();
     }
