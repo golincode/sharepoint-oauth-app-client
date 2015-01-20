@@ -10,7 +10,7 @@ This library aims for [PSR-1][], [PSR-2][] and [PSR-4][] standards compliance.
 ## Requirements
 * [PHP](http://www.php.net) 5.4+
 * [Guzzle](https://packagist.org/packages/guzzlehttp/guzzle)
-* [PHP-JWT](https://packagist.org/packages/nixilla/php-jwt)
+* [PHP-JWT](https://packagist.org/packages/firebase/php-jwt)
 * [Carbon](https://packagist.org/packages/nesbot/carbon)
 
 ## Installation

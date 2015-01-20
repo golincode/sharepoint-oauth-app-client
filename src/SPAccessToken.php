@@ -15,7 +15,7 @@ namespace WeAreArchitect\SharePoint;
 
 use Carbon\Carbon;
 use Exception;
-use JWT\Authentication\JWT;
+use JWT;
 use Serializable;
 
 class SPAccessToken extends SPObject implements Serializable
