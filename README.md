@@ -76,6 +76,11 @@ try {
 ## Troubleshooting
 Check for common library issues and how to [solve them](docs/Troubleshooting.md)
 
+## SharePoint Documentation
+- [Working with lists and list items with REST](https://msdn.microsoft.com/en-us/library/office/dn292552%28v=office.15%29.aspx)
+- [Working with folders and files with REST](https://msdn.microsoft.com/en-us/library/office/dn292553%28v=office.15%29.aspx)
+- [Files and folders REST API reference](https://msdn.microsoft.com/en-us/library/office/dn450841%28v=office.15%29.aspx)
+
 ## Warning
 Until a major version of the library gets released, the API may **change**!
 
