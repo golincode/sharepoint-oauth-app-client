@@ -108,3 +108,56 @@ Retrieve the **SPSite** logout URL.
 ```php
 	echo $site->getLogoutURL(); // https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx
 ```
+
+## HTTP request
+Make an HTTP request to the SharePoint API. Use this method when extending the class with new methods or for debugging purposes.
+
+```php
+	// [HTTP GET] get the most popular tags
+	$json = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
+		'headers' => [
+			'Authorization' => 'Bearer '.$site->getSPAccessToken(),
+			'Accept'        => 'application/json;odata=verbose'
+		],
+	]);
+
+	// [HTTP POST] follow a user
+	$json = $site->request('_api/sp.userprofiles.peoplemanager/follow(@v)', [
+		'headers' => [
+			'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
+			'Accept'          => 'application/json;odata=verbose',
+			'X-RequestDigest' => (string) $site->getSPFormDigest()
+		],
+		'query' => [
+			'@v' => 'i:0#.f|membership|user@example.onmicrosoft.com'
+		]
+	], 'POST');
+```
+The **$json** variable will contain an array with the API response on a successful request.
+If any error occurs, an **SPException** will be thrown.
+
+To **debug** an API response, the 4th argument should be set to **false**. So, to debug the above examples we would do:
+```php
+	// [HTTP GET] get the most popular tags
+	$json = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
+		'headers' => [
+			'Authorization' => 'Bearer '.$site->getSPAccessToken(),
+			'Accept'        => 'application/json;odata=verbose'
+		],
+	], 'GET', false);
+
+	// [HTTP POST] follow a user
+	$json = $site->request('_api/sp.userprofiles.peoplemanager/follow(@v)', [
+		'headers' => [
+			'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
+			'Accept'          => 'application/json;odata=verbose',
+			'X-RequestDigest' => (string) $site->getSPFormDigest()
+		],
+		'query' => [
+			'@v' => 'i:0#.f|membership|user@example.onmicrosoft.com'
+		]
+	], 'POST', false);
+```
+Instead of an **array**, a **GuzzleHttp\Message\Response** object will be returned.
+
+For further information on the API endpoints used in the examples, see the [User profiles REST API reference](https://msdn.microsoft.com/EN-US/library/office/dn790354%28v=office.15%29.aspx#bk_PeopleManagerEndpoint).
