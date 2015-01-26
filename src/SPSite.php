@@ -134,7 +134,7 @@ class SPSite implements SPRequestInterface
      */
     public function getURL($path = null)
     {
-        return $this->hostname.$this->path.($path ? '/'.ltrim($path, '/') : '/');
+        return $this->getHostname($this->getPath($path));
     }
 
     /**
