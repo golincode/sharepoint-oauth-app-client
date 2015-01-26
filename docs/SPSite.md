@@ -134,7 +134,7 @@ Make an HTTP request to the SharePoint API. Use this method when extending the c
 	], 'POST');
 ```
 The **$json** variable will contain an array with the API response on a successful request.
-If any error occurs, an **SPException** will be thrown.
+If any error occurs, an **SPException** will be thrown instead.
 
 To **debug** an API response, the 4th argument should be set to **false**. So, to debug the above examples we would do:
 ```php
@@ -160,4 +160,7 @@ To **debug** an API response, the 4th argument should be set to **false**. So, t
 ```
 Instead of an **array**, a **GuzzleHttp\Message\Response** object will be returned.
 
-For further information on the API endpoints used in the examples, see the [User profiles REST API reference](https://msdn.microsoft.com/EN-US/library/office/dn790354%28v=office.15%29.aspx#bk_PeopleManagerEndpoint).
+- When omitted, the 3rd argument will default to **GET**.
+- When omitted, the 4rd argument will default to **true**.
+
+For more information on the API endpoints used in the examples above, see the [User profiles REST API reference](https://msdn.microsoft.com/EN-US/library/office/dn790354%28v=office.15%29.aspx).
