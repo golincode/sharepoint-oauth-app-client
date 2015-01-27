@@ -48,7 +48,7 @@ class SPItem extends SPObject implements SPItemInterface
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function toArray()
     {

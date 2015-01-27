@@ -140,7 +140,7 @@ class SPList extends SPListObject
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function toArray()
     {

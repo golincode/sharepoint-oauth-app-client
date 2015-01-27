@@ -33,7 +33,7 @@ class SPFormDigest extends SPObject implements Serializable
     protected $expires = null;
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     protected function hydrate($data, $missing = false)
     {
@@ -62,7 +62,7 @@ class SPFormDigest extends SPObject implements Serializable
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function toArray()
     {

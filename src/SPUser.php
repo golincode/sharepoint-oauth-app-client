@@ -107,7 +107,7 @@ class SPUser extends SPObject
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function toArray()
     {

@@ -72,7 +72,7 @@ class SPFolder extends SPListObject implements SPItemInterface
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function toArray()
     {

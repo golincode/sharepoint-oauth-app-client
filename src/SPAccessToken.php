@@ -35,7 +35,7 @@ class SPAccessToken extends SPObject implements Serializable
     protected $expires = null;
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     protected function hydrate($data, $missing = false)
     {
@@ -64,7 +64,7 @@ class SPAccessToken extends SPObject implements Serializable
     }
 
     /**
-     * @{inheritdoc}
+     * {@inheritdoc}
      */
     public function toArray()
     {
