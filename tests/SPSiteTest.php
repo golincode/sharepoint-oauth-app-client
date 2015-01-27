@@ -88,10 +88,6 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPSite', $site);
 
-        $this->assertEquals('/sites/mySite/', $site->getPath());
-        $this->assertEquals('https://example.sharepoint.com/', $site->getHostname());
-        $this->assertEquals('https://example.sharepoint.com/sites/mySite/', $site->getURL());
-
         return $site;
     }
 
@@ -339,9 +335,67 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      */
     public function testSPSiteGetConfigPass(SPSite $site = null)
     {
-        $this->assertArrayHasKey('resource', $site->getConfig());
-        $this->assertArrayHasKey('client_id', $site->getConfig());
-        $this->assertArrayHasKey('secret', $site->getConfig());
+        $config = $site->getConfig();
+
+        $this->assertInternalType('array', $config);
+
+        $this->assertArrayHasKey('resource', $config);
+        $this->assertArrayHasKey('client_id', $config);
+        $this->assertArrayHasKey('secret', $config);
+    }
+
+    /**
+     * Test SPSite getHostname() method to PASS
+     *
+     * @depends testSPSiteConstructorPass
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteGetHostnamePass(SPSite $site = null)
+    {
+        $this->assertEquals('https://example.sharepoint.com/', $site->getHostname());
+        $this->assertEquals('https://example.sharepoint.com/test/path', $site->getHostname('test/path'));
+        $this->assertEquals('https://example.sharepoint.com/test/path/', $site->getHostname('test/path/'));
+        $this->assertEquals('https://example.sharepoint.com/test/path', $site->getHostname('/test/path'));
+        $this->assertEquals('https://example.sharepoint.com/test/path/', $site->getHostname('/test/path/'));
+    }
+
+    /**
+     * Test SPSite getPath() method to PASS
+     *
+     * @depends testSPSiteConstructorPass
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteGetPathPass(SPSite $site = null)
+    {
+        $this->assertEquals('/sites/mySite/', $site->getPath());
+        $this->assertEquals('/sites/mySite/test/path', $site->getPath('test/path'));
+        $this->assertEquals('/sites/mySite/test/path/', $site->getPath('test/path/'));
+        $this->assertEquals('/sites/mySite/test/path', $site->getPath('/test/path'));
+        $this->assertEquals('/sites/mySite/test/path/', $site->getPath('/test/path/'));
+    }
+
+    /**
+     * Test SPSite getURL() method to PASS
+     *
+     * @depends testSPSiteConstructorPass
+     *
+     * @access  public
+     * @param   SPSite  $site SharePoint Site
+     * @return  void
+     */
+    public function testSPSiteGetURLPass(SPSite $site = null)
+    {
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/', $site->getURL());
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path', $site->getURL('test/path'));
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path/', $site->getURL('test/path/'));
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path', $site->getURL('/test/path'));
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path/', $site->getURL('/test/path/'));
     }
 
     /**
@@ -356,6 +410,6 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
     public function testSPSiteGetLogoutURLPass(SPSite $site = null)
     {
         $this->assertNotFalse(filter_var($site->getLogoutURL(), FILTER_VALIDATE_URL));
-        $this->assertStringEndsWith('_layouts/SignOut.aspx', $site->getLogoutURL());
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx', $site->getLogoutURL());
     }
 }

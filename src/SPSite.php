@@ -105,7 +105,7 @@ class SPSite implements SPRequestInterface
      * Get SharePoint Site Hostname
      *
      * @access  public
-     * @param   string $path Path to append to the Hostname
+     * @param   string $path Path to append
      * @return  string
      */
     public function getHostname($path = null)
@@ -117,7 +117,7 @@ class SPSite implements SPRequestInterface
      * Get SharePoint Site Path
      *
      * @access  public
-     * @param   string $path Path to append to the Path
+     * @param   string $path Path to append
      * @return  string
      */
     public function getPath($path = null)
@@ -129,7 +129,7 @@ class SPSite implements SPRequestInterface
      * Get SharePoint Site URL
      *
      * @access  public
-     * @param   string $path Path to append to the URL
+     * @param   string $path Path to append
      * @return  string
      */
     public function getURL($path = null)
