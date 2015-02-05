@@ -119,7 +119,7 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function getRelativeURL($path = null)
     {
-        return $this->relative_url.($path ? '/'.ltrim($path, '/') : '');
+        return $this->relative_url.($path ? ltrim($path, '/') : '');
     }
 
     /**
