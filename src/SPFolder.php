@@ -32,13 +32,6 @@ class SPFolder extends SPListObject implements SPItemInterface
     protected $name = null;
 
     /**
-     * Folder Relative URL
-     *
-     * @access  protected
-     */
-    protected $relative_url = null;
-
-    /**
      * SharePoint Folder constructor
      *
      * @access  public
@@ -89,17 +82,6 @@ class SPFolder extends SPListObject implements SPItemInterface
     }
 
     /**
-     * Get SharePoint Site
-     *
-     * @access  public
-     * @return  SPSite
-     */
-    public function getSPSite()
-    {
-        return $this->site;
-    }
-
-    /**
      * Get SharePoint Name
      *
      * @access  public
@@ -111,15 +93,11 @@ class SPFolder extends SPListObject implements SPItemInterface
     }
 
     /**
-     * Get Relative URL
-     *
-     * @access  public
-     * @param   string $path Path to append to the URL
-     * @return  string
+     * {@inheritdoc}
      */
-    public function getRelativeURL($path = null)
+    public function isWritable($exception = false)
     {
-        return $this->relative_url.($path ? ltrim($path, '/') : '');
+        return true;
     }
 
     /**
@@ -249,14 +227,16 @@ class SPFolder extends SPListObject implements SPItemInterface
      *
      * @static
      * @access  public
-     * @param   SPFolder $folder   Parent SharePoint Folder
-     * @param   array    $name     SharePoint Folder name
-     * @param   array    $settings Instantiation settings
+     * @param   SPFolderInterface $folder   Parent SharePoint Folder
+     * @param   array             $name     SharePoint Folder name
+     * @param   array             $settings Instantiation settings
      * @throws  SPException
      * @return  SPFolder
      */
-    public static function create(SPFolder $folder, $name, array $settings = [])
+    public static function create(SPFolderInterface $folder, $name, array $settings = [])
     {
+        $folder->isWritable(true);
+
         $body = json_encode([
             '__metadata' => [
                 'type' => 'SP.Folder'

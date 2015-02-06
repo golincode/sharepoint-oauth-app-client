@@ -293,16 +293,18 @@ class SPFile extends SPObject implements SPItemInterface
      *
      * @static
      * @access  public
-     * @param   SPFolder $folder SharePoint List
-     * @param   string   $name   File Name
-     * @param   array    $extra  Extra properties to map
+     * @param   SPFolderInterface $folder SharePoint Folder
+     * @param   string            $name   File Name
+     * @param   array             $extra  Extra properties to map
      * @throws  SPException
      * @return  SPFile
      */
-    public static function getByName(SPFolder $folder, $name = null, array $extra = [])
+    public static function getByName(SPFolderInterface $folder, $name = null, array $extra = [])
     {
+        $folder->isWritable(true);
+
         if (empty($name)) {
-            throw new SPException('The SharePoint File Name is empty/not set');
+            throw new SPException('The SharePoint File name is empty/not set');
         }
 
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files('".$name."')", [
@@ -324,16 +326,18 @@ class SPFile extends SPObject implements SPItemInterface
      *
      * @static
      * @access  public
-     * @param   SPFolder $folder    SharePoint Folder
-     * @param   mixed    $contents  File contents
-     * @param   string   $name      Name for the file being uploaded
-     * @param   bool     $overwrite Overwrite if file already exists?
-     * @param   array    $extra     Extra properties to map
+     * @param   SPFolderInterface $folder    SharePoint Folder
+     * @param   mixed             $contents  File contents
+     * @param   string            $name      Name for the file being uploaded
+     * @param   bool              $overwrite Overwrite if file already exists?
+     * @param   array             $extra     Extra properties to map
      * @throws  SPException
      * @return  SPFile
      */
-    public static function create(SPFolder $folder, $contents = null, $name = null, $overwrite = false, array $extra = [])
+    public static function create(SPFolderInterface $folder, $contents = null, $name = null, $overwrite = false, array $extra = [])
     {
+        $folder->isWritable(true);
+
         switch (true) {
             case $contents instanceof SplFileObject:
                 $body = $contents->fread($contents->getSize());
@@ -442,14 +446,16 @@ class SPFile extends SPObject implements SPItemInterface
      * Move a SharePoint File
      *
      * @access  public
-     * @param   SPFolder $folder SharePoint Folder to move to
-     * @param   string   $name   SharePoint File name
-     * @param   array    $extra  Extra properties to map
+     * @param   SPFolderInterface $folder SharePoint Folder to move to
+     * @param   string            $name   SharePoint File name
+     * @param   array             $extra  Extra properties to map
      * @throws  SPException
      * @return  SPFile
      */
-    public function move(SPFolder $folder, $name = null, array $extra = [])
+    public function move(SPFolderInterface $folder, $name = null, array $extra = [])
     {
+        $folder->isWritable(true);
+
         $new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 
         $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relative_url."')/moveTo(newUrl='".$new_url."',flags=1)", [
@@ -476,15 +482,17 @@ class SPFile extends SPObject implements SPItemInterface
      * Copy a SharePoint File
      *
      * @access  public
-     * @param   SPFolder $folder    SharePoint Folder to move to
-     * @param   string   $name      SharePoint File name
-     * @param   bool     $overwrite Overwrite if file already exists?
-     * @param   array    $extra     Extra properties to map
+     * @param   SPFolderInterface $folder    SharePoint Folder to copy to
+     * @param   string            $name      SharePoint File name
+     * @param   bool              $overwrite Overwrite if file already exists?
+     * @param   array             $extra     Extra properties to map
      * @throws  SPException
      * @return  SPFile
      */
-    public function copy(SPFolder $folder, $name = null, $overwrite = false, array $extra = [])
+    public function copy(SPFolderInterface $folder, $name = null, $overwrite = false, array $extra = [])
     {
+        $folder->isWritable(true);
+
         $new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 
         $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relative_url."')/copyTo(strNewUrl='".$new_url."',boverwrite=".($overwrite ? 'true' : 'false').")", [
