@@ -41,6 +41,7 @@ class SPList extends SPListObject
      * @access  public
      */
     public static $allowed = [
+        self::TPL_GENERICLIST,
         self::TPL_DOCUMENTLIBRARY,
         self::TPL_SURVEY,
         self::TPL_LINKS,
