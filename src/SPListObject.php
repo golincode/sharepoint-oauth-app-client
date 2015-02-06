@@ -18,7 +18,7 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 
-abstract class SPListObject extends SPObject implements ArrayAccess, Countable, IteratorAggregate, SPRequestInterface
+abstract class SPListObject extends SPObject implements ArrayAccess, Countable, IteratorAggregate, SPFolderInterface
 {
     use SPPropertiesTrait;
 
@@ -37,10 +37,14 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     protected $items = [];
 
     /**
-     * Count the SharePoint Items
+     * Relative URL
      *
-     * @access  public
-     * @return  int
+     * @access  protected
+     */
+    protected $relative_url = null;
+
+    /**
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -48,10 +52,7 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     }
 
     /**
-     * Get the SharePoint Item iterator
-     *
-     * @access  public
-     * @return  ArrayIterator
+     * {@inheritdoc}
      */
     public function getIterator()
     {
@@ -59,11 +60,7 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     }
 
     /**
-     * Check if an SharePoint Item exists
-     *
-     * @access  public
-     * @param   string $index SharePoint Item index
-     * @return  bool
+     * {@inheritdoc}
      */
     public function offsetExists($index = null)
     {
@@ -71,12 +68,7 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     }
 
     /**
-     * Get a SharePoint Item
-     *
-     * @access  public
-     * @param   string $index SharePoint Item index
-     * @throws  SPException
-     * @return  SPItem
+     * {@inheritdoc}
      */
     public function offsetGet($index = null)
     {
@@ -88,13 +80,7 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     }
 
     /**
-     * Add a SharePoint Item
-     *
-     * @access  public
-     * @param   string $guid SharePoint Item GUID
-     * @param   SPItem $item SharePoint Item
-     * @throws  SPException
-     * @return  void
+     * {@inheritdoc}
      */
     public function offsetSet($guid = null, $item = null)
     {
@@ -110,11 +96,7 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     }
 
     /**
-     * Remove a SharePoint Item
-     *
-     * @access  public
-     * @param   string $index SharePoint Item index
-     * @return  void
+     * {@inheritdoc}
      */
     public function offsetUnset($index = null)
     {
@@ -143,5 +125,21 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     public function getSPFormDigest()
     {
         return $this->site->getSPFormDigest();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRelativeURL($path = null)
+    {
+        return sprintf('%s/%s', rtrim($this->relative_url, '/'), ltrim($path, '/'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSPSite()
+    {
+        return $this->site;
     }
 }
