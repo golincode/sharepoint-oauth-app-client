@@ -19,6 +19,7 @@ class SPList extends SPListObject
      * SharePoint List Template Types (SharePoint 2013)
      *
      * @link http://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.client.listtemplatetype%28v=office.15%29.aspx
+     * @link http://techtrainingnotes.blogspot.co.uk/2008/01/sharepoint-registrationid-list-template.html
      */
     const TPL_GENERICLIST     = 100; // Custom list
     const TPL_DOCUMENTLIBRARY = 101; // Document library
@@ -30,12 +31,16 @@ class SPList extends SPListObject
     const TPL_TASKS           = 107; // Tasks
     const TPL_DISCUSSIONBOARD = 108; // Discussion board
     const TPL_PICTURELIBRARY  = 109; // Picture library
+    const TPL_WEBPAGELIBRARY  = 119; // Webpage library
+    const TPL_PAGES           = 850; // Publishing pages
 
     /**
      * Allowed SharePoint List Types
+     *
+     * @static
+     * @access  public
      */
     public static $allowed = [
-        self::TPL_GENERICLIST,
         self::TPL_DOCUMENTLIBRARY,
         self::TPL_SURVEY,
         self::TPL_LINKS,
@@ -44,7 +49,22 @@ class SPList extends SPListObject
         self::TPL_EVENTS,
         self::TPL_TASKS,
         self::TPL_DISCUSSIONBOARD,
-        self::TPL_PICTURELIBRARY
+        self::TPL_PICTURELIBRARY,
+        self::TPL_WEBPAGELIBRARY,
+        self::TPL_PAGES
+    ];
+
+    /**
+     * Writable SharePoint List Types
+     *
+     * @static
+     * @access  public
+     */
+    public static $writable = [
+        self::TPL_DOCUMENTLIBRARY,
+        self::TPL_PICTURELIBRARY,
+        self::TPL_WEBPAGELIBRARY,
+        self::TPL_PAGES
     ];
 
     /**
@@ -122,12 +142,13 @@ class SPList extends SPListObject
         ], $settings);
 
         parent::__construct([
-            'template'    => 'BaseTemplate',
-            'type'        => '__metadata.type',
-            'item_type'   => 'ListItemEntityTypeFullName',
-            'guid'        => 'Id',
-            'title'       => 'Title',
-            'description' => 'Description'
+            'template'     => 'BaseTemplate',
+            'type'         => '__metadata.type',
+            'item_type'    => 'ListItemEntityTypeFullName',
+            'guid'         => 'Id',
+            'title'        => 'Title',
+            'relative_url' => 'RootFolder.ServerRelativeUrl',
+            'description'  => 'Description'
         ], $settings['extra']);
 
         $this->site = $site;
@@ -169,6 +190,20 @@ class SPList extends SPListObject
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isWritable($exception = false)
+    {
+        $writable = in_array($this->template, static::$writable);
+
+        if ($exception && ! $writable) {
+            throw new SPException('SPList Template Type ['.$this->template.'] does not allow SPFolder/SPFile operations');
+        }
+
+        return $writable;
+    }
+
+    /**
      * Get List Description
      *
      * @access  public
@@ -206,6 +241,10 @@ class SPList extends SPListObject
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose'
+            ],
+
+            'query' => [
+                '$expand' => 'RootFolder'
             ]
         ]);
 
@@ -238,6 +277,10 @@ class SPList extends SPListObject
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose'
+            ],
+
+            'query' => [
+                '$expand' => 'RootFolder'
             ]
         ]);
 
@@ -261,6 +304,10 @@ class SPList extends SPListObject
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose'
+            ],
+
+            'query' => [
+                '$expand' => 'RootFolder'
             ]
         ]);
 
