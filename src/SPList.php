@@ -347,6 +347,10 @@ class SPList extends SPListObject
                 'Content-length'  => strlen($body)
             ],
 
+            'query' => [
+                '$expand' => 'RootFolder'
+            ],
+
             'body'    => $body
         ], 'POST');
 
