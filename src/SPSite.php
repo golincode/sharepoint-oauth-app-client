@@ -159,9 +159,9 @@ class SPSite implements SPRequestInterface
      */
     public static function create($url = null, array $settings = [])
     {
-        // add trailing slash when missing
+        // ensure we have a trailing slash
         if (is_string($url)) {
-            $url = rtrim($url, '/').'/';
+            $url = sprintf('%s/', rtrim($url, '/'));
         }
 
         $settings = array_replace_recursive([
@@ -197,12 +197,12 @@ class SPSite implements SPRequestInterface
 
             // sometimes an error can be a JSON object
             if (isset($json['error']['message']['value'])) {
-                throw new SPException($json['error']['message']['value']);
+                throw new SPException($json['error']['message']['value'], $response->getStatusCode());
             }
 
             // or just a string
             if (isset($json['error'])) {
-                throw new SPException($json['error']);
+                throw new SPException($json['error'], $response->getStatusCode());
             }
 
             return $json;
