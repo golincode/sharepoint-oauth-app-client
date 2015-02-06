@@ -110,7 +110,7 @@ class SPSite implements SPRequestInterface
      */
     public function getHostname($path = null)
     {
-        return $this->hostname.($path ? '/'.ltrim($path, '/') : '/');
+        return sprintf('%s/%s', $this->hostname, ltrim($path, '/'));
     }
 
     /**
@@ -122,7 +122,7 @@ class SPSite implements SPRequestInterface
      */
     public function getPath($path = null)
     {
-        return $this->path.($path ? '/'.ltrim($path, '/') : '/');
+        return sprintf('%s/%s', $this->path, ltrim($path, '/'));
     }
 
     /**
