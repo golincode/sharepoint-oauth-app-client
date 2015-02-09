@@ -109,9 +109,7 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function getURL($path = null)
     {
-        $path = ($path ? $this->name.'/'.ltrim($path, '/') : $this->name);
-
-        return $this->site->getURL($path);
+        return $this->site->getHostname($this->getRelativeURL($path));
     }
 
     /**
