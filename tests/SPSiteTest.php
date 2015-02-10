@@ -49,7 +49,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
     public function testSPSiteConstructorPass()
     {
         $http = new Client([
-            'base_url' => 'https://example.sharepoint.com/sites/mySite/'
+            'base_url' => 'https://example.sharepoint.com/sites/mySite/',
         ]);
 
         $this->assertInstanceOf('\GuzzleHttp\Client', $http);
@@ -58,13 +58,13 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
             // testSPSiteGetSPAccessTokenWithoutContextPass
             new Response(200, [], Stream::factory(json_encode([
                 'access_token' => 'iz%1&r<jVDoQJ74787#,Z4}4DQ8aw7',
-                'expires_on'   => 2147483647
+                'expires_on'   => 2147483647,
             ]))),
 
             // testSPSiteGetSPAccessTokenWithContextPass
             new Response(200, [], Stream::factory(json_encode([
                 'access_token' => 'iz%1&r<jVDoQJ74787#,Z4}4DQ8aw7',
-                'expires_on'   => 2147483647
+                'expires_on'   => 2147483647,
             ]))),
 
             // testSPSiteGetSPAccessTokenWithContextPass
@@ -72,10 +72,10 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
                 'd' => [
                     'GetContextWebInformation' => [
                         'FormDigestValue'          => '1D98CAC834A6139426DF168F2E8ED',
-                        'FormDigestTimeoutSeconds' => 1800
-                    ]
-                ]
-            ])))
+                        'FormDigestTimeoutSeconds' => 1800,
+                    ],
+                ],
+            ]))),
         ]);
 
         $http->getEmitter()->attach($responses);
@@ -99,7 +99,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage  Invalid SharePoint Access Token
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetSPAccessTokenFailInvalidToken(SPSite $site = null)
@@ -115,7 +115,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage  Expired SharePoint Access Token
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetSPAccessTokenFailExpiredToken(SPSite $site = null)
@@ -139,7 +139,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetSPAccessTokenWithoutContextPass(SPSite $site = null)
@@ -157,7 +157,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetSPAccessTokenWithContextPass(SPSite $site = null)
@@ -171,10 +171,10 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
             'appctx'             => json_encode([
                 'CacheKey'                => '3+$xWJW69Xy+k5%KD=Tp6<NYT=8:qY{H31w7Q8a6+=xi5Jq8(<m6bGz.8S6f*0$',
                 'NextCacheKey'            => null,
-                'SecurityTokenServiceUri' => 'https://accounts.accesscontrol.windows.net/tokens/OAuth/2'
+                'SecurityTokenServiceUri' => 'https://accounts.accesscontrol.windows.net/tokens/OAuth/2',
             ]),
             'refreshtoken'       => '73xXmf0RGc4YvH0VErnCstTH6X925QXC',
-            'isbrowserhostedapp' => true
+            'isbrowserhostedapp' => true,
         ];
 
         $access_token = JWT::encode($data, 'secret_key');
@@ -192,7 +192,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage  Expired SharePoint Access Token
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteSetSPAccessTokenFailInvalidToken(SPSite $site = null)
@@ -211,7 +211,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteSetSPAccessTokenPass(SPSite $site = null)
@@ -232,7 +232,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage  Invalid SharePoint Form Digest
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetSPFormDigestFailInvalidDigest(SPSite $site = null)
@@ -248,7 +248,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage  Expired SharePoint Form Digest
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetSPFormDigestFailExpiredDigest(SPSite $site = null)
@@ -272,7 +272,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetSPFormDigestPass(SPSite $site = null)
@@ -292,7 +292,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage  Expired SharePoint Form Digest
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteSetSPFormDigestInvalidDigest(SPSite $site = null)
@@ -311,7 +311,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteSetSPFormDigestPass(SPSite $site = null)
@@ -330,7 +330,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetConfigPass(SPSite $site = null)
@@ -350,7 +350,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetHostnamePass(SPSite $site = null)
@@ -368,7 +368,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetPathPass(SPSite $site = null)
@@ -386,7 +386,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetURLPass(SPSite $site = null)
@@ -404,7 +404,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @depends testSPSiteConstructorPass
      *
      * @access  public
-     * @param   SPSite  $site SharePoint Site
+     * @param   SPSite $site SharePoint Site
      * @return  void
      */
     public function testSPSiteGetLogoutURLPass(SPSite $site = null)

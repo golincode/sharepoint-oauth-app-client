@@ -52,7 +52,7 @@ class SPList extends SPListObject
         self::TPL_DISCUSSIONBOARD,
         self::TPL_PICTURELIBRARY,
         self::TPL_WEBPAGELIBRARY,
-        self::TPL_PAGES
+        self::TPL_PAGES,
     ];
 
     /**
@@ -65,7 +65,7 @@ class SPList extends SPListObject
         self::TPL_DOCUMENTLIBRARY,
         self::TPL_PICTURELIBRARY,
         self::TPL_WEBPAGELIBRARY,
-        self::TPL_PAGES
+        self::TPL_PAGES,
     ];
 
     /**
@@ -139,7 +139,7 @@ class SPList extends SPListObject
         $settings = array_replace_recursive([
             'extra' => [],    // extra SharePoint List properties to map
             'fetch' => false, // fetch SharePoint Items?
-            'items' => []     // SharePoint Item instantiation settings
+            'items' => [],    // SharePoint Item instantiation settings
         ], $settings);
 
         parent::__construct([
@@ -149,7 +149,7 @@ class SPList extends SPListObject
             'guid'         => 'Id',
             'title'        => 'Title',
             'relative_url' => 'RootFolder.ServerRelativeUrl',
-            'description'  => 'Description'
+            'description'  => 'Description',
         ], $settings['extra']);
 
         $this->site = $site;
@@ -241,11 +241,11 @@ class SPList extends SPListObject
         $json = $site->request('_api/web/Lists', [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ],
 
             'query' => [
-                '$expand' => 'RootFolder'
+                '$expand' => 'RootFolder',
             ]
         ]);
 
@@ -277,11 +277,11 @@ class SPList extends SPListObject
         $json = $site->request("_api/web/Lists(guid'".$guid."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ],
 
             'query' => [
-                '$expand' => 'RootFolder'
+                '$expand' => 'RootFolder',
             ]
         ]);
 
@@ -304,11 +304,11 @@ class SPList extends SPListObject
         $json = $site->request("_api/web/Lists/GetByTitle('".$title."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ],
 
             'query' => [
-                '$expand' => 'RootFolder'
+                '$expand' => 'RootFolder',
             ]
         ]);
 
@@ -329,10 +329,10 @@ class SPList extends SPListObject
     public static function create(SPSite $site, array $properties, array $settings = [])
     {
         $properties = array_replace_recursive([
-            'BaseTemplate' => static::TPL_DOCUMENTLIBRARY
+            'BaseTemplate' => static::TPL_DOCUMENTLIBRARY,
         ], $properties, [
             '__metadata' => [
-                'type' => 'SP.List'
+                'type' => 'SP.List',
             ],
         ]);
 
@@ -344,11 +344,11 @@ class SPList extends SPListObject
                 'Accept'          => 'application/json;odata=verbose',
                 'X-RequestDigest' => (string) $site->getSPFormDigest(),
                 'Content-type'    => 'application/json;odata=verbose',
-                'Content-length'  => strlen($body)
+                'Content-length'  => strlen($body),
             ],
 
             'query' => [
-                '$expand' => 'RootFolder'
+                '$expand' => 'RootFolder',
             ],
 
             'body'    => $body
@@ -369,7 +369,7 @@ class SPList extends SPListObject
     {
         $properties = array_replace_recursive($properties, [
             '__metadata' => [
-                'type' => 'SP.List'
+                'type' => 'SP.List',
             ]
         ]);
 
@@ -383,17 +383,15 @@ class SPList extends SPListObject
                 'X-HTTP-Method'   => 'MERGE',
                 'IF-MATCH'        => '*',
                 'Content-type'    => 'application/json;odata=verbose',
-                'Content-length'  => strlen($body)
+                'Content-length'  => strlen($body),
             ],
 
             'body'    => $body
         ], 'POST');
 
-        /**
-         * NOTE: Rehydration is done using the $properties array,
-         * since the SharePoint API does not return a response on
-         * a successful update
-         */
+        // Rehydration is done using the $properties array,
+        // since the SharePoint API doesn't return a response
+        // on a successful update
         $this->hydrate($properties, true);
 
         return $this;
@@ -414,7 +412,7 @@ class SPList extends SPListObject
                 'Accept'          => 'application/json;odata=verbose',
                 'X-RequestDigest' => (string) $this->getSPFormDigest(),
                 'X-HTTP-Method'   => 'DELETE',
-                'IF-MATCH'        => '*'
+                'IF-MATCH'        => '*',
             ]
         ], 'POST');
 
@@ -432,10 +430,10 @@ class SPList extends SPListObject
     public function createSPField(array $properties)
     {
         $properties = array_replace_recursive([
-            'FieldTypeKind' => static::FLD_TEXT
+            'FieldTypeKind' => static::FLD_TEXT,
         ], $properties, [
             '__metadata' => [
-                'type' => 'SP.Field'
+                'type' => 'SP.Field',
             ]
         ]);
 
@@ -447,7 +445,7 @@ class SPList extends SPListObject
                 'Accept'          => 'application/json;odata=verbose',
                 'X-RequestDigest' => (string) $this->getSPFormDigest(),
                 'Content-type'    => 'application/json;odata=verbose',
-                'Content-length'  => strlen($body)
+                'Content-length'  => strlen($body),
             ],
 
             'body'    => $body
@@ -468,7 +466,7 @@ class SPList extends SPListObject
         $json = $this->request("_api/web/Lists(guid'".$this->guid."')/itemCount", [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ]
         ]);
 
@@ -486,8 +484,8 @@ class SPList extends SPListObject
     public function getSPItems(array $settings = [])
     {
         $settings = array_replace_recursive([
-            'extra' => [],  // extra SharePoint Item properties to map
-            'top'   => 5000 // SharePoint Item threshold
+            'extra' => [],   // extra SharePoint Item properties to map
+            'top'   => 5000, // SharePoint Item threshold
         ], $settings);
 
         $this->items = SPItem::getAll($this, $settings);

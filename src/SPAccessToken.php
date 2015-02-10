@@ -57,7 +57,7 @@ class SPAccessToken extends SPObject implements Serializable
     {
         parent::__construct([
             'token'   => 'access_token',
-            'expires' => 'expires_on'
+            'expires' => 'expires_on',
         ], $extra);
 
         $this->hydrate($json);
@@ -85,7 +85,7 @@ class SPAccessToken extends SPObject implements Serializable
     {
         return serialize([
             $this->token,
-            $this->expires->getTimestamp()
+            $this->expires->getTimestamp(),
         ]);
     }
 
@@ -154,7 +154,7 @@ class SPAccessToken extends SPObject implements Serializable
 
         $json = $site->request($oauth2->SecurityTokenServiceUri, [
             'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded'
+                'Content-Type' => 'application/x-www-form-urlencoded',
             ],
 
             // the POST body must be passed as a query string
@@ -163,7 +163,7 @@ class SPAccessToken extends SPObject implements Serializable
                 'client_id'     => $jwt->aud,
                 'client_secret' => $config['secret'],
                 'refresh_token' => $jwt->refreshtoken,
-                'resource'      => $resource
+                'resource'      => $resource,
             ])
         ], 'POST');
 
@@ -206,7 +206,7 @@ class SPAccessToken extends SPObject implements Serializable
 
         $json = $site->request($config['acs'], [
             'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded'
+                'Content-Type' => 'application/x-www-form-urlencoded',
             ],
 
             // the POST body must be passed as a query string
@@ -214,7 +214,7 @@ class SPAccessToken extends SPObject implements Serializable
                 'grant_type'    => 'client_credentials',
                 'client_id'     => $config['client_id'],
                 'client_secret' => $config['secret'],
-                'resource'      => $config['resource']
+                'resource'      => $config['resource'],
             ])
         ], 'POST');
 

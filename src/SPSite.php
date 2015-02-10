@@ -73,7 +73,7 @@ class SPSite implements SPRequestInterface
     public function __construct(Client $http, array $config)
     {
         $this->config = array_replace([
-            'acs' => 'https://accounts.accesscontrol.windows.net/tokens/OAuth/2'
+            'acs' => 'https://accounts.accesscontrol.windows.net/tokens/OAuth/2',
         ], $config);
 
         // set Guzzle HTTP client
@@ -168,7 +168,7 @@ class SPSite implements SPRequestInterface
             'site' => [], // SharePoint Site configuration
         ], $settings, [
             'http' => [   // Guzzle HTTP Client configuration
-                'base_url' => $url
+                'base_url' => $url,
             ]
         ]);
 
