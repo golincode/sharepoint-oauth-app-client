@@ -167,15 +167,16 @@ class SPList extends SPListObject
     public function toArray()
     {
         return [
-            'type'        => $this->type,
-            'id'          => $this->id,
-            'guid'        => $this->guid,
-            'title'       => $this->title,
-            'template'    => $this->template,
-            'item_type'   => $this->item_type,
-            'description' => $this->description,
-            'items'       => $this->items,
-            'extra'       => $this->extra
+            'type'         => $this->type,
+            'id'           => $this->id,
+            'guid'         => $this->guid,
+            'title'        => $this->title,
+            'template'     => $this->template,
+            'item_type'    => $this->item_type,
+            'description'  => $this->description,
+            'relative_url' => $this->relative_url,
+            'items'        => $this->items,
+            'extra'        => $this->extra
         ];
     }
 
