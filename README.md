@@ -40,7 +40,7 @@ try {
 	// create a SharePoint Site instance
 	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
-	// generate an Access Token
+	// generate an Access Token (App-only Policy)
 	$site->createSPAccessToken();
 
 	// get all the Lists and respective Items 
