@@ -224,9 +224,9 @@ class SPSite implements SPRequestInterface
     public function createSPAccessToken($context_token = null)
     {
         if (empty($context_token)) {
-            $this->token = SPAccessToken::createFromAOP($this);
+            $this->token = SPAccessToken::createAOP($this);
         } else {
-            $this->token = SPAccessToken::createFromUser($this, $context_token);
+            $this->token = SPAccessToken::createUOP($this, $context_token);
         }
 
         return $this;

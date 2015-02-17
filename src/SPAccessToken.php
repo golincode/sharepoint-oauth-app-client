@@ -115,7 +115,7 @@ class SPAccessToken extends SPObject implements Serializable
     }
 
     /**
-     * Create a SharePoint Access Token (User Context Token)
+     * Create a SharePoint Access Token (User-only Policy)
      *
      * @static
      * @access  public
@@ -125,7 +125,7 @@ class SPAccessToken extends SPObject implements Serializable
      * @throws  SPException
      * @return  SPAccessToken
      */
-    public static function createFromUser(SPSite $site, $context_token = null, array $extra = [])
+    public static function createUOP(SPSite $site, $context_token = null, array $extra = [])
     {
         $config = $site->getConfig();
 
@@ -171,7 +171,7 @@ class SPAccessToken extends SPObject implements Serializable
     }
 
     /**
-     * Create a SharePoint Access Token (App only policy)
+     * Create a SharePoint Access Token (App-only Policy)
      *
      * @static
      * @access  public
@@ -180,7 +180,7 @@ class SPAccessToken extends SPObject implements Serializable
      * @throws  SPException
      * @return  SPAccessToken
      */
-    public static function createFromAOP(SPSite $site, array $extra = [])
+    public static function createAOP(SPSite $site, array $extra = [])
     {
         $config = $site->getConfig();
 
