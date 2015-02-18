@@ -1,9 +1,9 @@
 # SharePoint Site
-The **SPSite** class is the foundation for all the other classes of the **SharePoint OAuth App Client** library.
+The `SPSite` class is the foundation for all the other classes of the **SharePoint OAuth App Client** library.
 It handles HTTP requests and manages [Access Tokens](SPAccessToken.md) and [Form Digests](SPFormDigest.md).
 
 ## Instantiation
-There are two ways to create an **SPSite** instance.
+There are two ways to create an `SPSite` instance.
 
 ### via constructor
 ```php
@@ -61,7 +61,7 @@ try {
 ```
 
 ## Configuration
-Retrieve the **SPSite** configuration array.
+Retrieve the `SPSite` configuration array.
 
 ```php
 	$config = $site->getConfig();
@@ -76,7 +76,7 @@ Retrieve the **SPSite** configuration array.
 ```
 
 ## Hostname
-Retrieve the **SPSite** hostname.
+Retrieve the `SPSite` hostname.
 
 ```php
 	echo $site->getHostname(); // https://example.sharepoint.com
@@ -85,7 +85,7 @@ Retrieve the **SPSite** hostname.
 ```
 
 ## Path
-Retrieve the **SPSite** path.
+Retrieve the `SPSite` path.
 
 ```php
 	echo $site->getPath(); // /sites/mySite/
@@ -94,7 +94,7 @@ Retrieve the **SPSite** path.
 ```
 
 ## URL
-Retrieve the **SPSite** URL.
+Retrieve the `SPSite` URL.
 
 ```php
 	echo $site->getURL(); // https://example.sharepoint.com/sites/mySite
@@ -103,7 +103,7 @@ Retrieve the **SPSite** URL.
 ```
 
 ## Logout URL
-Retrieve the **SPSite** logout URL.
+Retrieve the `SPSite` logout URL.
 
 ```php
 	echo $site->getLogoutURL(); // https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx
@@ -133,10 +133,10 @@ Make an HTTP request to the SharePoint API. Use this method when extending the c
 		]
 	], 'POST');
 ```
-The **$json** variable will contain an array with the API response on a successful request.
-If any error occurs, an **SPException** will be thrown instead.
+The `$json` variable will be an `array` with the API response on a successful request.
+If any error occurs, an `SPException` will be thrown instead.
 
-To **debug** an API response, the 4th argument should be set to **false**. So, to debug the above examples we would do:
+To **debug** an API response, the 4th argument should be set to `false`. So, to debug the above examples we would do:
 ```php
 	// [HTTP GET] get the most popular tags
 	$json = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
@@ -160,7 +160,37 @@ To **debug** an API response, the 4th argument should be set to **false**. So, t
 ```
 Instead of an **array**, a **GuzzleHttp\Message\Response** object will be returned.
 
-- When omitted, the 3rd argument will default to **GET**.
-- When omitted, the 4rd argument will default to **true**.
+- When omitted, the 3rd argument will default to `GET`.
+- When omitted, the 4rd argument will default to `true`.
 
 For more information on the API endpoints used in the examples above, see the [User profiles REST API reference](https://msdn.microsoft.com/EN-US/library/office/dn790354%28v=office.15%29.aspx).
+
+## Access Tokens
+There are three methods to manage **Access Tokens** within the **SPSite** class.
+
+### Create
+The `createSPAccessToken()` method isn't more than a shorthand that creates a `SPAccessToken` and sets it internally to the `SPSite` object.
+Refer to the [SharePoint Access Token](SPAccessToken.md) documentation for an **App-only** and **User-only** Policy examples.
+
+### Set
+The `setSPAccessToken()` method assigns `SPAccessToken` objects to the `SPSite`. An `SPException` will be thrown if the object being passed has expired.
+
+```php
+// SharePoint Site settings
+$settings = [
+	// ...
+];
+
+$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+
+$token = SPAccessToken::createAOP($site);
+
+$site->setSPAccessToken($token);
+```
+
+### Get
+The `getSPAccessToken()` method returns the current `SPAccessToken` object in use by the `SPSite`. If it hasn't been set yet or if it's expired, an `SPException` will be thrown.
+
+```php
+$token = $site->getSPAccessToken();
+```

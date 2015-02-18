@@ -4,7 +4,7 @@ In order to work with SharePoint **Lists**, **Folders**, **Items**, **Files** or
 Access Tokens can have two authorization policies: **App-only Policy** and **User-only Policy**
 
 ## Instantiation (App-only Policy)
-There are two ways to create a new App-only Policy **SPAccessToken** instance.
+There are two ways to create a new **App-only Policy** `SPAccessToken` instance.
 
 ### via SPSite
 ```php
@@ -59,7 +59,7 @@ try {
 ```
 
 ## Instantiation (User-only Policy)
-Like with the App-only Policy **SPAccessToken**, there's also two ways to instantiate a User-only Policy **SPAccessToken**.
+Like with the **App-only Policy** `SPAccessToken`, there's also two ways to instantiate a **User-only Policy** `SPAccessToken`.
 
 ### via SPSite
 ```php
@@ -117,4 +117,4 @@ try {
 }
 ```
 
-**Note:** On both User-only Policy examples above, the context token comes from the **SPAppToken** HTTP POST field when the SharePoint application launches.
+**Note:** On both **User-only Policy** examples above, the context token comes from the `SPAppToken` HTTP POST field when the SharePoint application launches.

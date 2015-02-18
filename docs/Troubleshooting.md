@@ -10,7 +10,7 @@ cURL error 35: Unknown SSL protocol error in connection to accounts.accesscontro
 cURL error 4: OpenSSL was built without SSLv2 support
 ```
 
-Depending on the **libcURL** version your PHP is currently using, either use SSL **version 3** or TLS **version 1.0** to overcome the situation.
+Depending on the **libcURL** version your PHP is currently using, either use SSL **version 3** (`CURL_SSLVERSION_SSLv3`) or TLS **version 1.0** (`CURL_SSLVERSION_TLSv1_0`) to overcome the situation.
 That can be achieved through the [SPSite](docs/SPSite.md) settings when creating a new instance:
 
 ```php
