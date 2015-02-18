@@ -30,7 +30,7 @@ try {
 
 	$site = new SPSite($http, $settings);
 
-} catch(SPException $e) {
+} catch (SPException $e) {
 	// handle exceptions
 }
 ```
@@ -55,7 +55,7 @@ try {
 
 	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
-} catch(SPException $e) {
+} catch (SPException $e) {
 	// handle exceptions
 }
 ```

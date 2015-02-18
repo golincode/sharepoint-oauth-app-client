@@ -58,7 +58,7 @@ try {
 		}
 	}
 
-} catch(SPException $e) {
+} catch (SPException $e) {
 	// handle exceptions
 }
 ```
