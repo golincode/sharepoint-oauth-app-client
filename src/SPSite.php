@@ -218,15 +218,16 @@ class SPSite implements SPRequestInterface
      *
      * @access  public
      * @param   string $context_token SharePoint Context Token
+     * @param   array  $extra         Extra SharePoint Access Token properties to map
      * @throws  SPException
      * @return  SPSite
      */
-    public function createSPAccessToken($context_token = null)
+    public function createSPAccessToken($context_token = null, $extra = [])
     {
         if (empty($context_token)) {
-            $this->token = SPAccessToken::createAOP($this);
+            $this->token = SPAccessToken::createAOP($this, $extra);
         } else {
-            $this->token = SPAccessToken::createUOP($this, $context_token);
+            $this->token = SPAccessToken::createUOP($this, $context_token, $extra);
         }
 
         return $this;
@@ -269,12 +270,13 @@ class SPSite implements SPRequestInterface
      * Create a SharePoint Form Digest
      *
      * @access  public
+     * @param   array  $extra Extra SharePoint Access Token properties to map
      * @throws  SPException
      * @return  SPSite
      */
-    public function createSPFormDigest()
+    public function createSPFormDigest($extra = [])
     {
-        $this->digest = SPFormDigest::create($this);
+        $this->digest = SPFormDigest::create($this, $extra);
 
         return $this;
     }
