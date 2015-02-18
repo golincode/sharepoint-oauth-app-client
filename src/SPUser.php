@@ -98,7 +98,7 @@ class SPUser extends SPObject
             'last_name'  => 'UserProfileProperties.results.6.Value',
             'title'      => 'Title',
             'picture'    => 'PictureUrl',
-            'url'        => 'PersonalUrl'
+            'url'        => 'PersonalUrl',
         ], $extra);
 
         $this->site = $site;
@@ -226,7 +226,7 @@ class SPUser extends SPObject
         $json = $site->request('_api/SP.UserProfiles.PeopleManager/GetMyProperties', [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ]
         ]);
 
@@ -248,11 +248,11 @@ class SPUser extends SPObject
         $json = $site->request('_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)', [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ],
 
             'query' => [
-                '@v' => "'".$account."'"
+                '@v' => "'".$account."'",
             ]
         ], 'POST');
 

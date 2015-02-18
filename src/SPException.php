@@ -20,8 +20,8 @@ class SPException extends RuntimeException
     /**
      * Get the previous Exception message
      *
-     * @access public
-     * @return string|null Previous exception message or null if no previous Exception exists
+     * @access  public
+     * @return  string|null
      */
     public function getPreviousMessage()
     {

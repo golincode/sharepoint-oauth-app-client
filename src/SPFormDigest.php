@@ -55,7 +55,7 @@ class SPFormDigest extends SPObject implements Serializable
     {
         parent::__construct([
             'digest'  => 'GetContextWebInformation.FormDigestValue',
-            'expires' => 'GetContextWebInformation.FormDigestTimeoutSeconds'
+            'expires' => 'GetContextWebInformation.FormDigestTimeoutSeconds',
         ], $extra);
 
         $this->hydrate($json);
@@ -83,7 +83,7 @@ class SPFormDigest extends SPObject implements Serializable
     {
         return serialize([
             $this->digest,
-            $this->expires->getTimestamp()
+            $this->expires->getTimestamp(),
         ]);
     }
 
@@ -127,7 +127,7 @@ class SPFormDigest extends SPObject implements Serializable
         $json = $site->request('_api/contextinfo', [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ]
         ], 'POST');
 

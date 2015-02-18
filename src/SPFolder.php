@@ -21,7 +21,7 @@ class SPFolder extends SPListObject implements SPItemInterface
      * @access  public
      */
     public static $system_folders = [
-        'forms'
+        'forms',
     ];
 
     /**
@@ -45,14 +45,14 @@ class SPFolder extends SPListObject implements SPItemInterface
         $settings = array_replace_recursive([
             'extra' => [],    // extra SharePoint Folder properties to map
             'fetch' => false, // fetch SharePoint Items (Folders/Files)?
-            'items' => []     // SharePoint Item instantiation settings
+            'items' => [],    // SharePoint Item instantiation settings
         ], $settings);
 
         parent::__construct([
             'guid'         => 'UniqueId',
             'name'         => 'Name',
             'title'        => 'Name',
-            'relative_url' => 'ServerRelativeUrl'
+            'relative_url' => 'ServerRelativeUrl',
         ], $settings['extra']);
 
         $this->site = $site;
@@ -141,15 +141,12 @@ class SPFolder extends SPListObject implements SPItemInterface
 
         $match = [];
 
-        /**
-         * NOTE: regardless of the SharePoint Folder, the associated
-         * SharePoint List can be always fetched by Title using the
-         * root Folder Name.
-         *
-         * Example:
-         * For the relative Folder: /sites/mySite/MainFolder/SubFolder
-         * The List Title will be: MainFolder
-         */
+         // The associated SharePoint List of a SharePoint Folder
+         // can always be fetched by Title using the root Folder name.
+         //
+         // Example:
+         // For the relative Folder: /sites/mySite/MainFolder/SubFolder
+         // The List Title will be: MainFolder
         if (preg_match('/'.$site_path.'(?<title>[^\/]+)\/?.*/', $this->relative_url, $match) !== 1) {
             throw new SPException('Unable to get the SharePoint List Title for the Folder: '.$this->name);
         }
@@ -173,7 +170,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relative_url."')/Folders", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ]
         ]);
 
@@ -213,7 +210,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relative_url."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ]
         ]);
 
@@ -237,10 +234,10 @@ class SPFolder extends SPListObject implements SPItemInterface
 
         $body = json_encode([
             '__metadata' => [
-                'type' => 'SP.Folder'
+                'type' => 'SP.Folder',
             ],
 
-            'ServerRelativeUrl' => $folder->getRelativeURL($name)
+            'ServerRelativeUrl' => $folder->getRelativeURL($name),
         ]);
 
         $json = $folder->request('_api/web/Folders', [
@@ -249,7 +246,7 @@ class SPFolder extends SPListObject implements SPItemInterface
                 'Accept'          => 'application/json;odata=verbose',
                 'X-RequestDigest' => (string) $folder->getSPFormDigest(),
                 'Content-type'    => 'application/json;odata=verbose',
-                'Content-length'  => strlen($body)
+                'Content-length'  => strlen($body),
             ],
 
             'body'    => $body
@@ -270,7 +267,7 @@ class SPFolder extends SPListObject implements SPItemInterface
     {
         $properties = array_replace_recursive($properties, [
             '__metadata' => [
-                'type' => 'SP.Folder'
+                'type' => 'SP.Folder',
             ]
         ]);
 
@@ -284,17 +281,15 @@ class SPFolder extends SPListObject implements SPItemInterface
                 'X-HTTP-Method'   => 'MERGE',
                 'IF-MATCH'        => '*',
                 'Content-type'    => 'application/json;odata=verbose',
-                'Content-length'  => strlen($body)
+                'Content-length'  => strlen($body),
             ],
 
             'body'    => $body
         ], 'POST');
 
-        /**
-         * NOTE: Rehydration is done using the $properties array,
-         * since the SharePoint API does not return a response on
-         * a successful update
-         */
+        // Rehydration is done using the $properties array,
+        // since the SharePoint API doesn't return a response
+        // on a successful update
         $this->hydrate($properties, true);
 
         return $this;
@@ -314,7 +309,7 @@ class SPFolder extends SPListObject implements SPItemInterface
                 'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
                 'X-RequestDigest' => (string) $this->getSPFormDigest(),
                 'X-HTTP-Method'   => 'DELETE',
-                'IF-MATCH'        => '*'
+                'IF-MATCH'        => '*',
             ]
         ], 'POST');
 
@@ -333,7 +328,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         $json = $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relative_url."')/itemCount", [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ]
         ]);
 
@@ -345,18 +340,19 @@ class SPFolder extends SPListObject implements SPItemInterface
      *
      * @static
      * @access  public
-     * @param   array $settings Instantiation settings
+     * @param   array  $settings Instantiation settings
      * @return  array
      */
     public function getSPItems(array $settings = [])
     {
         $settings = array_replace_recursive([
             'folders' => [
-                'extra' => [] // extra SharePoint Folder properties to map
+                'extra' => [], // extra SharePoint Folder properties to map
             ],
+
             'files' => [
-                'extra' => [] // extra SharePoint File properties to map
-            ]
+                'extra' => [], // extra SharePoint File properties to map
+            ],
         ], $settings);
 
         $folders = static::getAll($this->site, $this->relative_url, $settings['folders']);

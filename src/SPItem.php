@@ -39,7 +39,7 @@ class SPItem extends SPObject implements SPItemInterface
             'type'  => '__metadata.type',
             'id'    => 'Id',
             'guid'  => 'GUID',
-            'title' => 'Title'
+            'title' => 'Title',
         ], $extra);
 
         $this->list = $list;
@@ -75,17 +75,17 @@ class SPItem extends SPObject implements SPItemInterface
     {
         $settings = array_replace_recursive([
             'extra' => [],  // extra SharePoint Item properties to map
-            'top'   => 5000 // SharePoint Item threshold
+            'top'   => 5000, // SharePoint Item threshold
         ], $settings);
 
         $json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
             'headers' => [
                 'Authorization' => 'Bearer '.$list->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ],
 
             'query'   => [
-                'top' => $settings['top']
+                'top' => $settings['top'],
             ]
         ]);
 
@@ -118,7 +118,7 @@ class SPItem extends SPObject implements SPItemInterface
         $json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items(".$id.")", [
             'headers' => [
                 'Authorization' => 'Bearer '.$list->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ]
         ]);
 
@@ -140,7 +140,7 @@ class SPItem extends SPObject implements SPItemInterface
     {
         $properties = array_replace_recursive($properties, [
             '__metadata' => [
-                'type' => $list->getItemType()
+                'type' => $list->getItemType(),
             ]
         ]);
 
@@ -152,7 +152,7 @@ class SPItem extends SPObject implements SPItemInterface
                 'Accept'          => 'application/json;odata=verbose',
                 'X-RequestDigest' => (string) $list->getSPFormDigest(),
                 'Content-type'    => 'application/json;odata=verbose',
-                'Content-length'  => strlen($body)
+                'Content-length'  => strlen($body),
             ],
 
             'body'    => $body
@@ -174,7 +174,7 @@ class SPItem extends SPObject implements SPItemInterface
     {
         $properties = array_replace_recursive($properties, [
             '__metadata' => [
-                'type' => $this->type
+                'type' => $this->type,
             ]
         ], $properties);
 
@@ -188,18 +188,16 @@ class SPItem extends SPObject implements SPItemInterface
                 'X-HTTP-Method'   => 'MERGE',
                 'IF-MATCH'        => '*',
                 'Content-type'    => 'application/json;odata=verbose',
-                'Content-length'  => strlen($body)
+                'Content-length'  => strlen($body),
             ],
 
             'body'    => $body
 
         ], 'POST');
 
-        /**
-         * NOTE: Rehydration is done using the $properties array,
-         * since the SharePoint API does not return a response on
-         * a successful update
-         */
+        // Rehydration is done using the $properties array,
+        // since the SharePoint API doesn't return a response
+        // on a successful update
         $this->hydrate($properties, true);
 
         return $this;
@@ -219,7 +217,7 @@ class SPItem extends SPObject implements SPItemInterface
                 'Authorization'   => 'Bearer '.$this->list->getSPAccessToken(),
                 'X-RequestDigest' => (string) $this->list->getSPFormDigest(),
                 'IF-MATCH'        => '*',
-                'X-HTTP-Method'   => 'DELETE'
+                'X-HTTP-Method'   => 'DELETE',
             ]
         ], 'POST');
 

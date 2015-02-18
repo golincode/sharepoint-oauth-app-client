@@ -82,7 +82,7 @@ class SPFile extends SPObject implements SPItemInterface
             'size'         => 'Length',
             'created'      => 'TimeCreated',
             'modified'     => 'TimeLastModified',
-            'relative_url' => 'ServerRelativeUrl'
+            'relative_url' => 'ServerRelativeUrl',
         ], $extra);
 
         $this->folder = $folder;
@@ -185,7 +185,7 @@ class SPFile extends SPObject implements SPItemInterface
     {
         $response = $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
             'headers' => [
-                'Authorization' => 'Bearer '.$this->folder->getSPAccessToken()
+                'Authorization' => 'Bearer '.$this->folder->getSPAccessToken(),
             ]
         ], 'GET', false);
 
@@ -239,10 +239,11 @@ class SPFile extends SPObject implements SPItemInterface
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files", [
             'headers' => [
                 'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ],
+
             'query'   => [
-                '$expand' => 'ListItemAllFields'
+                '$expand' => 'ListItemAllFields',
             ]
         ]);
 
@@ -275,11 +276,11 @@ class SPFile extends SPObject implements SPItemInterface
         $json = $site->request("_api/web/GetFileByServerRelativeUrl('".$relative_url."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ],
 
             'query'   => [
-                '$expand' => 'ListItemAllFields'
+                '$expand' => 'ListItemAllFields',
             ]
         ]);
 
@@ -310,11 +311,11 @@ class SPFile extends SPObject implements SPItemInterface
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files('".$name."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose'
+                'Accept'        => 'application/json;odata=verbose',
             ],
 
             'query'   => [
-                '$expand' => 'ListItemAllFields'
+                '$expand' => 'ListItemAllFields',
             ]
         ]);
 
@@ -372,11 +373,11 @@ class SPFile extends SPObject implements SPItemInterface
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
-                'X-RequestDigest' => (string) $folder->getSPFormDigest()
+                'X-RequestDigest' => (string) $folder->getSPFormDigest(),
             ],
 
             'query'   => [
-                '$expand' => 'ListItemAllFields'
+                '$expand' => 'ListItemAllFields',
             ],
 
             'body'    => $body
@@ -389,7 +390,7 @@ class SPFile extends SPObject implements SPItemInterface
      * Update a SharePoint File
      *
      * @access  public
-     * @param   mixed $contents File contents
+     * @param   mixed  $contents File contents
      * @throws  SPException
      * @return  SPFile
      */
@@ -422,21 +423,19 @@ class SPFile extends SPObject implements SPItemInterface
                 'Authorization'   => 'Bearer '.$this->folder->getSPAccessToken(),
                 'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
                 'X-HTTP-Method'   => 'PUT',
-                'Content-length'  => strlen($body)
+                'Content-length'  => strlen($body),
             ],
 
             'body'    => $body
 
         ], 'POST');
 
-        /**
-         * NOTE: Rehydration is done in a best effort manner,
-         * since the SharePoint API doesn't return a response
-         * on a successful update
-         */
+        // Rehydration is done in a best effort manner,
+        // since the SharePoint API doesn't return a response
+        // on a successful update
         $this->hydrate([
             'Length'           => strlen($body),
-            'TimeLastModified' => Carbon::now()
+            'TimeLastModified' => Carbon::now(),
         ], true);
 
         return $this;
@@ -462,15 +461,13 @@ class SPFile extends SPObject implements SPItemInterface
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
-                'X-RequestDigest' => (string) $this->folder->getSPFormDigest()
+                'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
             ]
         ], 'POST');
 
-        /**
-         * NOTE: Since the SharePoint API doesn't return a proper response on
-         * a successful move operation, we do a second request to get an updated
-         * SPFile to rehydrate the current object
-         */
+        // Since the SharePoint API doesn't return a proper response on
+        // a successful move operation, we do a second request to get an
+        // updated SPFile to rehydrate the current object
         $file = static::getByRelativeURL($folder->getSPSite(), $new_url, $extra);
 
         $this->hydrate($file);
@@ -499,15 +496,13 @@ class SPFile extends SPObject implements SPItemInterface
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
-                'X-RequestDigest' => (string) $this->folder->getSPFormDigest()
+                'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
             ]
         ], 'POST');
 
-        /**
-         * NOTE: Since the SharePoint API doesn't return a proper response on
-         * a successful copy operation, we do a second request to return the
-         * copied SPFile
-         */
+        // Since the SharePoint API doesn't return a proper response on
+        // a successful copy operation, we do a second request to get the
+        // copied SPFile
         return static::getByRelativeURL($folder->getSPSite(), $new_url, $extra);
     }
 
@@ -525,7 +520,7 @@ class SPFile extends SPObject implements SPItemInterface
                 'Authorization'   => 'Bearer '.$this->folder->getSPAccessToken(),
                 'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
                 'IF-MATCH'        => '*',
-                'X-HTTP-Method'   => 'DELETE'
+                'X-HTTP-Method'   => 'DELETE',
             ]
         ], 'POST');
 
