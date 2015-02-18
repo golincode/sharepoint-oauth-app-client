@@ -117,4 +117,4 @@ try {
 }
 ```
 
-**Note:** On both App-only Policy examples, the context token comes from the **SPAppToken** HTTP POST field when the SharePoint application launches.
+**Note:** On both User-only Policy examples above, the context token comes from the **SPAppToken** HTTP POST field when the SharePoint application launches.
