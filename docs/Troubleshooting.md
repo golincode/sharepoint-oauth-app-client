@@ -2,9 +2,7 @@
 Here you will find a list of common library issues and their respective resolution.
 
 ## Unable to make an HTTP request (SPException thrown)
-You might bump into this one, depending on the **libcURL** version your PHP is currently using.
-
-Some of the problems might be:
+If you bump into this one, check the stack trace for one these error messages:
 ```
 cURL error 35: Unknown SSL protocol error in connection to accounts.accesscontrol.windows.net:443
 ```
@@ -12,9 +10,8 @@ cURL error 35: Unknown SSL protocol error in connection to accounts.accesscontro
 cURL error 4: OpenSSL was built without SSLv2 support
 ```
 
-To make it work, cURL must either use SSL **version 3** or TLS **version 1.0** (if supported by your PHP version).
-
-That can be achieved through the [SPSite](docs/SPSite.md) settings when creating a new instance.
+Depending on the **libcURL** version your PHP is currently using, either use SSL **version 3** or TLS **version 1.0** to overcome the situation.
+That can be achieved through the [SPSite](docs/SPSite.md) settings when creating a new instance:
 
 ```php
 $settings = [
