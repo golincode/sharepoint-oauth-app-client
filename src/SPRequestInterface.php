@@ -26,7 +26,7 @@ interface SPRequestInterface
      * @throws  SPException
      * @return  \GuzzleHttp\Message\Response|array
      */
-    public function request($url = null, array $options = [], $method = 'GET', $process = true);
+    public function request($url, array $options = [], $method = 'GET', $process = true);
 
     /**
      * Get the current SharePoint Access Token

@@ -186,7 +186,7 @@ class SPSite implements SPRequestInterface
     /**
      * {@inheritdoc}
      */
-    public function request($url = null, array $options = [], $method = 'GET', $process = true)
+    public function request($url, array $options = [], $method = 'GET', $process = true)
     {
         try {
             $options = array_replace_recursive($options, [
