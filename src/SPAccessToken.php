@@ -122,26 +122,22 @@ class SPAccessToken extends SPObject implements Serializable
      *
      * @static
      * @access  public
-     * @param   SPSite $site          SharePoint Site
-     * @param   string $context_token Context Token
-     * @param   array  $extra         Extra SharePoint Access Token properties to map
+     * @param   SPSite $site         SharePoint Site
+     * @param   string $contextToken Context Token
+     * @param   array  $extra        Extra SharePoint Access Token properties to map
      * @throws  SPException
      * @return  SPAccessToken
      */
-    public static function createUOP(SPSite $site, $context_token = null, array $extra = [])
+    public static function createUOP(SPSite $site, $contextToken, array $extra = [])
     {
         $config = $site->getConfig();
-
-        if (empty($context_token)) {
-            throw new SPException('The Context Token is empty/not set');
-        }
 
         if (empty($config['secret'])) {
             throw new SPException('The Secret is empty/not set');
         }
 
         try {
-            $jwt = JWT::decode($context_token, $config['secret'], false);
+            $jwt = JWT::decode($contextToken, $config['secret'], false);
         } catch (Exception $e) {
             throw new SPException('Unable to decode the Context Token', 0, $e);
         }
