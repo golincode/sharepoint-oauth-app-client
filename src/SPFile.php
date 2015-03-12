@@ -67,29 +67,29 @@ class SPFile extends SPObject implements SPItemInterface
      * @access  protected
      * @var     string
      */
-    protected $relative_url = null;
+    protected $relativeUrl;
 
     /**
      * SharePoint File constructor
      *
      * @access  public
-     * @param   SPFolder $folder SharePoint Folder
-     * @param   array    $json   JSON response from the SharePoint REST API
-     * @param   array    $extra  Extra properties to map
+     * @param   SPFolderInterface $folder SharePoint Folder
+     * @param   array             $json   JSON response from the SharePoint REST API
+     * @param   array             $extra  Extra properties to map
      * @return  SPFile
      */
-    public function __construct(SPFolder $folder, array $json, array $extra = [])
+    public function __construct(SPFolderInterface $folder, array $json, array $extra = [])
     {
         parent::__construct([
-            'type'         => 'ListItemAllFields.__metadata.type',
-            'id'           => 'ListItemAllFields.ID',
-            'guid'         => 'ListItemAllFields.GUID',
-            'title'        => 'Title',
-            'name'         => 'Name',
-            'size'         => 'Length',
-            'created'      => 'TimeCreated',
-            'modified'     => 'TimeLastModified',
-            'relative_url' => 'ServerRelativeUrl',
+            'type'        => 'ListItemAllFields.__metadata.type',
+            'id'          => 'ListItemAllFields.ID',
+            'guid'        => 'ListItemAllFields.GUID',
+            'title'       => 'Title',
+            'name'        => 'Name',
+            'size'        => 'Length',
+            'created'     => 'TimeCreated',
+            'modified'    => 'TimeLastModified',
+            'relativeUrl' => 'ServerRelativeUrl',
         ], $extra);
 
         $this->folder = $folder;
@@ -103,16 +103,16 @@ class SPFile extends SPObject implements SPItemInterface
     public function toArray()
     {
         return [
-            'type'         => $this->type,
-            'id'           => $this->id,
-            'guid'         => $this->guid,
-            'title'        => $this->title,
-            'name'         => $this->name,
-            'size'         => $this->size,
-            'created'      => $this->created,
-            'modified'     => $this->modified,
-            'relative_url' => $this->relative_url,
-            'extra'        => $this->extra
+            'type'        => $this->type,
+            'id'          => $this->id,
+            'guid'        => $this->guid,
+            'title'       => $this->title,
+            'name'        => $this->name,
+            'size'        => $this->size,
+            'created'     => $this->created,
+            'modified'    => $this->modified,
+            'relativeUrl' => $this->relativeUrl,
+            'extra'       => $this->extra,
         ];
     }
 
@@ -166,9 +166,9 @@ class SPFile extends SPObject implements SPItemInterface
      * @access  public
      * @return  string
      */
-    public function getRelativeURL()
+    public function getRelativeUrl()
     {
-        return $this->relative_url;
+        return $this->relativeUrl;
     }
 
     /**
@@ -190,10 +190,10 @@ class SPFile extends SPObject implements SPItemInterface
      */
     public function getContents()
     {
-        $response = $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
+        $response = $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/\$value", [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->folder->getSPAccessToken(),
-            ]
+            ],
         ], 'GET', false);
 
         return (string) $response->getBody();
@@ -214,7 +214,7 @@ class SPFile extends SPObject implements SPItemInterface
             'size'     => $this->size,
             'created'  => $this->created,
             'modified' => $this->modified,
-            'url'      => $this->getURL()
+            'url'      => $this->getURL(),
         ];
     }
 
@@ -251,7 +251,7 @@ class SPFile extends SPObject implements SPItemInterface
 
             'query'   => [
                 '$expand' => 'ListItemAllFields',
-            ]
+            ],
         ]);
 
         $files = [];
@@ -268,19 +268,15 @@ class SPFile extends SPObject implements SPItemInterface
      *
      * @static
      * @access  public
-     * @param   SPSite $site         SharePoint Site
-     * @param   string $relative_url SharePoint Folder relative URL
-     * @param   array  $extra        Extra properties to map
+     * @param   SPSite $site        SharePoint Site
+     * @param   string $relativeUrl SharePoint Folder relative URL
+     * @param   array  $extra       Extra properties to map
      * @throws  SPException
      * @return  SPFile
      */
-    public static function getByRelativeURL(SPSite $site, $relative_url = null, array $extra = [])
+    public static function getByRelativeURL(SPSite $site, $relativeUrl, array $extra = [])
     {
-        if (empty($relative_url)) {
-            throw new SPException('The SharePoint File Relative URL is empty/not set');
-        }
-
-        $json = $site->request("_api/web/GetFileByServerRelativeUrl('".$relative_url."')", [
+        $json = $site->request("_api/web/GetFileByServerRelativeUrl('".$relativeUrl."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
@@ -288,10 +284,10 @@ class SPFile extends SPObject implements SPItemInterface
 
             'query'   => [
                 '$expand' => 'ListItemAllFields',
-            ]
+            ],
         ]);
 
-        $folder = SPFolder::getByRelativeURL($site, dirname($relative_url));
+        $folder = SPFolder::getByRelativeURL($site, dirname($relativeUrl));
 
         return new static($folder, $json['d'], $extra);
     }
@@ -307,13 +303,9 @@ class SPFile extends SPObject implements SPItemInterface
      * @throws  SPException
      * @return  SPFile
      */
-    public static function getByName(SPFolderInterface $folder, $name = null, array $extra = [])
+    public static function getByName(SPFolderInterface $folder, $name, array $extra = [])
     {
         $folder->isWritable(true);
-
-        if (empty($name)) {
-            throw new SPException('The SharePoint File name is empty/not set');
-        }
 
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files('".$name."')", [
             'headers' => [
@@ -323,7 +315,7 @@ class SPFile extends SPObject implements SPItemInterface
 
             'query'   => [
                 '$expand' => 'ListItemAllFields',
-            ]
+            ],
         ]);
 
         return new static($folder, $json['d'], $extra);
@@ -387,7 +379,7 @@ class SPFile extends SPObject implements SPItemInterface
                 '$expand' => 'ListItemAllFields',
             ],
 
-            'body'    => $body
+            'body'    => $body,
         ], 'POST');
 
         return new static($folder, $json['d'], $extra);
@@ -425,7 +417,7 @@ class SPFile extends SPObject implements SPItemInterface
                 break;
         }
 
-        $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')/\$value", [
+        $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/\$value", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->folder->getSPAccessToken(),
                 'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
@@ -433,7 +425,7 @@ class SPFile extends SPObject implements SPItemInterface
                 'Content-length'  => strlen($body),
             ],
 
-            'body'    => $body
+            'body'    => $body,
 
         ], 'POST');
 
@@ -464,12 +456,12 @@ class SPFile extends SPObject implements SPItemInterface
 
         $new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 
-        $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relative_url."')/moveTo(newUrl='".$new_url."',flags=1)", [
+        $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/moveTo(newUrl='".$new_url."',flags=1)", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
                 'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
-            ]
+            ],
         ], 'POST');
 
         // Since the SharePoint API doesn't return a proper response on
@@ -499,12 +491,12 @@ class SPFile extends SPObject implements SPItemInterface
 
         $new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
 
-        $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relative_url."')/copyTo(strNewUrl='".$new_url."',boverwrite=".($overwrite ? 'true' : 'false').")", [
+        $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/copyTo(strNewUrl='".$new_url."',boverwrite=".($overwrite ? 'true' : 'false').")", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
                 'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
-            ]
+            ],
         ], 'POST');
 
         // Since the SharePoint API doesn't return a proper response on
@@ -522,13 +514,13 @@ class SPFile extends SPObject implements SPItemInterface
      */
     public function delete()
     {
-        $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relative_url."')", [
+        $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relativeUrl."')", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->folder->getSPAccessToken(),
                 'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
                 'IF-MATCH'        => '*',
                 'X-HTTP-Method'   => 'DELETE',
-            ]
+            ],
         ], 'POST');
 
         return true;

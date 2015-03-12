@@ -74,7 +74,7 @@ class SPAccessToken extends SPObject implements Serializable
         return [
             'token'   => $this->token,
             'expires' => $this->expires,
-            'extra'   => $this->extra
+            'extra'   => $this->extra,
         ];
     }
 
