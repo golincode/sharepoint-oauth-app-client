@@ -44,7 +44,7 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
      * @access  protected
      * @var     string
      */
-    protected $relative_url;
+    protected $relativeUrl;
 
     /**
      * {@inheritdoc}
@@ -65,51 +65,50 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($index = null)
+    public function offsetExists($offset)
     {
-        return isset($this->items[$index]);
+        return isset($this->items[$offset]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetGet($index = null)
+    public function offsetGet($offset)
     {
-        if (isset($this->items[$index])) {
-            return $this->items[$index];
+        if (isset($this->items[$offset])) {
+            return $this->items[$offset];
         }
 
-        throw new SPException('Invalid SharePoint Item');
+        throw new SPException('Invalid SharePoint Item GUID');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($guid = null, $item = null)
+    public function offsetSet($offset, $value)
     {
-        if (! $item instanceof SPItemInterface) {
+        if (! $value instanceof SPItemInterface) {
             throw new SPException('SharePoint Item expected');
         }
 
-        if ($guid === null) {
-            $guid = $item->getGUID();
-        }
+        // always set the GUID as the array index
+        $offset = $value->getGUID();
 
-        $this->items[$guid] = $item;
+        $this->items[$offset] = $value;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($index = null)
+    public function offsetUnset($offset)
     {
-        unset($this->items[$index]);
+        unset($this->items[$offset]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function request($url = null, array $options = [], $method = 'GET', $process = true)
+    public function request($url, array $options = [], $method = 'GET', $process = true)
     {
         return $this->site->request($url, $options, $method, $process);
     }
@@ -135,7 +134,7 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
      */
     public function getRelativeURL($path = null)
     {
-        return sprintf('%s/%s', rtrim($this->relative_url, '/'), ltrim($path, '/'));
+        return sprintf('%s/%s', rtrim($this->relativeUrl, '/'), ltrim($path, '/'));
     }
 
     /**
