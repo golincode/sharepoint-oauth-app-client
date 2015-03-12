@@ -99,7 +99,7 @@ class SPAccessToken extends SPObject implements Serializable
      * @param   string $serialized
      * @return  void
      */
-    public function unserialize($serialized = null)
+    public function unserialize($serialized)
     {
         list($this->token, $this->expires) = unserialize($serialized);
 

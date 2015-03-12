@@ -72,7 +72,7 @@ class SPFormDigest extends SPObject implements Serializable
         return [
             'digest'  => $this->digest,
             'expires' => $this->expires,
-            'extra'   => $this->extra
+            'extra'   => $this->extra,
         ];
     }
 
@@ -97,7 +97,7 @@ class SPFormDigest extends SPObject implements Serializable
      * @param   string $serialized
      * @return  void
      */
-    public function unserialize($serialized = null)
+    public function unserialize($serialized)
     {
         list($this->digest, $this->expires) = unserialize($serialized);
 
