@@ -21,7 +21,7 @@ class SPFolder extends SPListObject implements SPItemInterface
      * @access  public
      * @var     array
      */
-    public static $system_folders = [
+    public static $systemFolders = [
         'forms',
     ];
 
@@ -51,10 +51,10 @@ class SPFolder extends SPListObject implements SPItemInterface
         ], $settings);
 
         parent::__construct([
-            'guid'         => 'UniqueId',
-            'name'         => 'Name',
-            'title'        => 'Name',
-            'relative_url' => 'ServerRelativeUrl',
+            'guid'        => 'UniqueId',
+            'name'        => 'Name',
+            'title'       => 'Name',
+            'relativeUrl' => 'ServerRelativeUrl',
         ], $settings['extra']);
 
         $this->site = $site;
@@ -77,7 +77,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             'guid'         => $this->guid,
             'title'        => $this->title,
             'name'         => $this->name,
-            'relative_url' => $this->relative_url,
+            'relative_url' => $this->relativeUrl,
             'items'        => $this->items,
             'extra'        => $this->extra
         ];
@@ -122,11 +122,11 @@ class SPFolder extends SPListObject implements SPItemInterface
      * @param   string $name SharePoint Folder name
      * @return  bool
      */
-    public static function isSystemFolder($name = null)
+    public static function isSystemFolder($name)
     {
         $normalized = strtolower(basename($name));
 
-        return in_array($normalized, static::$system_folders);
+        return in_array($normalized, static::$systemFolders);
     }
 
     /**
@@ -149,7 +149,7 @@ class SPFolder extends SPListObject implements SPItemInterface
          // Example:
          // For the relative Folder: /sites/mySite/MainFolder/SubFolder
          // The List Title will be: MainFolder
-        if (preg_match('/'.$site_path.'(?<title>[^\/]+)\/?.*/', $this->relative_url, $match) !== 1) {
+        if (preg_match('/'.$site_path.'(?<title>[^\/]+)\/?.*/', $this->relativeUrl, $match) !== 1) {
             throw new SPException('Unable to get the SharePoint List Title for the Folder: '.$this->name);
         }
 
@@ -161,27 +161,27 @@ class SPFolder extends SPListObject implements SPItemInterface
      *
      * @static
      * @access  public
-     * @param   SPSite $site         SharePoint Site
-     * @param   string $relative_url SharePoint Folder relative URL
-     * @param   array  $settings     Instantiation settings
+     * @param   SPSite $site        SharePoint Site
+     * @param   string $relativeUrl SharePoint Folder relative URL
+     * @param   array  $settings    Instantiation settings
      * @throws  SPException
      * @return  array
      */
-    public static function getAll(SPSite $site, $relative_url = null, array $settings = [])
+    public static function getAll(SPSite $site, $relativeUrl, array $settings = [])
     {
-        $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relative_url."')/Folders", [
+        $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relativeUrl."')/Folders", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
-            ]
+            ],
         ]);
 
         $folders = [];
 
-        foreach ($json['d']['results'] as $subfolder) {
+        foreach ($json['d']['results'] as $subFolder) {
             // skip System Folders
-            if (! static::isSystemFolder($subfolder['Name'])) {
-                $folders[$subfolder['UniqueId']] = new static($site, $subfolder, $settings);
+            if (! static::isSystemFolder($subFolder['Name'])) {
+                $folders[$subFolder['UniqueId']] = new static($site, $subFolder, $settings);
             }
         }
 
@@ -193,27 +193,23 @@ class SPFolder extends SPListObject implements SPItemInterface
      *
      * @static
      * @access  public
-     * @param   SPSite $site         SharePoint Site
-     * @param   string $relative_url SharePoint Folder relative URL
-     * @param   array  $settings     Instantiation settings
+     * @param   SPSite $site        SharePoint Site
+     * @param   string $relativeUrl SharePoint Folder relative URL
+     * @param   array  $settings    Instantiation settings
      * @throws  SPException
      * @return  SPFolder
      */
-    public static function getByRelativeURL(SPSite $site, $relative_url = null, array $settings = [])
+    public static function getByRelativeURL(SPSite $site, $relativeUrl, array $settings = [])
     {
-        if (empty($relative_url)) {
-            throw new SPException('The SharePoint Folder Relative URL is empty/not set');
-        }
-
-        if (static::isSystemFolder(basename($relative_url))) {
+        if (static::isSystemFolder(basename($relativeUrl))) {
             throw new SPException('Trying to get a SharePoint System Folder');
         }
 
-        $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relative_url."')", [
+        $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relativeUrl."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
-            ]
+            ],
         ]);
 
         return new static($site, $json['d'], $settings);
@@ -251,7 +247,7 @@ class SPFolder extends SPListObject implements SPItemInterface
                 'Content-length'  => strlen($body),
             ],
 
-            'body'    => $body
+            'body'    => $body,
         ], 'POST');
 
         return new static($folder->getSPSite(), $json['d'], $settings);
@@ -275,7 +271,7 @@ class SPFolder extends SPListObject implements SPItemInterface
 
         $body = json_encode($properties);
 
-        $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relative_url."')", [
+        $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relativeUrl."')", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
@@ -286,7 +282,7 @@ class SPFolder extends SPListObject implements SPItemInterface
                 'Content-length'  => strlen($body),
             ],
 
-            'body'    => $body
+            'body'    => $body,
         ], 'POST');
 
         // Rehydration is done using the $properties array,
@@ -306,13 +302,13 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function delete()
     {
-        $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relative_url."')", [
+        $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relativeUrl."')", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
                 'X-RequestDigest' => (string) $this->getSPFormDigest(),
                 'X-HTTP-Method'   => 'DELETE',
                 'IF-MATCH'        => '*',
-            ]
+            ],
         ], 'POST');
 
         return true;
@@ -327,11 +323,11 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function getSPItemCount()
     {
-        $json = $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relative_url."')/itemCount", [
+        $json = $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relativeUrl."')/itemCount", [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
-            ]
+            ],
         ]);
 
         return $json['d']['ItemCount'];
@@ -357,7 +353,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             ],
         ], $settings);
 
-        $folders = static::getAll($this->site, $this->relative_url, $settings['folders']);
+        $folders = static::getAll($this->site, $this->relativeUrl, $settings['folders']);
         $files = SPFile::getAll($this, $settings['files']['extra']);
 
         $this->items = array_merge($folders, $files);
