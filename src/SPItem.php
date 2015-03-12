@@ -58,7 +58,7 @@ class SPItem extends SPObject implements SPItemInterface
             'id'    => $this->id,
             'guid'  => $this->guid,
             'title' => $this->title,
-            'extra' => $this->extra
+            'extra' => $this->extra,
         ];
     }
 
@@ -87,7 +87,7 @@ class SPItem extends SPObject implements SPItemInterface
 
             'query'   => [
                 'top' => $settings['top'],
-            ]
+            ],
         ]);
 
         $items = [];
@@ -110,17 +110,13 @@ class SPItem extends SPObject implements SPItemInterface
      * @throws  SPException
      * @return  SPItem
      */
-    public static function getByID(SPList $list, $id = 0, array $extra = [])
+    public static function getByID(SPList $list, $id, array $extra = [])
     {
-        if (empty($id)) {
-            throw new SPException('The Item ID is empty/not set');
-        }
-
         $json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items(".$id.")", [
             'headers' => [
                 'Authorization' => 'Bearer '.$list->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
-            ]
+            ],
         ]);
 
         return new static($list, $json['d'], $extra);
@@ -142,7 +138,7 @@ class SPItem extends SPObject implements SPItemInterface
         $properties = array_replace_recursive($properties, [
             '__metadata' => [
                 'type' => $list->getItemType(),
-            ]
+            ],
         ]);
 
         $body = json_encode($properties);
@@ -156,7 +152,7 @@ class SPItem extends SPObject implements SPItemInterface
                 'Content-length'  => strlen($body),
             ],
 
-            'body'    => $body
+            'body'    => $body,
 
         ], 'POST');
 
@@ -176,7 +172,7 @@ class SPItem extends SPObject implements SPItemInterface
         $properties = array_replace_recursive($properties, [
             '__metadata' => [
                 'type' => $this->type,
-            ]
+            ],
         ], $properties);
 
         $body = json_encode($properties);
@@ -192,7 +188,7 @@ class SPItem extends SPObject implements SPItemInterface
                 'Content-length'  => strlen($body),
             ],
 
-            'body'    => $body
+            'body'    => $body,
 
         ], 'POST');
 
@@ -219,7 +215,7 @@ class SPItem extends SPObject implements SPItemInterface
                 'X-RequestDigest' => (string) $this->list->getSPFormDigest(),
                 'IF-MATCH'        => '*',
                 'X-HTTP-Method'   => 'DELETE',
-            ]
+            ],
         ], 'POST');
 
         return true;
