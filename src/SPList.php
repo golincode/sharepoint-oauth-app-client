@@ -122,7 +122,7 @@ class SPList extends SPListObject
      * @access  protected
      * @var     string
      */
-    protected $item_type;
+    protected $itemType;
 
     /**
      * List Description
@@ -152,7 +152,7 @@ class SPList extends SPListObject
         parent::__construct([
             'template'     => 'BaseTemplate',
             'type'         => '__metadata.type',
-            'item_type'    => 'ListItemEntityTypeFullName',
+            'itemType'     => 'ListItemEntityTypeFullName',
             'guid'         => 'Id',
             'title'        => 'Title',
             'relative_url' => 'RootFolder.ServerRelativeUrl',
@@ -179,9 +179,9 @@ class SPList extends SPListObject
             'guid'         => $this->guid,
             'title'        => $this->title,
             'template'     => $this->template,
-            'item_type'    => $this->item_type,
+            'item_type'    => $this->itemType,
             'description'  => $this->description,
-            'relative_url' => $this->relative_url,
+            'relative_url' => $this->relativeUrl,
             'items'        => $this->items,
             'extra'        => $this->extra
         ];
@@ -231,7 +231,7 @@ class SPList extends SPListObject
      */
     public function getItemType()
     {
-        return $this->item_type;
+        return $this->itemType;
     }
 
     /**
@@ -254,7 +254,7 @@ class SPList extends SPListObject
 
             'query' => [
                 '$expand' => 'RootFolder',
-            ]
+            ],
         ]);
 
         $lists = [];
@@ -280,7 +280,7 @@ class SPList extends SPListObject
      * @throws  SPException
      * @return  SPList
      */
-    public static function getByGUID(SPSite $site, $guid = null, array $settings = [])
+    public static function getByGUID(SPSite $site, $guid, array $settings = [])
     {
         $json = $site->request("_api/web/Lists(guid'".$guid."')", [
             'headers' => [
@@ -290,7 +290,7 @@ class SPList extends SPListObject
 
             'query' => [
                 '$expand' => 'RootFolder',
-            ]
+            ],
         ]);
 
         return new static($site, $json['d'], $settings);
@@ -307,7 +307,7 @@ class SPList extends SPListObject
      * @throws  SPException
      * @return  SPList
      */
-    public static function getByTitle(SPSite $site, $title = null, array $settings = [])
+    public static function getByTitle(SPSite $site, $title, array $settings = [])
     {
         $json = $site->request("_api/web/Lists/GetByTitle('".$title."')", [
             'headers' => [
@@ -317,7 +317,7 @@ class SPList extends SPListObject
 
             'query' => [
                 '$expand' => 'RootFolder',
-            ]
+            ],
         ]);
 
         return new static($site, $json['d'], $settings);
@@ -359,7 +359,7 @@ class SPList extends SPListObject
                 '$expand' => 'RootFolder',
             ],
 
-            'body'    => $body
+            'body'    => $body,
         ], 'POST');
 
         return new static($site, $json['d'], $settings);
@@ -378,7 +378,7 @@ class SPList extends SPListObject
         $properties = array_replace_recursive($properties, [
             '__metadata' => [
                 'type' => 'SP.List',
-            ]
+            ],
         ]);
 
         $body = json_encode($properties);
@@ -394,7 +394,7 @@ class SPList extends SPListObject
                 'Content-length'  => strlen($body),
             ],
 
-            'body'    => $body
+            'body'    => $body,
         ], 'POST');
 
         // Rehydration is done using the $properties array,
@@ -421,7 +421,7 @@ class SPList extends SPListObject
                 'X-RequestDigest' => (string) $this->getSPFormDigest(),
                 'X-HTTP-Method'   => 'DELETE',
                 'IF-MATCH'        => '*',
-            ]
+            ],
         ], 'POST');
 
         return true;
@@ -442,7 +442,7 @@ class SPList extends SPListObject
         ], $properties, [
             '__metadata' => [
                 'type' => 'SP.Field',
-            ]
+            ],
         ]);
 
         $body = json_encode($properties);
@@ -456,7 +456,7 @@ class SPList extends SPListObject
                 'Content-length'  => strlen($body),
             ],
 
-            'body'    => $body
+            'body'    => $body,
         ], 'POST');
 
         return $json['d']['Id'];
@@ -475,7 +475,7 @@ class SPList extends SPListObject
             'headers' => [
                 'Authorization' => 'Bearer '.$this->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
-            ]
+            ],
         ]);
 
         return $json['d']['ItemCount'];
@@ -510,7 +510,7 @@ class SPList extends SPListObject
      * @param   array  $extra Extra SharePoint Item properties to map
      * @return  SPItem
      */
-    public function getSPItem($id = 0, array $extra = [])
+    public function getSPItem($id, array $extra = [])
     {
         $item = SPItem::getByID($this, $id, $extra);
 
@@ -540,33 +540,29 @@ class SPList extends SPListObject
      * Update a SharePoint Item
      *
      * @access  public
-     * @param   string $index      SharePoint Item index
+     * @param   string $guid       SharePoint Item GUID
      * @param   array  $properties SharePoint Item properties (Title, ...)
      * @return  SPItem
      */
-    public function updateSPItem($index = null, array $properties)
+    public function updateSPItem($guid, array $properties)
     {
-        $item = $this[$index]->update($properties);
-
-        $this[] = $item;
-
-        return $item;
+        return $this[$guid]->update($properties);
     }
 
     /**
      * Delete a SharePoint Item
      *
      * @access  public
-     * @param   string $index SharePoint Item index
+     * @param   string $guid SharePoint Item index
      * @throws  SPException
      * @return  bool
      */
-    public function deleteSPItem($index = null)
+    public function deleteSPItem($guid)
     {
-        if ($deleted = $this[$index]->delete()) {
-            unset($this[$index]);
+        if ($this[$guid]->delete()) {
+            unset($this[$guid]);
         }
 
-        return $deleted;
+        return true;
     }
 }
