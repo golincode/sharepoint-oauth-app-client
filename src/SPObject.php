@@ -105,45 +105,47 @@ abstract class SPObject
      */
     protected function hydrate($data, $missing = false)
     {
-        switch (true) {
-            // hydrate from SPObject
-            case ($data instanceof $this):
-                foreach (get_object_vars($data) as $key => $value) {
-                    $this->$key = $value;
-                }
-                break;
+        // hydrate from a SPObject
+        if ($data instanceof $this) {
+            foreach (get_object_vars($data) as $key => $value) {
+                $this->$key = $value;
+            }
 
-            // hydrate from JSON
-            case (is_array($data)):
-                foreach ($this->mapper as $property => $map) {
-                    // make spaces SharePoint compatible
-                    $map = str_replace(' ', '_x0020_', $map);
+            return;
+        }
 
-                    $current = $data;
+        // hydrate from an array (JSON)
+        if (is_array($data)) {
+            foreach ($this->mapper as $property => $map) {
+                // make spaces SharePoint compatible
+                $map = str_replace(' ', '_x0020_', $map);
 
-                    foreach (explode('.', $map) as $segment) {
-                        if (! is_array($current) || ! array_key_exists($segment, $current)) {
-                            if ($missing) {
-                                continue 2;
-                            }
+                $current = $data;
 
-                            throw new SPException('Invalid property mapper: '.$map);
+                // use dot notation to
+                foreach (explode('.', $map) as $segment) {
+                    if (! is_array($current) || ! array_key_exists($segment, $current)) {
+                        if ($missing) {
+                            continue 2;
                         }
 
-                        $current = $current[$segment];
+                        throw new SPException('Invalid property mapper: '.$map);
                     }
 
-                    $this->assign(strtolower($property), $current);
+                    $current = $current[$segment];
                 }
-                break;
 
-            default:
-                throw new SPException('Could not hydrate '.get_class($this));
+                $this->assign(strtolower($property), $current);
+            }
+
+            return;
         }
+
+        throw new SPException('Could not hydrate '.get_class($this));
     }
 
     /**
-     * Get the SPObject as an Array
+     * Get an array with the SPObject properties
      *
      * @access  public
      * @return  array
