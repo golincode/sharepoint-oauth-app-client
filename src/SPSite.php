@@ -163,7 +163,7 @@ class SPSite implements SPRequestInterface
      * @param   array  $settings Instantiation settings
      * @return  SPSite
      */
-    public static function create($url = null, array $settings = [])
+    public static function create($url, array $settings = [])
     {
         // ensure we have a trailing slash
         if (is_string($url)) {
@@ -175,7 +175,7 @@ class SPSite implements SPRequestInterface
         ], $settings, [
             'http' => [   // Guzzle HTTP Client configuration
                 'base_url' => $url,
-            ]
+            ],
         ]);
 
         $http = new Client($settings['http']);
@@ -223,17 +223,17 @@ class SPSite implements SPRequestInterface
      * Create SharePoint Access Token
      *
      * @access  public
-     * @param   string $context_token SharePoint Context Token
-     * @param   array  $extra         Extra SharePoint Access Token properties to map
+     * @param   string $contextToken SharePoint Context Token
+     * @param   array  $extra        Extra SharePoint Access Token properties to map
      * @throws  SPException
      * @return  SPSite
      */
-    public function createSPAccessToken($context_token = null, $extra = [])
+    public function createSPAccessToken( $contextToken = null, $extra = [])
     {
-        if (empty($context_token)) {
+        if (empty( $contextToken)) {
             $this->token = SPAccessToken::createAOP($this, $extra);
         } else {
-            $this->token = SPAccessToken::createUOP($this, $context_token, $extra);
+            $this->token = SPAccessToken::createUOP($this, $contextToken, $extra);
         }
 
         return $this;
