@@ -103,16 +103,16 @@ class SPFile extends SPObject implements SPItemInterface
     public function toArray()
     {
         return [
-            'type'        => $this->type,
-            'id'          => $this->id,
-            'guid'        => $this->guid,
-            'title'       => $this->title,
-            'name'        => $this->name,
-            'size'        => $this->size,
-            'created'     => $this->created,
-            'modified'    => $this->modified,
-            'relativeUrl' => $this->relativeUrl,
-            'extra'       => $this->extra,
+            'type'         => $this->type,
+            'id'           => $this->id,
+            'guid'         => $this->guid,
+            'title'        => $this->title,
+            'name'         => $this->name,
+            'size'         => $this->size,
+            'created'      => $this->created,
+            'modified'     => $this->modified,
+            'relative_url' => $this->relativeUrl,
+            'extra'        => $this->extra,
         ];
     }
 
