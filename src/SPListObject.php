@@ -26,13 +26,15 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
      * SharePoint Site
      *
      * @access  protected
+     * @var     SPSite
      */
-    protected $site = null;
+    protected $site;
 
     /**
      * SharePoint Items
      *
      * @access  protected
+     * @var     array
      */
     protected $items = [];
 
@@ -40,8 +42,9 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
      * Relative URL
      *
      * @access  protected
+     * @var     string
      */
-    protected $relative_url = null;
+    protected $relative_url;
 
     /**
      * {@inheritdoc}

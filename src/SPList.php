@@ -20,6 +20,7 @@ class SPList extends SPListObject
      *
      * @link http://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.client.listtemplatetype%28v=office.15%29.aspx
      * @link http://techtrainingnotes.blogspot.co.uk/2008/01/sharepoint-registrationid-list-template.html
+     * @var  int
      */
     const TPL_GENERICLIST     = 100; // Custom list
     const TPL_DOCUMENTLIBRARY = 101; // Document library
@@ -39,6 +40,7 @@ class SPList extends SPListObject
      *
      * @static
      * @access  public
+     * @var     array
      */
     public static $allowed = [
         self::TPL_GENERICLIST,
@@ -60,6 +62,7 @@ class SPList extends SPListObject
      *
      * @static
      * @access  public
+     * @var     array
      */
     public static $writable = [
         self::TPL_DOCUMENTLIBRARY,
@@ -72,6 +75,7 @@ class SPList extends SPListObject
      * SharePoint List Field Types (SharePoint 2013)
      *
      * @link http://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.client.fieldtype%28v=office.15%29.aspx
+     * @var  int
      */
     const FLD_INTEGER          = 1;  // Field contains an integer value
     const FLD_TEXT             = 2;  // Field contains a single line of text
@@ -108,6 +112,7 @@ class SPList extends SPListObject
      * List Template Type
      *
      * @access  protected
+     * @var     int
      */
     protected $template = 0;
 
@@ -115,15 +120,17 @@ class SPList extends SPListObject
      * List Item Entity Type Full Name
      *
      * @access  protected
+     * @var     string
      */
-    protected $item_type = null;
+    protected $item_type;
 
     /**
      * List Description
      *
      * @access  protected
+     * @var     string
      */
-    protected $description = null;
+    protected $description;
 
     /**
      * SharePoint List constructor

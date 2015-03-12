@@ -19,6 +19,7 @@ class SPFolder extends SPListObject implements SPItemInterface
      * System Folder names
      *
      * @access  public
+     * @var     array
      */
     public static $system_folders = [
         'forms',
@@ -28,8 +29,9 @@ class SPFolder extends SPListObject implements SPItemInterface
      * Folder Name
      *
      * @access  protected
+     * @var     string
      */
-    protected $name = null;
+    protected $name;
 
     /**
      * SharePoint Folder constructor

@@ -23,41 +23,47 @@ class SPSite implements SPRequestInterface
      * HTTP Client object
      *
      * @access  private
+     * @var     \GuzzleHttp\Client
      */
-    private $http = null;
+    private $http;
 
     /**
      * Access Token
      *
      * @access  private
+     * @var     SPAccessToken
      */
-    private $token = null;
+    private $token;
 
     /**
      * Form Digest
      *
      * @access  private
+     * @var     SPFormDigest
      */
-    private $digest = null;
+    private $digest;
 
     /**
      * Site Hostname
      *
      * @access  private
+     * @var     string
      */
-    private $hostname = null;
+    private $hostname;
 
     /**
      * Site Path
      *
      * @access  private
+     * @var     string
      */
-    private $path = null;
+    private $path;
 
     /**
      * Site Configuration
      *
      * @access  private
+     * @var     array
      */
     private $config = [];
 

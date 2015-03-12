@@ -13,10 +13,11 @@
 
 namespace WeAreArchitect\SharePoint;
 
-use Carbon\Carbon;
 use Exception;
-use JWT;
 use Serializable;
+
+use Carbon\Carbon;
+use JWT;
 
 class SPAccessToken extends SPObject implements Serializable
 {
@@ -24,15 +25,17 @@ class SPAccessToken extends SPObject implements Serializable
      * Access token
      *
      * @access  protected
+     * @var     string
      */
-    protected $token = null;
+    protected $token;
 
     /**
      * Expire date
      *
      * @access  protected
+     * @var     \Carbon\Carbon
      */
-    protected $expires = null;
+    protected $expires;
 
     /**
      * {@inheritdoc}

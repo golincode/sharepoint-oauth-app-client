@@ -21,8 +21,9 @@ class SPItem extends SPObject implements SPItemInterface
      * SharePoint List
      *
      * @access  private
+     * @var     SPList
      */
-    private $list = null;
+    private $list;
 
     /**
      * SharePoint Item constructor

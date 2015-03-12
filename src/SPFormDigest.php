@@ -13,8 +13,9 @@
 
 namespace WeAreArchitect\SharePoint;
 
-use Carbon\Carbon;
 use Serializable;
+
+use Carbon\Carbon;
 
 class SPFormDigest extends SPObject implements Serializable
 {
@@ -22,15 +23,17 @@ class SPFormDigest extends SPObject implements Serializable
      * Form digest
      *
      * @access  protected
+     * @var     string
      */
-    protected $digest = null;
+    protected $digest;
 
     /**
      * Expire date
      *
      * @access  protected
+     * @var     \Carbon\Carbon
      */
-    protected $expires = null;
+    protected $expires;
 
     /**
      * {@inheritdoc}

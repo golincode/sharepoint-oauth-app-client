@@ -21,6 +21,7 @@ abstract class SPObject
      * Property mapper
      *
      * @access  protected
+     * @var     array
      */
     protected $mapper = [];
 
@@ -28,6 +29,7 @@ abstract class SPObject
      * Extra properties
      *
      * @access  protected
+     * @var     array
      */
     protected $extra = [];
 

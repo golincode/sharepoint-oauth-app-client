@@ -13,8 +13,9 @@
 
 namespace WeAreArchitect\SharePoint;
 
-use Carbon\Carbon;
 use SplFileObject;
+
+use Carbon\Carbon;
 
 class SPFile extends SPObject implements SPItemInterface
 {
@@ -24,20 +25,23 @@ class SPFile extends SPObject implements SPItemInterface
      * SharePoint Folder
      *
      * @access  private
+     * @var     SPFolder
      */
-    private $folder = null;
+    private $folder;
 
     /**
      * File Name
      *
      * @access  protected
+     * @var     string
      */
-    protected $name = null;
+    protected $name;
 
     /**
      * File Size
      *
      * @access  protected
+     * @var     int
      */
     protected $size = 0;
 
@@ -45,20 +49,23 @@ class SPFile extends SPObject implements SPItemInterface
      * File Creation Time
      *
      * @access  protected
+     * @var     \Carbon\Carbon
      */
-    protected $created = null;
+    protected $created;
 
     /**
      * File Modification Time
      *
      * @access  protected
+     * @var     \Carbon\Carbon
      */
-    protected $modified = null;
+    protected $modified;
 
     /**
      * File Relative URL
      *
      * @access  protected
+     * @var     string
      */
     protected $relative_url = null;
 

@@ -19,13 +19,15 @@ trait SPPropertiesTrait
      * SharePoint Type
      *
      * @access  protected
+     * @var     string
      */
-    protected $type = null;
+    protected $type;
 
     /**
      * SharePoint ID
      *
      * @access  protected
+     * @var     int
      */
     protected $id = 0;
 
@@ -33,15 +35,17 @@ trait SPPropertiesTrait
      * SharePoint GUID
      *
      * @access  protected
+     * @var     string
      */
-    protected $guid = null;
+    protected $guid;
 
     /**
      * SharePoint Title
      *
      * @access  protected
+     * @var     string
      */
-    protected $title = null;
+    protected $title;
 
     /**
      * Get SharePoint Type
