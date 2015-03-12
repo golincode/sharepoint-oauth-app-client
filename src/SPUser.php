@@ -45,7 +45,7 @@ class SPUser extends SPObject
      * @access  protected
      * @var     string
      */
-    protected $full_name;
+    protected $fullName;
 
     /**
      * User First Name
@@ -53,7 +53,7 @@ class SPUser extends SPObject
      * @access  protected
      * @var     string
      */
-    protected $first_name;
+    protected $firstName;
 
     /**
      * User Last Name
@@ -61,7 +61,7 @@ class SPUser extends SPObject
      * @access  protected
      * @var     string
      */
-    protected $last_name;
+    protected $lastName;
 
     /**
      * User Title
@@ -100,14 +100,14 @@ class SPUser extends SPObject
     public function __construct(SPSite $site, array $json, array $extra = [])
     {
         parent::__construct([
-            'account'    => 'AccountName',
-            'email'      => 'Email',
-            'full_name'  => 'DisplayName',
-            'first_name' => 'UserProfileProperties.results.4.Value',
-            'last_name'  => 'UserProfileProperties.results.6.Value',
-            'title'      => 'Title',
-            'picture'    => 'PictureUrl',
-            'url'        => 'PersonalUrl',
+            'account'   => 'AccountName',
+            'email'     => 'Email',
+            'fullName'  => 'DisplayName',
+            'firstName' => 'UserProfileProperties.results.4.Value',
+            'lastName'  => 'UserProfileProperties.results.6.Value',
+            'title'     => 'Title',
+            'picture'   => 'PictureUrl',
+            'url'       => 'PersonalUrl',
         ], $extra);
 
         $this->site = $site;
@@ -123,9 +123,9 @@ class SPUser extends SPObject
         return [
             'account'    => $this->account,
             'email'      => $this->email,
-            'full_name'  => $this->full_name,
-            'first_name' => $this->first_name,
-            'last_name'  => $this->last_name,
+            'full_name'  => $this->fullName,
+            'first_name' => $this->firstName,
+            'last_name'  => $this->lastName,
             'title'      => $this->title,
             'picture'    => $this->picture,
             'url'        => $this->url,
@@ -163,7 +163,7 @@ class SPUser extends SPObject
      */
     public function getFullName()
     {
-        return $this->full_name;
+        return $this->fullName;
     }
 
     /**
@@ -174,7 +174,7 @@ class SPUser extends SPObject
      */
     public function getFirstName()
     {
-        return $this->first_name;
+        return $this->firstName;
     }
 
     /**
@@ -185,7 +185,7 @@ class SPUser extends SPObject
      */
     public function getLastName()
     {
-        return $this->last_name;
+        return $this->lastName;
     }
 
     /**
@@ -236,7 +236,7 @@ class SPUser extends SPObject
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
-            ]
+            ],
         ]);
 
         return new static($site, $json['d'], $extra);
@@ -252,7 +252,7 @@ class SPUser extends SPObject
      * @throws  SPException
      * @return  SPUser
      */
-    public static function getByAccount(SPSite $site, $account = null, array $extra = [])
+    public static function getByAccount(SPSite $site, $account, array $extra = [])
     {
         $json = $site->request('_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)', [
             'headers' => [
@@ -262,7 +262,7 @@ class SPUser extends SPObject
 
             'query' => [
                 '@v' => "'".$account."'",
-            ]
+            ],
         ], 'POST');
 
         return new static($site, $json['d'], $extra);
