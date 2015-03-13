@@ -445,7 +445,7 @@ class SPFile extends SPObject implements SPItemInterface
         $this->hydrate([
             'Length'           => strlen($data),
             'TimeLastModified' => Carbon::now(),
-        ], true);
+        ], false);
 
         return $this;
     }
