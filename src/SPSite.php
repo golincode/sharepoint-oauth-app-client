@@ -233,6 +233,11 @@ class SPSite implements SPRequestInterface
                         $message = $matches['message'].' (Hint: Problem during handshake, try using TLS v1.0)';
                         break;
 
+                    case 56:
+                        // this normally happens when cURL couldn't verify a peer's certificate
+                        $message = $matches['message'].' (Hint: A certificate could not be verified. Update your certificates [recommended] or disable SSL verification from cURL)';
+                        break;
+
                     default:
                         $message = $matches['message'];
                         break;
