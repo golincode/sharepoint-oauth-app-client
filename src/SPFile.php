@@ -13,7 +13,7 @@
 
 namespace WeAreArchitect\SharePoint;
 
-use SplFileObject;
+use SplFileInfo;
 
 use Carbon\Carbon;
 
@@ -322,50 +322,79 @@ class SPFile extends SPObject implements SPItemInterface
     }
 
     /**
+     * Content normalizer
+     *
+     * @static
+     * @access  private
+     * @param   mixed $input
+     * @throws  SPException
+     * @return  string
+     */
+    private static function contentNormalizer($input)
+    {
+        if ($input instanceof SplFileInfo) {
+            $data = $input->openFile('r')->fread($input->getSize());
+
+            if ($data === false) {
+                throw new SPException('Unable to get file contents');
+            }
+
+            return $data;
+        }
+
+        if (is_string($input)) {
+            return $input;
+        }
+
+        if (is_resource($input)) {
+            $type = get_resource_type($input);
+
+            if ($type != 'stream') {
+                throw new SPException('Invalid resource type: '.$type);
+            }
+
+            $data = stream_get_contents($input);
+
+            if ($data === false) {
+                throw new SPException('Failed to get data from stream');
+            }
+
+            return $data;
+        }
+
+        throw new SPException('Invalid input type: '.gettype($input));
+    }
+
+    /**
      * Create a SharePoint File
      *
      * @static
      * @access  public
      * @param   SPFolderInterface $folder    SharePoint Folder
-     * @param   mixed             $contents  File contents
+     * @param   mixed             $content   File content
      * @param   string            $name      Name for the file being uploaded
      * @param   bool              $overwrite Overwrite if file already exists?
      * @param   array             $extra     Extra properties to map
      * @throws  SPException
      * @return  SPFile
      */
-    public static function create(SPFolderInterface $folder, $contents = null, $name = null, $overwrite = false, array $extra = [])
+    public static function create(SPFolderInterface $folder, $content, $name = null, $overwrite = false, array $extra = [])
     {
         $folder->isWritable(true);
 
-        switch (true) {
-            case $contents instanceof SplFileObject:
-                $body = $contents->fread($contents->getSize());
+        $data = static::contentNormalizer($content);
 
-                if ($body === false) {
-                    throw new SPException('Unable to get file contents');
-                }
+        if ($content instanceof SplFileInfo) {
+            // use original name if none specified
+            if (empty($name)) {
+                $name = $content->getFilename();
+            }
+        }
 
-                // use original name if none specified
-                if (empty($name)) {
-                    $name = $contents->getFilename();
-                }
-                break;
-
-            case is_resource($contents):
-                $body = stream_get_contents($contents);
-
-                if ($body === false) {
-                    throw new SPException('Unable to get file contents');
-                }
-                break;
-
-            default:
-                $body = $contents;
-
-                if (empty($name)) {
-                    throw new SPException('SharePoint File Name is empty/not set');
-                }
+        if (is_resource($content) || is_string($content)) {
+            if (empty($name)) {
+                throw new SPException('SharePoint File Name is empty/not set');
+            }
         }
 
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
@@ -373,13 +402,14 @@ class SPFile extends SPObject implements SPItemInterface
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
                 'X-RequestDigest' => (string) $folder->getSPFormDigest(),
+                'Content-length'  => strlen($data),
             ],
 
             'query'   => [
                 '$expand' => 'ListItemAllFields',
             ],
 
-            'body'    => $body,
+            'body'    => $data,
         ], 'POST');
 
         return new static($folder, $json['d'], $extra);
@@ -389,43 +419,23 @@ class SPFile extends SPObject implements SPItemInterface
      * Update a SharePoint File
      *
      * @access  public
-     * @param   mixed  $contents File contents
+     * @param   mixed $content File content
      * @throws  SPException
      * @return  SPFile
      */
-    public function update($contents = null)
+    public function update($content)
     {
-        switch (true) {
-            case $contents instanceof SplFileObject:
-                $body = $contents->fread($contents->getSize());
-
-                if ($body === false) {
-                    throw new SPException('Unable to get file contents');
-                }
-                break;
-
-            case is_resource($contents):
-                $body = stream_get_contents($contents);
-
-                if ($body === false) {
-                    throw new SPException('Unable to get file contents');
-                }
-                break;
-
-            default:
-                $body = $contents;
-                break;
-        }
+        $data = static::contentNormalizer($content);
 
         $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/\$value", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->folder->getSPAccessToken(),
                 'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
                 'X-HTTP-Method'   => 'PUT',
-                'Content-length'  => strlen($body),
+                'Content-length'  => strlen($data),
             ],
 
-            'body'    => $body,
+            'body'    => $data,
 
         ], 'POST');
 
@@ -433,7 +443,7 @@ class SPFile extends SPObject implements SPItemInterface
         // since the SharePoint API doesn't return a response
         // on a successful update
         $this->hydrate([
-            'Length'           => strlen($body),
+            'Length'           => strlen($data),
             'TimeLastModified' => Carbon::now(),
         ], true);
 
