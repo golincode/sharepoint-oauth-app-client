@@ -166,7 +166,7 @@ class SPFile extends SPObject implements SPItemInterface
      * @access  public
      * @return  string
      */
-    public function getRelativeUrl()
+    public function getRelativeURL()
     {
         return $this->relativeUrl;
     }
