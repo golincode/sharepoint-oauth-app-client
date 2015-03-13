@@ -150,13 +150,13 @@ class SPList extends SPListObject
         ], $settings);
 
         parent::__construct([
-            'template'     => 'BaseTemplate',
-            'type'         => '__metadata.type',
-            'itemType'     => 'ListItemEntityTypeFullName',
-            'guid'         => 'Id',
-            'title'        => 'Title',
-            'relative_url' => 'RootFolder.ServerRelativeUrl',
-            'description'  => 'Description',
+            'template'    => 'BaseTemplate',
+            'type'        => '__metadata.type',
+            'itemType'    => 'ListItemEntityTypeFullName',
+            'guid'        => 'Id',
+            'title'       => 'Title',
+            'relativeUrl' => 'RootFolder.ServerRelativeUrl',
+            'description' => 'Description',
         ], $settings['extra']);
 
         $this->site = $site;
