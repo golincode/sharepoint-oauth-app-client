@@ -98,12 +98,12 @@ abstract class SPObject
      * Hydration handler
      *
      * @access  protected
-     * @param   mixed     $data    SPObject / JSON response from the SharePoint REST API
-     * @param   bool      $missing Allow missing properties when hydrating from JSON?
+     * @param   mixed     $data       SPObject / JSON response from the SharePoint REST API
+     * @param   bool      $exceptions Throw an exception on invalid/missing JSON paths
      * @throws  SPException
      * @return  void
      */
-    protected function hydrate($data, $missing = false)
+    protected function hydrate($data, $exceptions = true)
     {
         // hydrate from a SPObject
         if ($data instanceof $this) {
@@ -116,26 +116,26 @@ abstract class SPObject
 
         // hydrate from an array (JSON)
         if (is_array($data)) {
-            foreach ($this->mapper as $property => $map) {
+            foreach ($this->mapper as $property => $path) {
                 // make spaces SharePoint compatible
-                $map = str_replace(' ', '_x0020_', $map);
+                $path = str_replace(' ', '_x0020_', $path);
 
                 $current = $data;
 
-                // use dot notation to
-                foreach (explode('.', $map) as $segment) {
+                // access sub levels via dot notation
+                foreach (explode('.', $path) as $segment) {
                     if (! is_array($current) || ! array_key_exists($segment, $current)) {
-                        if ($missing) {
-                            continue 2;
+                        if ($exceptions) {
+                            throw new SPException('['.$property.'] Invalid JSON path: '.$path);
                         }
 
-                        throw new SPException('Invalid property mapper: '.$map);
+                        continue 2;
                     }
 
                     $current = $current[$segment];
                 }
 
-                $this->assign(strtolower($property), $current);
+                $this->assign($property, $current);
             }
 
             return;
