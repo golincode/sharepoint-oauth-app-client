@@ -215,7 +215,31 @@ class SPSite implements SPRequestInterface
         } catch (ParseException $e) {
             throw new SPException('The JSON data could not be parsed', 0, $e);
         } catch (RequestException $e) {
-            throw new SPException('Unable to make an HTTP request', 0, $e);
+
+            $message = $e->getMessage();
+            $code = $e->getCode();
+            $matches = [];
+
+            // if it's a cURL error, throw an exception with a more meaningful error
+            if (preg_match('/^cURL error (?<code>\d+): (?<message>.*)$/', $message, $matches)) {
+                switch ($matches['code']) {
+                    case 4:
+                        // error usually triggered when libcURL doesn't support SSLv2
+                        $message = $matches['message'].' (Hint: Protocol unsupported by cURL, try using SSL v3)';
+                        break;
+
+                    case 35:
+                        // this normally happens when SSLv2 and SSLv3 fail the handshake
+                        $message = $matches['message'].' (Hint: Problem during handshake, try using TLS v1.0)';
+                        break;
+
+                    default:
+                        $message = $matches['message'];
+                        break;
+                }
+            }
+
+            throw new SPException(sprintf('Unable to make HTTP request: %s', $message), $code, $e);
         }
     }
 
