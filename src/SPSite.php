@@ -224,18 +224,18 @@ class SPSite implements SPRequestInterface
             if (preg_match('/^cURL error (?<code>\d+): (?<message>.*)$/', $message, $matches)) {
                 switch ($matches['code']) {
                     case 4:
-                        // error usually triggered when libcURL doesn't support SSLv2
-                        $message = $matches['message'].' (Hint: Protocol unsupported by cURL, try using SSL v3)';
+                        // error usually triggered when libcURL doesn't have support built in for a some protocols, normally CURL_SSLVERSION_SSLv2 (2)
+                        $message = $matches['message'].' Hint: Unsupported protocol, try using CURL_SSLVERSION_SSLv3 (3)';
                         break;
 
                     case 35:
-                        // this normally happens when SSLv2 and SSLv3 fail the handshake
-                        $message = $matches['message'].' (Hint: Problem during handshake, try using TLS v1.0)';
+                        // this may happen when the SSLv2 or SSLv3 handshake fails
+                        $message = $matches['message'].' Hint: Handshake failed, try using CURL_SSLVERSION_TLSv1_0 (4)';
                         break;
 
                     case 56:
-                        // this normally happens when cURL couldn't verify a peer's certificate
-                        $message = $matches['message'].' (Hint: A certificate could not be verified. Update your certificates [recommended] or disable SSL verification from cURL)';
+                        // this can happen for several reasons
+                        $message = $matches['message'].' Hint: Unable to verify certificate / GnuTLS is strict about direct connection termination';
                         break;
 
                     default:
