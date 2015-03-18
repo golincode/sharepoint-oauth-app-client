@@ -60,6 +60,31 @@ try {
 }
 ```
 
+## HTTP client settings
+To pass custom settings to the HTTP client, the `http` key should be used in the settings `array`.
+
+```php
+$settings = [
+	// SharePoint Site credentials
+	'site' => [
+		// ...
+	],
+
+	'http' => [
+		'defaults' => [
+			'verify' => '/path/to/cert.pem', // enable verification using a custom certificate
+			'config' => [
+				'curl' => [
+					CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_0, // use TLS v1.0
+				],
+			],
+		],
+	],
+];
+```
+
+For more info, refer to the [Guzzle HTTP client documentation](http://docs.guzzlephp.org/en/latest/clients.html#creating-a-client)
+
 ## Configuration
 Retrieve the `SPSite` configuration array.
 
