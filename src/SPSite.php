@@ -224,24 +224,26 @@ class SPSite implements SPRequestInterface
             if (preg_match('/^cURL error (?<code>\d+): (?<message>.*)$/', $message, $matches)) {
                 switch ($matches['code']) {
                     case 4:
-                        // error usually triggered when libcURL doesn't have support built in for a some protocols, normally CURL_SSLVERSION_SSLv2 (2)
-                        $message = $matches['message'].' Hint: Unsupported protocol, try using CURL_SSLVERSION_SSLv3 (3)';
+                        // error triggered when libcURL doesn't support a protocol
+                        $message = $matches['message'].' Hint: Check which SSL/TLS protocols your build of libcURL supports';
                         break;
 
                     case 35:
                         // this may happen when the SSLv2 or SSLv3 handshake fails
-                        $message = $matches['message'].' Hint: Handshake failed, try using CURL_SSLVERSION_TLSv1_0 (4)';
+                        $message = $matches['message'].' Hint: Handshake failed. If supported, try using CURL_SSLVERSION_TLSv1_0';
                         break;
 
                     case 56:
                         // this can happen for several reasons
-                        $message = $matches['message'].' Hint: Unable to verify certificate / GnuTLS is strict about direct connection termination';
+                        $message = $matches['message'].' Hint: Refer to the Troubleshooting.md document';
                         break;
 
                     default:
                         $message = $matches['message'];
                         break;
                 }
+
+                $code = $matches['code'];
             }
 
             throw new SPException(sprintf('Unable to make HTTP request: %s', $message), $code, $e);
