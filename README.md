@@ -29,37 +29,37 @@ use WeAreArchitect\SharePoint\SPList;
 use WeAreArchitect\SharePoint\SPSite;
 
 try {
-	$settings = [
-		'site' => [
-			'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-			'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-			'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
-		]
-	];
+    $settings = [
+        'site' => [
+            'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+            'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+            'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
+        ]
+    ];
 
-	// create a SharePoint Site instance
-	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+    // create a SharePoint Site instance
+    $site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
-	// generate an Access Token (App-only Policy)
-	$site->createSPAccessToken();
+    // generate an Access Token (App-only Policy)
+    $site->createSPAccessToken();
 
-	// get all the Lists and respective Items 
-	$lists = SPList::getAll($site, [
-		'fetch' => true
-	]);
+    // get all the Lists and respective Items 
+    $lists = SPList::getAll($site, [
+        'fetch' => true
+    ]);
 
-	// iterate through each List
-	foreach ($lists as $list) {
-		var_dump($list);
+    // iterate through each List
+    foreach ($lists as $list) {
+        var_dump($list);
 
-		// iterate through each List Item
-		foreach ($list as $item) {
-			var_dump($item);
-		}
-	}
+        // iterate through each List Item
+        foreach ($list as $item) {
+            var_dump($item);
+        }
+    }
 
 } catch (SPException $e) {
-	// handle exceptions
+    // handle exceptions
 }
 ```
 
@@ -80,9 +80,6 @@ Check for common library issues and how to [solve them](docs/Troubleshooting.md)
 - [Working with lists and list items with REST](https://msdn.microsoft.com/en-us/library/office/dn292552%28v=office.15%29.aspx)
 - [Working with folders and files with REST](https://msdn.microsoft.com/en-us/library/office/dn292553%28v=office.15%29.aspx)
 - [Files and folders REST API reference](https://msdn.microsoft.com/en-us/library/office/dn450841%28v=office.15%29.aspx)
-
-## Warning
-Until a major version of the library gets released, the API may **change**!
 
 ## License
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
