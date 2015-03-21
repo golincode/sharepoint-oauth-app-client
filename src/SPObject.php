@@ -15,7 +15,7 @@ namespace WeAreArchitect\SharePoint;
 
 use Carbon\Carbon;
 
-abstract class SPObject
+abstract class SPObject implements SPObjectInterface
 {
     /**
      * Property mapper
@@ -143,12 +143,4 @@ abstract class SPObject
 
         throw new SPException('Could not hydrate '.get_class($this));
     }
-
-    /**
-     * Get an array with the SPObject properties
-     *
-     * @access  public
-     * @return  array
-     */
-    abstract public function toArray();
 }
