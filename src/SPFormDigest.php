@@ -131,7 +131,7 @@ class SPFormDigest extends SPObject implements Serializable
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
-            ]
+            ],
         ], 'POST');
 
         return new static($json['d'], $extra);

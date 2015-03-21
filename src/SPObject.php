@@ -80,7 +80,7 @@ abstract class SPObject
      * @param   mixed  $value    Property value
      * @return  void
      */
-    protected function assign($property = null, $value = null)
+    protected function assign($property, $value)
     {
         // convert datetime strings to Carbon objects
         if (preg_match('/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/', $value) === 1) {

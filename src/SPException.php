@@ -27,6 +27,6 @@ class SPException extends RuntimeException
     {
         $previous = $this->getPrevious();
 
-        return ($previous === null) ? null : $previous->getMessage();
+        return $previous ? $previous->getMessage() : null;
     }
 }

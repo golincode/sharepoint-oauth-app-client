@@ -214,7 +214,7 @@ class SPAccessToken extends SPObject implements Serializable
                 'client_id'     => $config['client_id'],
                 'client_secret' => $config['secret'],
                 'resource'      => $config['resource'],
-            ])
+            ]),
         ], 'POST');
 
         return new static($json, $extra);

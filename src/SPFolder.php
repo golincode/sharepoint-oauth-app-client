@@ -79,7 +79,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             'name'         => $this->name,
             'relative_url' => $this->relativeUrl,
             'items'        => $this->items,
-            'extra'        => $this->extra
+            'extra'        => $this->extra,
         ];
     }
 
@@ -139,7 +139,7 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function getSPList(array $settings = [])
     {
-        $site_path = preg_quote($this->site->getPath(), '/');
+        $sitePath = preg_quote($this->site->getPath(), '/');
 
         $match = [];
 
@@ -149,7 +149,7 @@ class SPFolder extends SPListObject implements SPItemInterface
          // Example:
          // For the relative Folder: /sites/mySite/MainFolder/SubFolder
          // The List Title will be: MainFolder
-        if (preg_match('/'.$site_path.'(?<title>[^\/]+)\/?.*/', $this->relativeUrl, $match) !== 1) {
+        if (preg_match('/'.$sitePath.'(?<title>[^\/]+)\/?.*/', $this->relativeUrl, $match) !== 1) {
             throw new SPException('Unable to get the SharePoint List Title for the Folder: '.$this->name);
         }
 
@@ -266,7 +266,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         $properties = array_replace_recursive($properties, [
             '__metadata' => [
                 'type' => 'SP.Folder',
-            ]
+            ],
         ]);
 
         $body = json_encode($properties);

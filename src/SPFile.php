@@ -322,15 +322,15 @@ class SPFile extends SPObject implements SPItemInterface
     }
 
     /**
-     * Content normalizer
+     * Content handler
      *
      * @static
      * @access  private
-     * @param   mixed $input
+     * @param   mixed   $input
      * @throws  SPException
      * @return  string
      */
-    private static function contentNormalizer($input)
+    private static function contentHandler($input)
     {
         if ($input instanceof SplFileInfo) {
             $data = $input->openFile('r')->fread($input->getSize());
@@ -382,17 +382,14 @@ class SPFile extends SPObject implements SPItemInterface
     {
         $folder->isWritable(true);
 
-        $data = static::contentNormalizer($content);
+        $data = static::contentHandler($content);
 
-        if ($content instanceof SplFileInfo) {
-            // use original name if none specified
-            if (empty($name)) {
+        if (empty($name)) {
+            if ($content instanceof SplFileInfo) {
                 $name = $content->getFilename();
             }
-        }
 
-        if (is_resource($content) || is_string($content)) {
-            if (empty($name)) {
+            if (is_resource($content) || is_string($content)) {
                 throw new SPException('SharePoint File Name is empty/not set');
             }
         }
@@ -425,7 +422,7 @@ class SPFile extends SPObject implements SPItemInterface
      */
     public function update($content)
     {
-        $data = static::contentNormalizer($content);
+        $data = static::contentHandler($content);
 
         $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/\$value", [
             'headers' => [
@@ -464,9 +461,9 @@ class SPFile extends SPObject implements SPItemInterface
     {
         $folder->isWritable(true);
 
-        $new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
+        $newUrl = $folder->getRelativeURL($name ?: $this->name);
 
-        $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/moveTo(newUrl='".$new_url."',flags=1)", [
+        $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/moveTo(newUrl='".$newUrl."',flags=1)", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
@@ -477,7 +474,7 @@ class SPFile extends SPObject implements SPItemInterface
         // Since the SharePoint API doesn't return a proper response on
         // a successful move operation, we do a second request to get an
         // updated SPFile to rehydrate the current object
-        $file = static::getByRelativeURL($folder->getSPSite(), $new_url, $extra);
+        $file = static::getByRelativeURL($folder->getSPSite(), $newUrl, $extra);
 
         $this->hydrate($file);
 
@@ -499,9 +496,9 @@ class SPFile extends SPObject implements SPItemInterface
     {
         $folder->isWritable(true);
 
-        $new_url = $folder->getRelativeURL(empty($name) ? $this->name : $name);
+        $newUrl = $folder->getRelativeURL($name ?: $this->name);
 
-        $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/copyTo(strNewUrl='".$new_url."',boverwrite=".($overwrite ? 'true' : 'false').")", [
+        $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/copyTo(strNewUrl='".$newUrl."',boverwrite=".($overwrite ? 'true' : 'false').")", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
@@ -512,7 +509,7 @@ class SPFile extends SPObject implements SPItemInterface
         // Since the SharePoint API doesn't return a proper response on
         // a successful copy operation, we do a second request to get the
         // copied SPFile
-        return static::getByRelativeURL($folder->getSPSite(), $new_url, $extra);
+        return static::getByRelativeURL($folder->getSPSite(), $newUrl, $extra);
     }
 
     /**

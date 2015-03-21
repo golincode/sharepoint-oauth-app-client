@@ -20,6 +20,13 @@ use GuzzleHttp\Exception\RequestException;
 class SPSite implements SPRequestInterface
 {
     /**
+     * Azure Access Control System URL
+     *
+     * @var string
+     */
+    const ACS = 'https://accounts.accesscontrol.windows.net/tokens/OAuth/2';
+
+    /**
      * HTTP Client object
      *
      * @access  private
@@ -79,7 +86,7 @@ class SPSite implements SPRequestInterface
     public function __construct(Client $http, array $config)
     {
         $this->config = array_replace([
-            'acs' => 'https://accounts.accesscontrol.windows.net/tokens/OAuth/2',
+            'acs' => static::ACS,
         ], $config);
 
         // set Guzzle HTTP client
@@ -190,7 +197,7 @@ class SPSite implements SPRequestInterface
     {
         try {
             $options = array_replace_recursive($options, [
-                'exceptions' => false // avoid throwing exceptions when we get HTTP errors (4XX, 5XX)
+                'exceptions' => false, // avoid throwing exceptions when we get HTTP errors (4XX, 5XX)
             ]);
 
             $response = $this->http->send($this->http->createRequest($method, $url, $options));
@@ -259,9 +266,9 @@ class SPSite implements SPRequestInterface
      * @throws  SPException
      * @return  SPSite
      */
-    public function createSPAccessToken( $contextToken = null, $extra = [])
+    public function createSPAccessToken($contextToken = null, $extra = [])
     {
-        if (empty( $contextToken)) {
+        if (empty($contextToken)) {
             $this->token = SPAccessToken::createAOP($this, $extra);
         } else {
             $this->token = SPAccessToken::createUOP($this, $contextToken, $extra);
