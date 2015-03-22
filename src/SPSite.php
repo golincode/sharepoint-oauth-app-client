@@ -14,8 +14,8 @@
 namespace WeAreArchitect\SharePoint;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ParseException;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\Message\Response;
 
 class SPSite implements SPRequestInterface
 {
@@ -191,9 +191,32 @@ class SPSite implements SPRequestInterface
     }
 
     /**
+     * Check for errors in the SharePoint API response
+     *
+     * @access  private
+     * @param   \GuzzleHttp\Message\Response $response
+     * @throws  SPException
+     * @return  void
+     */
+    private function checkSPErrors(Response $response)
+    {
+        $json = $response->json([
+            'object' => true,
+        ]);
+
+        if (isset($json->error->message->value)) {
+            throw new SPException($json->error->message->value, $response->getStatusCode());
+        }
+
+        if (isset($json->error)) {
+            throw new SPException($json->error, $response->getStatusCode());
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function request($url, array $options = [], $method = 'GET', $process = true)
+    public function request($url, array $options = [], $method = 'GET', $json = true)
     {
         try {
             $options = array_replace_recursive($options, [
@@ -202,58 +225,15 @@ class SPSite implements SPRequestInterface
 
             $response = $this->http->send($this->http->createRequest($method, $url, $options));
 
-            if (! $process) {
-                return $response;
+            if ($json) {
+                $this->checkSPErrors($response);
+
+                return $response->json();
             }
 
-            $json = $response->json();
-
-            // sometimes an error can be a JSON object
-            if (isset($json['error']['message']['value'])) {
-                throw new SPException($json['error']['message']['value'], $response->getStatusCode());
-            }
-
-            // or just a string
-            if (isset($json['error'])) {
-                throw new SPException($json['error'], $response->getStatusCode());
-            }
-
-            return $json;
-        } catch (ParseException $e) {
-            throw new SPException('The JSON data could not be parsed', 0, $e);
-        } catch (RequestException $e) {
-
-            $message = $e->getMessage();
-            $code = $e->getCode();
-            $matches = [];
-
-            // if it's a cURL error, throw an exception with a more meaningful error
-            if (preg_match('/^cURL error (?<code>\d+): (?<message>.*)$/', $message, $matches)) {
-                switch ($matches['code']) {
-                    case 4:
-                        // error triggered when libcURL doesn't support a protocol
-                        $message = $matches['message'].' Hint: Check which SSL/TLS protocols your build of libcURL supports';
-                        break;
-
-                    case 35:
-                        // this may happen when the SSLv2 or SSLv3 handshake fails
-                        $message = $matches['message'].' Hint: Handshake failed. If supported, try using CURL_SSLVERSION_TLSv1_0';
-                        break;
-
-                    case 56:
-                        // this can happen for several reasons
-                        $message = $matches['message'].' Hint: Refer to the Troubleshooting.md document';
-                        break;
-
-                    default:
-                        $message = $matches['message'];
-                        break;
-                }
-
-                $code = $matches['code'];
-            }
-
-            throw new SPException(sprintf('Unable to make HTTP request: %s', $message), $code, $e);
+            return $response;
+        } catch (TransferException $e) {
+            throw SPException::fromTransferException($e);
         }
     }
 

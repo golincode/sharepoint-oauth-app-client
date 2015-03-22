@@ -108,9 +108,9 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     /**
      * {@inheritdoc}
      */
-    public function request($url, array $options = [], $method = 'GET', $process = true)
+    public function request($url, array $options = [], $method = 'GET', $json = true)
     {
-        return $this->site->request($url, $options, $method, $process);
+        return $this->site->request($url, $options, $method, $json);
     }
 
     /**
