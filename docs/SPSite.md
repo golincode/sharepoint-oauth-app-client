@@ -135,14 +135,14 @@ Retrieve the `SPSite` logout URL.
 ```
 
 ## HTTP request
-Make an HTTP request to the SharePoint API. Use this method when extending the class with new methods or for debugging purposes.
+Make an HTTP request to the SharePoint API. Use this method when extending the library with new classes/methods or for debugging purposes.
 
 ```php
 	// [HTTP GET] get the most popular tags
 	$json = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
 		'headers' => [
 			'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-			'Accept'        => 'application/json;odata=verbose'
+			'Accept'        => 'application/json;odata=verbose',
 		],
 	]);
 
@@ -151,39 +151,39 @@ Make an HTTP request to the SharePoint API. Use this method when extending the c
 		'headers' => [
 			'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
 			'Accept'          => 'application/json;odata=verbose',
-			'X-RequestDigest' => (string) $site->getSPFormDigest()
+			'X-RequestDigest' => (string) $site->getSPFormDigest(),
 		],
 		'query' => [
-			'@v' => 'i:0#.f|membership|user@example.onmicrosoft.com'
-		]
+			'@v' => 'i:0#.f|membership|user@example.onmicrosoft.com',
+		],
 	], 'POST');
 ```
-The `$json` variable will be an `array` with the API response on a successful request.
-If any error occurs, an `SPException` will be thrown instead.
+The `$json` variable will be an `array` with the response of a successful request.
+If the response contains an error object, an `SPException` will be thrown.
 
-To **debug** an API response, the 4th argument should be set to `false`. So, to debug the above examples we would do:
+To **debug** a response, the 4th argument should be set to `false`.
 ```php
 	// [HTTP GET] get the most popular tags
-	$json = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
+	$response = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
 		'headers' => [
 			'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-			'Accept'        => 'application/json;odata=verbose'
+			'Accept'        => 'application/json;odata=verbose',
 		],
 	], 'GET', false);
 
 	// [HTTP POST] follow a user
-	$json = $site->request('_api/sp.userprofiles.peoplemanager/follow(@v)', [
+	$response = $site->request('_api/sp.userprofiles.peoplemanager/follow(@v)', [
 		'headers' => [
 			'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
 			'Accept'          => 'application/json;odata=verbose',
-			'X-RequestDigest' => (string) $site->getSPFormDigest()
+			'X-RequestDigest' => (string) $site->getSPFormDigest(),
 		],
 		'query' => [
-			'@v' => 'i:0#.f|membership|user@example.onmicrosoft.com'
-		]
+			'@v' => 'i:0#.f|membership|user@example.onmicrosoft.com',
+		],
 	], 'POST', false);
 ```
-Instead of an **array**, a **GuzzleHttp\Message\Response** object will be returned.
+A **GuzzleHttp\Message\Response** object will always be returned, even if an error object exists in the response body.
 
 - When omitted, the 3rd argument will default to `GET`.
 - When omitted, the 4rd argument will default to `true`.
