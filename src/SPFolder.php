@@ -55,13 +55,14 @@ class SPFolder extends SPListObject implements SPItemInterface
             'name'        => 'Name',
             'title'       => 'Name',
             'relativeUrl' => 'ServerRelativeUrl',
+            'itemCount'   => 'ItemCount',
         ], $settings['extra']);
 
         $this->site = $site;
 
         $this->hydrate($json);
 
-        if ($settings['fetch']) {
+        if ($settings['fetch'] && $this->itemCount > 0) {
             $this->getSPItems($settings['items']);
         }
     }

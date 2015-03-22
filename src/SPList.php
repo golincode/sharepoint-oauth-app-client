@@ -157,13 +157,14 @@ class SPList extends SPListObject
             'title'       => 'Title',
             'relativeUrl' => 'RootFolder.ServerRelativeUrl',
             'description' => 'Description',
+            'itemCount'   => 'ItemCount',
         ], $settings['extra']);
 
         $this->site = $site;
 
         $this->hydrate($json);
 
-        if ($settings['fetch']) {
+        if ($settings['fetch'] && $this->itemCount > 0) {
             $this->getSPItems($settings['items']);
         }
     }
