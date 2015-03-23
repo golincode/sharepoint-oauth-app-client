@@ -15,7 +15,7 @@ namespace WeAreArchitect\SharePoint;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
-use GuzzleHttp\Message\Response;
+use GuzzleHttp\Message\ResponseInterface;
 
 class SPSite implements SPRequestInterface
 {
@@ -194,11 +194,11 @@ class SPSite implements SPRequestInterface
      * Check for errors in the SharePoint API response
      *
      * @access  private
-     * @param   \GuzzleHttp\Message\Response $response
+     * @param   \GuzzleHttp\Message\ResponseInterface $response
      * @throws  SPException
      * @return  void
      */
-    private function checkSPErrors(Response $response)
+    private function checkSPErrors(ResponseInterface $response)
     {
         $json = $response->json([
             'object' => true,
