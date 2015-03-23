@@ -202,7 +202,7 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public static function getByRelativeURL(SPSite $site, $relativeUrl, array $settings = [])
     {
-        if (static::isSystemFolder(basename($relativeUrl))) {
+        if (static::isSystemFolder($relativeUrl)) {
             throw new SPException('Trying to get a SharePoint System Folder');
         }
 
