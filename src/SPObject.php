@@ -63,13 +63,11 @@ abstract class SPObject implements SPObjectInterface
             throw new SPException('Invalid method: '.$name);
         }
 
-        $property = strtolower($match['property']);
-
-        if (array_key_exists($property, $this->extra)) {
-            return $this->extra[$property];
+        if (array_key_exists($match['property'], $this->extra)) {
+            return $this->extra[$match['property']];
         }
 
-        throw new SPException('Invalid property: '.$property);
+        throw new SPException('Invalid property: '.$match['property']);
     }
 
     /**
