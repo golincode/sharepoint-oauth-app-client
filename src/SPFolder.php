@@ -117,6 +117,32 @@ class SPFolder extends SPListObject implements SPItemInterface
     }
 
     /**
+     * Get the root Folder
+     *
+     * @access  public
+     * @param   array  $settings
+     * @return  SPFolder
+     */
+    public function getRootFolder(array $settings = [])
+    {
+        $sitePath = preg_quote($this->site->getPath(), '/');
+
+        $match = [];
+
+        if (preg_match('/(?<root>'.$sitePath.'[^\/]+)\/?.*/', $this->relativeUrl, $match) !== 1) {
+            throw new SPException('Unable to get the SharePoint root Folder of: '.$this->relativeUrl);
+        }
+
+        $settings = array_replace_recursive($settings, [
+            'extra' => [
+                'ListTitle' => 'Properties.vti_x005f_listtitle',
+            ],
+        ]);
+
+        return static::getByRelativeURL($this->site, $match['root'], $settings);
+    }
+
+    /**
      * Check if a name matches a SharePoint System Folder
      *
      * @static
@@ -141,21 +167,10 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function getSPList(array $settings = [])
     {
-        $sitePath = preg_quote($this->site->getPath(), '/');
+        // The SharePoint List of any SharePoint Folder is always the List of the root Folder.
+        $rootFolder = $this->getRootFolder();
 
-        $match = [];
-
-         // The associated SharePoint List of a SharePoint Folder
-         // can always be fetched by Title using the root Folder name.
-         //
-         // Example:
-         // For the relative Folder: /sites/mySite/MainFolder/SubFolder
-         // The List Title will be: MainFolder
-        if (preg_match('/'.$sitePath.'(?<title>[^\/]+)\/?.*/', $this->relativeUrl, $match) !== 1) {
-            throw new SPException('Unable to get the SharePoint List Title for the Folder: '.$this->name);
-        }
-
-        return SPList::getByTitle($this->site, $match['title'], $settings);
+        return SPList::getByTitle($this->site, $rootFolder->getListTitle(), $settings);
     }
 
     /**
@@ -175,6 +190,10 @@ class SPFolder extends SPListObject implements SPItemInterface
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
+            ],
+
+            'query'   => [
+                '$expand' => 'Properties',
             ],
         ]);
 
@@ -208,6 +227,10 @@ class SPFolder extends SPListObject implements SPItemInterface
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
             ],
+
+            'query'   => [
+                '$expand' => 'Properties',
+            ],
         ]);
 
         return new static($site, $json['d'], $settings);
@@ -234,6 +257,10 @@ class SPFolder extends SPListObject implements SPItemInterface
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
+            ],
+
+            'query'   => [
+                '$expand' => 'Properties',
             ],
         ]);
 
