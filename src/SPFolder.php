@@ -191,6 +191,29 @@ class SPFolder extends SPListObject implements SPItemInterface
     }
 
     /**
+     * Get a SharePoint Folder by GUID
+     *
+     * @static
+     * @access  public
+     * @param   SPSite $site     SharePoint Site
+     * @param   string $guid     SharePoint Folder GUID
+     * @param   array  $settings Instantiation settings
+     * @throws  SPException
+     * @return  SPFolder
+     */
+    public static function getByGUID(SPSite $site, $guid, array $settings = [])
+    {
+        $json = $site->request("_api/web/GetFolderById('".$guid."')", [
+            'headers' => [
+                'Authorization' => 'Bearer '.$site->getSPAccessToken(),
+                'Accept'        => 'application/json;odata=verbose',
+            ],
+        ]);
+
+        return new static($site, $json['d'], $settings);
+    }
+
+    /**
      * Get a SharePoint Folder by Relative URL
      *
      * @static
