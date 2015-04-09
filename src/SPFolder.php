@@ -51,6 +51,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         ], $settings);
 
         parent::__construct([
+            'type'        => '__metadata.type',
             'guid'        => 'UniqueId',
             'name'        => 'Name',
             'title'       => 'Name',
