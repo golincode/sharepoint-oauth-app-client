@@ -50,24 +50,17 @@ abstract class SPObject implements SPObjectInterface
      * Get extra properties
      *
      * @access  public
-     * @param   string $name      Method name being called
-     * @param   array  $arguments Arguments passed
+     * @param   string $property Extra property name
      * @throws  SPException
      * @return  mixed
      */
-    public function __call($name, $arguments)
+    public function getExtra($property)
     {
-        $match = [];
-
-        if (preg_match('/^get(?<property>[a-zA-Z0-9_\x7f-\xff]+)$/', $name, $match) !== 1) {
-            throw new SPException('Invalid method: '.$name);
+        if (array_key_exists($property, $this->extra)) {
+            return $this->extra[$property];
         }
 
-        if (array_key_exists($match['property'], $this->extra)) {
-            return $this->extra[$match['property']];
-        }
-
-        throw new SPException('Invalid property: '.$match['property']);
+        throw new SPException('Invalid property: '.$property);
     }
 
     /**
