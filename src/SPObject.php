@@ -93,15 +93,38 @@ abstract class SPObject implements SPObjectInterface
     }
 
     /**
+     * Get a value from a JSON array using dot notation
+     *
+     * @access  protected
+     * @param   array     $json JSON response from the SharePoint REST API
+     * @param   string    $path Path to the value we want to get
+     * @return  mixed
+     */
+    protected function fromJSON(array $json, $path)
+    {
+        if (is_string($path)) {
+            foreach (explode('.', $path) as $segment) {
+                if (! is_array($json) || ! array_key_exists($segment, $json)) {
+                    return null;
+                }
+
+                $json = $json[$segment];
+            }
+        }
+
+        return $json;
+    }
+
+    /**
      * Hydration handler
      *
      * @access  protected
-     * @param   mixed     $data       SPObject / JSON response from the SharePoint REST API
-     * @param   bool      $exceptions Throw an exception on invalid/missing JSON paths
+     * @param   mixed     $data      SPObject / JSON response from the SharePoint REST API
+     * @param   bool      $rehydrate Are we rehydrating?
      * @throws  SPException
      * @return  void
      */
-    protected function hydrate($data, $exceptions = true)
+    protected function hydrate($data, $rehydrate = false)
     {
         // hydrate from a SPObject
         if ($data instanceof $this) {
@@ -118,22 +141,11 @@ abstract class SPObject implements SPObjectInterface
                 // make spaces SharePoint compatible
                 $path = str_replace(' ', '_x0020_', $path);
 
-                $current = $data;
+                $current = $this->fromJSON($data, $path);
 
-                // access sub levels via dot notation
-                foreach (explode('.', $path) as $segment) {
-                    if (! is_array($current) || ! array_key_exists($segment, $current)) {
-                        if ($exceptions) {
-                            throw new SPException('['.$property.'] Invalid JSON path: '.$path);
-                        }
-
-                        continue 2;
-                    }
-
-                    $current = $current[$segment];
+                if ($current !== null || $rehydrate === false) {
+                    $this->assign($property, $current);
                 }
-
-                $this->assign($property, $current);
             }
 
             return;
