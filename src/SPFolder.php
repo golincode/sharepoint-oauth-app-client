@@ -26,6 +26,22 @@ class SPFolder extends SPListObject implements SPItemInterface
     ];
 
     /**
+     * Parent SharePoint List GUID
+     *
+     * @access  protected
+     * @var     string
+     */
+    protected $listGUID;
+
+    /**
+     * Parent SharePoint List Title
+     *
+     * @access  protected
+     * @var     string
+     */
+    protected $listTitle;
+
+    /**
      * Folder Name
      *
      * @access  protected
@@ -57,6 +73,12 @@ class SPFolder extends SPListObject implements SPItemInterface
             'title'       => 'Name',
             'relativeUrl' => 'ServerRelativeUrl',
             'itemCount'   => 'ItemCount',
+
+            // only available in sub Folders
+            'listGUID'    => 'ListItemAllFields.ParentList.Id',
+
+            // only available in the root Folder
+            'listTitle'   => 'Properties.vti_x005f_listtitle',
         ], $settings['extra']);
 
         $this->site = $site;
@@ -117,32 +139,6 @@ class SPFolder extends SPListObject implements SPItemInterface
     }
 
     /**
-     * Get the root Folder
-     *
-     * @access  public
-     * @param   array  $settings
-     * @return  SPFolder
-     */
-    public function getRootFolder(array $settings = [])
-    {
-        $sitePath = preg_quote($this->site->getPath(), '/');
-
-        $match = [];
-
-        if (preg_match('/(?<root>'.$sitePath.'[^\/]+)\/?.*/', $this->relativeUrl, $match) !== 1) {
-            throw new SPException('Unable to get the SharePoint root Folder of: '.$this->relativeUrl);
-        }
-
-        $settings = array_replace_recursive($settings, [
-            'extra' => [
-                'ListTitle' => 'Properties.vti_x005f_listtitle',
-            ],
-        ]);
-
-        return static::getByRelativeURL($this->site, $match['root'], $settings);
-    }
-
-    /**
      * Check if a name matches a SharePoint System Folder
      *
      * @static
@@ -167,10 +163,13 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function getSPList(array $settings = [])
     {
-        // The SharePoint List of any SharePoint Folder is always the List of the root Folder.
-        $rootFolder = $this->getRootFolder();
+        // if we have a SharePoint parent List GUID, it means this is a subFolder
+        if ($this->listGUID) {
+            return SPList::getByGUID($this->site, $this->listGUID, $settings);
+        }
 
-        return SPList::getByTitle($this->site, $rootFolder->getListTitle(), $settings);
+        // if we reached this point, it means this is a root Folder
+        return SPList::getByTitle($this->site, $this->listTitle, $settings);
     }
 
     /**
@@ -193,7 +192,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             ],
 
             'query'   => [
-                '$expand' => 'Properties',
+                '$expand' => 'ListItemAllFields/ParentList,Properties',
             ],
         ]);
 
@@ -229,7 +228,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             ],
 
             'query'   => [
-                '$expand' => 'Properties',
+                '$expand' => 'ListItemAllFields/ParentList,Properties',
             ],
         ]);
 
@@ -260,7 +259,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             ],
 
             'query'   => [
-                '$expand' => 'Properties',
+                '$expand' => 'ListItemAllFields/ParentList,Properties',
             ],
         ]);
 
@@ -299,6 +298,10 @@ class SPFolder extends SPListObject implements SPItemInterface
                 'Content-length'  => strlen($body),
             ],
 
+            'query'   => [
+                '$expand' => 'ListItemAllFields/ParentList,Properties',
+            ],
+
             'body'    => $body,
         ], 'POST');
 
@@ -334,13 +337,17 @@ class SPFolder extends SPListObject implements SPItemInterface
                 'Content-length'  => strlen($body),
             ],
 
+            'query'   => [
+                '$expand' => 'ListItemAllFields/ParentList,Properties',
+            ],
+
             'body'    => $body,
         ], 'POST');
 
         // Rehydration is done using the $properties array,
         // since the SharePoint API doesn't return a response
         // on a successful update
-        $this->hydrate($properties, false);
+        $this->hydrate($properties, true);
 
         return $this;
     }
