@@ -30,6 +30,14 @@ class SPFile extends SPObject implements SPItemInterface
     private $folder;
 
     /**
+     * SharePoint ID
+     *
+     * @access  protected
+     * @var     int
+     */
+    protected $id = 0;
+
+    /**
      * File Name
      *
      * @access  protected
@@ -95,6 +103,17 @@ class SPFile extends SPObject implements SPItemInterface
         $this->folder = $folder;
 
         $this->hydrate($json);
+    }
+
+    /**
+     * Get SharePoint ID
+     *
+     * @access  public
+     * @return  int
+     */
+    public function getID()
+    {
+        return $this->id;
     }
 
     /**

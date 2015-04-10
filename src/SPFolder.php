@@ -97,7 +97,6 @@ class SPFolder extends SPListObject implements SPItemInterface
     {
         return [
             'type'         => $this->type,
-            'id'           => $this->id,
             'guid'         => $this->guid,
             'title'        => $this->title,
             'name'         => $this->name,

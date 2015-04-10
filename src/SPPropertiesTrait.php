@@ -24,14 +24,6 @@ trait SPPropertiesTrait
     protected $type;
 
     /**
-     * SharePoint ID
-     *
-     * @access  protected
-     * @var     int
-     */
-    protected $id = 0;
-
-    /**
      * SharePoint GUID
      *
      * @access  protected
@@ -56,17 +48,6 @@ trait SPPropertiesTrait
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * Get SharePoint ID
-     *
-     * @access  public
-     * @return  int
-     */
-    public function getID()
-    {
-        return $this->id;
     }
 
     /**

@@ -26,6 +26,14 @@ class SPItem extends SPObject implements SPItemInterface
     private $list;
 
     /**
+     * SharePoint ID
+     *
+     * @access  protected
+     * @var     int
+     */
+    protected $id = 0;
+
+    /**
      * SharePoint Item constructor
      *
      * @access  public
@@ -46,6 +54,17 @@ class SPItem extends SPObject implements SPItemInterface
         $this->list = $list;
 
         $this->hydrate($json);
+    }
+
+    /**
+     * Get SharePoint ID
+     *
+     * @access  public
+     * @return  int
+     */
+    public function getID()
+    {
+        return $this->id;
     }
 
     /**

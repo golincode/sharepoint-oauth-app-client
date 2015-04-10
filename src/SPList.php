@@ -176,7 +176,6 @@ class SPList extends SPListObject
     {
         return [
             'type'         => $this->type,
-            'id'           => $this->id,
             'guid'         => $this->guid,
             'title'        => $this->title,
             'template'     => $this->template,
