@@ -26,7 +26,7 @@ class SPFolder extends SPListObject implements SPItemInterface
     ];
 
     /**
-     * Parent SharePoint List GUID
+     * SharePoint List GUID
      *
      * @access  protected
      * @var     string
@@ -34,7 +34,7 @@ class SPFolder extends SPListObject implements SPItemInterface
     protected $listGUID;
 
     /**
-     * Parent SharePoint List Title
+     * SharePoint List Title
      *
      * @access  protected
      * @var     string
@@ -99,6 +99,8 @@ class SPFolder extends SPListObject implements SPItemInterface
             'type'         => $this->type,
             'guid'         => $this->guid,
             'title'        => $this->title,
+            'list_guid'    => $this->listGUID,
+            'list_title'   => $this->listTitle,
             'name'         => $this->name,
             'relative_url' => $this->relativeUrl,
             'items'        => $this->items,
@@ -115,6 +117,39 @@ class SPFolder extends SPListObject implements SPItemInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get SharePoint List GUID
+     *
+     * @access  public
+     * @return  string|null
+     */
+    public function getListGUID()
+    {
+        return $this->listGUID;
+    }
+
+    /**
+     * Get SharePoint List Title
+     *
+     * @access  public
+     * @return  string|null
+     */
+    public function getListTitle()
+    {
+        return $this->listTitle;
+    }
+
+    /**
+     * Is this a root SharePoint Folder?
+     *
+     * @access  public
+     * @return  bool
+     */
+    public function isRootFolder()
+    {
+        return ($this->listTitle !== null);
     }
 
     /**
@@ -162,13 +197,13 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function getSPList(array $settings = [])
     {
-        // if we have a SharePoint parent List GUID, it means this is a subFolder
-        if ($this->listGUID) {
-            return SPList::getByGUID($this->site, $this->listGUID, $settings);
+        // Depending if this is a root Folder, the
+        // List will be retrieved differently
+        if ($this->isRootFolder()) {
+            return SPList::getByTitle($this->site, $this->listTitle, $settings);
         }
 
-        // if we reached this point, it means this is a root Folder
-        return SPList::getByTitle($this->site, $this->listTitle, $settings);
+        return SPList::getByGUID($this->site, $this->listGUID, $settings);
     }
 
     /**
