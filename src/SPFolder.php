@@ -99,8 +99,6 @@ class SPFolder extends SPListObject implements SPItemInterface
             'type'         => $this->type,
             'guid'         => $this->guid,
             'title'        => $this->title,
-            'list_guid'    => $this->listGUID,
-            'list_title'   => $this->listTitle,
             'name'         => $this->name,
             'relative_url' => $this->relativeUrl,
             'items'        => $this->items,
@@ -117,28 +115,6 @@ class SPFolder extends SPListObject implements SPItemInterface
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Get SharePoint List GUID
-     *
-     * @access  public
-     * @return  string|null
-     */
-    public function getListGUID()
-    {
-        return $this->listGUID;
-    }
-
-    /**
-     * Get SharePoint List Title
-     *
-     * @access  public
-     * @return  string|null
-     */
-    public function getListTitle()
-    {
-        return $this->listTitle;
     }
 
     /**
@@ -190,6 +166,9 @@ class SPFolder extends SPListObject implements SPItemInterface
     /**
      * Get the SharePoint List of this Folder
      *
+     * Depending if this is a root Folder,
+     * retrieve the SharePoint List accordingly
+     *
      * @access  public
      * @param   array  $settings Instantiation settings
      * @throws  SPException
@@ -197,8 +176,6 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function getSPList(array $settings = [])
     {
-        // Depending if this is a root Folder, the
-        // List will be retrieved differently
         if ($this->isRootFolder()) {
             return SPList::getByTitle($this->site, $this->listTitle, $settings);
         }
