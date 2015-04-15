@@ -200,26 +200,17 @@ There are three methods to manage **Access Tokens** within the **SPSite** class.
 
 ### Create
 The `createSPAccessToken()` method isn't more than a shorthand that creates a `SPAccessToken` and sets it internally to the `SPSite` object.
-Refer to the [SharePoint Access Token](SPAccessToken.md) documentation for an **App-only** and **User-only** Policy examples.
+Refer to the [SharePoint Access Token](SPAccessToken.md) documentation for usage examples.
 
 ### Set
-The `setSPAccessToken()` method assigns `SPAccessToken` objects to the `SPSite`. An `SPException` will be thrown if the object being passed has expired.
+The `setSPAccessToken()` method assigns a `SPAccessToken` to the `SPSite`. An `SPException` will be thrown if the token has expired.
 
 ```php
-// SharePoint Site settings
-$settings = [
-    // ...
-];
-
-$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
-
-$token = SPAccessToken::createAOP($site);
-
 $site->setSPAccessToken($token);
 ```
 
 ### Get
-The `getSPAccessToken()` method returns the current `SPAccessToken` object in use by the `SPSite`. If it hasn't been set yet or if it's expired, an `SPException` will be thrown.
+The `getSPAccessToken()` method returns the `SPAccessToken` in use by the `SPSite`. If it hasn't been set yet or if it's expired, an `SPException` will be thrown.
 
 ```php
 $token = $site->getSPAccessToken();
@@ -229,27 +220,18 @@ $token = $site->getSPAccessToken();
 Like with the **Access Tokens**, there's also three methods to manage `SPFormDigest` objects within the **SPSite** class.
 
 ### Create
-Like it's `createSPAccessToken()` couterpart, the `createSPFormDigest()` method is just a shorthand that creates a `SPFormDigest` and sets it internally to the `SPSite` object.
+Like it's `createSPAccessToken()` couterpart, the `createSPFormDigest()` method is just a shorthand that creates a `SPFormDigest` and sets it internally to the `SPSite`.
 See the [SharePoint Form Digest](SPFormDigest.md) documentation for examples.
 
 ### Set
-The `setSPFormDigest()` method will assign a `SPFormDigest` object to the `SPSite`. An `SPException` will be thrown if the object being passed has expired.
+The `setSPFormDigest()` method will assign a `SPFormDigest` to the `SPSite`. An `SPException` will be thrown if the digest has expired.
 
 ```php
-// SharePoint Site settings
-$settings = [
-    // ...
-];
-
-$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
-
-$digest = SPFormDigest::create($site);
-
 $site->setSPFormDigest($token);
 ```
 
 ### Get
-The `getSPFormDigest()` method returns the current `SPFormDigest` object in use by the `SPSite`. An `SPException` will be thrown if it's expired or non existent.
+The `getSPFormDigest()` method returns the `SPFormDigest` in use by the `SPSite`. An `SPException` will be thrown if it's expired or non existent.
 
 ```php
 $digest = $site->getSPFormDigest();
