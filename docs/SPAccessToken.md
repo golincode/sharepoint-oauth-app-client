@@ -122,3 +122,54 @@ try {
 ```
 
 **Note:** On both **User-only Policy** examples above, the context token comes from the `SPAppToken` HTTP POST field when the SharePoint application launches.
+
+## To array
+Retrieve an `array` representation of the `SPAccessToken` object.
+
+```php
+    var_dump($token->toArray());
+    
+    // array(3) {
+    //     ["token"]=>
+    //     string(1132) "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1uQ19WWmNBVG..."
+    //     ["expires"]=>
+    //     object(Carbon\Carbon)#28 (3) {
+    //         ["date"]=>
+    //         string(26) "2000-01-01 00:00:00.000000"
+    //         ["timezone_type"]=>
+    //         int(3)
+    //         ["timezone"]=>
+    //         string(13) "Europe/London"
+    //     }
+    //     ["extra"]=>
+    //     array(0) {
+    //     }
+    // }
+```
+
+## Has expired
+Check if the `SPAccessToken` has expired.
+
+```php
+    if ($token->hasExpired()) {
+        // it's time to get a fresh token
+    } else {
+        // we're good
+    }
+```
+
+## Expire date
+Get the expiration date of a `SPAccessToken` in the form of a `Carbon` object.
+
+```php
+    $carbon = $token->expireDate();
+
+    echo $carbon->diffForHumans(); // 12 hours from now
+```
+
+## To String
+The `SPAccessToken` class implements the `__toString` magic method, which enables us to get the token value when we treat the object as a `string`. 
+
+```php
+    echo $token; // eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1uQ19WWmNBVG...
+```
