@@ -93,11 +93,16 @@ Retrieve the `SPSite` configuration array.
 
     var_dump($config);
 
-    // [
-    //     'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-    //     'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-    //     'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
-    // ];
+    // array(4) {
+    //     ["acs"]=>
+    //     string(57) "https://accounts.accesscontrol.windows.net/tokens/OAuth/2"
+    //     ["resource"]=>
+    //     string(101) "00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64"
+    //     ["client_id"]=>
+    //     string(90) "52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64"
+    //     ["secret"]=>
+    //     string(44) "YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE="
+    // }
 ```
 
 ## Hostname
