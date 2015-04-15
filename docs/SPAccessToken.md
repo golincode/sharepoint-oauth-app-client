@@ -173,3 +173,26 @@ The `SPAccessToken` class implements the `__toString` magic method, which enable
 ```php
     echo $token; // eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1uQ19WWmNBVG...
 ```
+
+## Serialization
+The `SPAccessToken` class implements the `Serializable` interface.
+This allows saving the token to use at a later time, avoiding new token requests to the SharePoint API each time something needs doing.
+
+```php
+    // serialize the token
+    $serialized = serialize($token);
+    
+    // store it in a database
+    
+    // when needed, get it back
+
+    // unserialize the data
+    $oldToken = unserialize($serialized);
+    
+    // check if it's still valid
+    if ($oldToken->hasExpired()) {
+        // request a new token from the API
+    }
+
+    // do something
+```
