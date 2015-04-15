@@ -16,22 +16,22 @@ use WeAreArchitect\SharePoint\SPException;
 use WeAreArchitect\SharePoint\SPSite;
 
 try {
-	$settings = [
-		'site' => [
-			'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-			'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-			'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
-		]
-	];
+    $settings = [
+        'site' => [
+            'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+            'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+            'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
+        ]
+    ];
 
-	$http = new Client([
-		'base_url' => 'https://example.sharepoint.com/sites/mySite/'
-	]);
+    $http = new Client([
+        'base_url' => 'https://example.sharepoint.com/sites/mySite/'
+    ]);
 
-	$site = new SPSite($http, $settings);
+    $site = new SPSite($http, $settings);
 
 } catch (SPException $e) {
-	// handle exceptions
+    // handle exceptions
 }
 ```
 
@@ -45,18 +45,18 @@ use WeAreArchitect\SharePoint\SPException;
 use WeAreArchitect\SharePoint\SPSite;
 
 try {
-	$settings = [
-		'site' => [
-			'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-			'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-			'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
-		]
-	];
+    $settings = [
+        'site' => [
+            'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+            'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+            'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
+        ]
+    ];
 
-	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+    $site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
 } catch (SPException $e) {
-	// handle exceptions
+    // handle exceptions
 }
 ```
 
@@ -65,21 +65,21 @@ To pass custom settings to the HTTP client, the `http` key should be used in the
 
 ```php
 $settings = [
-	// SharePoint Site credentials
-	'site' => [
-		// ...
-	],
+    // SharePoint Site credentials
+    'site' => [
+        // ...
+    ],
 
-	'http' => [
-		'defaults' => [
-			'verify' => '/path/to/cert.pem', // enable verification using a custom certificate
-			'config' => [
-				'curl' => [
-					CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_0, // use TLS v1.0
-				],
-			],
-		],
-	],
+    'http' => [
+        'defaults' => [
+            'verify' => '/path/to/cert.pem', // enable verification using a custom certificate
+            'config' => [
+                'curl' => [
+                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_0, // use TLS v1.0
+                ],
+            ],
+        ],
+    ],
 ];
 ```
 
@@ -89,99 +89,99 @@ For more info, refer to the [Guzzle HTTP client documentation](http://docs.guzzl
 Retrieve the `SPSite` configuration array.
 
 ```php
-	$config = $site->getConfig();
+    $config = $site->getConfig();
 
-	var_dump($config);
+    var_dump($config);
 
-	// [
-	//     'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-	//     'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-	//     'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
-	// ];
+    // [
+    //     'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+    //     'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
+    //     'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
+    // ];
 ```
 
 ## Hostname
 Retrieve the `SPSite` hostname.
 
 ```php
-	echo $site->getHostname(); // https://example.sharepoint.com
+    echo $site->getHostname(); // https://example.sharepoint.com
 
-	echo $site->getHostname('/sites/mySite'); // https://example.sharepoint.com/sites/mySite
+    echo $site->getHostname('/sites/mySite'); // https://example.sharepoint.com/sites/mySite
 ```
 
 ## Path
 Retrieve the `SPSite` path.
 
 ```php
-	echo $site->getPath(); // /sites/mySite/
+    echo $site->getPath(); // /sites/mySite/
 
-	echo $site->getPath('/stuff'); // /sites/mySite/stuff
+    echo $site->getPath('/stuff'); // /sites/mySite/stuff
 ```
 
 ## URL
 Retrieve the `SPSite` URL.
 
 ```php
-	echo $site->getURL(); // https://example.sharepoint.com/sites/mySite
+    echo $site->getURL(); // https://example.sharepoint.com/sites/mySite
 
-	echo $site->getURL('/stuff'); // https://example.sharepoint.com/sites/mySite/stuff
+    echo $site->getURL('/stuff'); // https://example.sharepoint.com/sites/mySite/stuff
 ```
 
 ## Logout URL
 Retrieve the `SPSite` logout URL.
 
 ```php
-	echo $site->getLogoutURL(); // https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx
+    echo $site->getLogoutURL(); // https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx
 ```
 
 ## HTTP request
 Make an HTTP request to the SharePoint API. Use this method when extending the library with new classes/methods or for debugging purposes.
 
 ```php
-	// [HTTP GET] get the most popular tags
-	$json = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
-		'headers' => [
-			'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-			'Accept'        => 'application/json;odata=verbose',
-		],
-	]);
+    // [HTTP GET] get the most popular tags
+    $json = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
+        'headers' => [
+            'Authorization' => 'Bearer '.$site->getSPAccessToken(),
+            'Accept'        => 'application/json;odata=verbose',
+        ],
+    ]);
 
-	// [HTTP POST] follow a user
-	$json = $site->request('_api/sp.userprofiles.peoplemanager/follow(@v)', [
-		'headers' => [
-			'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
-			'Accept'          => 'application/json;odata=verbose',
-			'X-RequestDigest' => (string) $site->getSPFormDigest(),
-		],
-		'query' => [
-			'@v' => 'i:0#.f|membership|user@example.onmicrosoft.com',
-		],
-	], 'POST');
+    // [HTTP POST] follow a user
+    $json = $site->request('_api/sp.userprofiles.peoplemanager/follow(@v)', [
+        'headers' => [
+            'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
+            'Accept'          => 'application/json;odata=verbose',
+            'X-RequestDigest' => (string) $site->getSPFormDigest(),
+        ],
+        'query' => [
+            '@v' => 'i:0#.f|membership|user@example.onmicrosoft.com',
+        ],
+    ], 'POST');
 ```
 The `$json` variable will be an `array` with the response of a successful request.
 If the response contains an error object, an `SPException` will be thrown.
 
 To **debug** a response, the 4th argument should be set to `false`.
 ```php
-	// [HTTP GET] get the most popular tags
-	$response = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
-		'headers' => [
-			'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-			'Accept'        => 'application/json;odata=verbose',
-		],
-	], 'GET', false);
+    // [HTTP GET] get the most popular tags
+    $response = $site->request('_api/sp.userprofiles.peoplemanager.gettrendingtags', [
+        'headers' => [
+            'Authorization' => 'Bearer '.$site->getSPAccessToken(),
+            'Accept'        => 'application/json;odata=verbose',
+        ],
+    ], 'GET', false);
 
-	// [HTTP POST] follow a user
-	$response = $site->request('_api/sp.userprofiles.peoplemanager/follow(@v)', [
-		'headers' => [
-			'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
-			'Accept'          => 'application/json;odata=verbose',
-			'X-RequestDigest' => (string) $site->getSPFormDigest(),
-		],
-		'query' => [
-			'@v' => 'i:0#.f|membership|user@example.onmicrosoft.com',
-		],
-	], 'POST', false);
+    // [HTTP POST] follow a user
+    $response = $site->request('_api/sp.userprofiles.peoplemanager/follow(@v)', [
+        'headers' => [
+            'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
+            'Accept'          => 'application/json;odata=verbose',
+            'X-RequestDigest' => (string) $site->getSPFormDigest(),
+        ],
+        'query' => [
+            '@v' => 'i:0#.f|membership|user@example.onmicrosoft.com',
+        ],
+    ], 'POST', false);
 ```
 A **GuzzleHttp\Message\Response** object will always be returned, even if an error object exists in the response body.
 
@@ -203,7 +203,7 @@ The `setSPAccessToken()` method assigns `SPAccessToken` objects to the `SPSite`.
 ```php
 // SharePoint Site settings
 $settings = [
-	// ...
+    // ...
 ];
 
 $site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
@@ -233,7 +233,7 @@ The `setSPFormDigest()` method will assign a `SPFormDigest` object to the `SPSit
 ```php
 // SharePoint Site settings
 $settings = [
-	// ...
+    // ...
 ];
 
 $site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);

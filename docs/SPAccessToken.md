@@ -17,23 +17,23 @@ use WeAreArchitect\SharePoint\SPException;
 use WeAreArchitect\SharePoint\SPSite;
 
 try {
-	// SharePoint Site settings
-	$settings = [
-		// ...
-	];
+    // SharePoint Site settings
+    $settings = [
+        // ...
+    ];
 
-	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+    $site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
-	$site->createSPAccessToken();
+    $site->createSPAccessToken();
 
-	$token = $site->getSPAccessToken();
+    $token = $site->getSPAccessToken();
 
 } catch (SPException $e) {
-	// handle exceptions
+    // handle exceptions
 }
 ```
 
-### via factory
+### via class factory
 ```php
 <?php
 
@@ -44,17 +44,19 @@ use WeAreArchitect\SharePoint\SPException;
 use WeAreArchitect\SharePoint\SPSite;
 
 try {
-	// SharePoint Site settings
-	$settings = [
-		// ...
-	];
+    // SharePoint Site settings
+    $settings = [
+        // ...
+    ];
 
-	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+    $site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
-	$token = SPAccessToken::createAOP($site);
+    $token = SPAccessToken::createAOP($site);
+
+    $site->setSPAccessToken($token);
 
 } catch (SPException $e) {
-	// handle exceptions
+    // handle exceptions
 }
 ```
 
@@ -72,25 +74,25 @@ use WeAreArchitect\SharePoint\SPException;
 use WeAreArchitect\SharePoint\SPSite;
 
 try {
-	// SharePoint Site settings
-	$settings = [
-		// ...
-	];
+    // SharePoint Site settings
+    $settings = [
+        // ...
+    ];
 
-	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+    $site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
-	$context_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTQyNGR...';
+    $context_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTQyNGR...';
 
-	$site->createSPAccessToken($context_token);
+    $site->createSPAccessToken($context_token);
 
-	$token = $site->getSPAccessToken();
+    $token = $site->getSPAccessToken();
 
 } catch (SPException $e) {
-	// handle exceptions
+    // handle exceptions
 }
 ```
 
-### via factory
+### via class factory
 ```php
 <?php
 
@@ -101,19 +103,21 @@ use WeAreArchitect\SharePoint\SPException;
 use WeAreArchitect\SharePoint\SPSite;
 
 try {
-	// SharePoint Site settings
-	$settings = [
-		// ...
-	];
+    // SharePoint Site settings
+    $settings = [
+        // ...
+    ];
 
-	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+    $site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
 
-	$context_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTQyNGR...';
+    $context_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTQyNGR...';
 
-	$token = SPAccessToken::createUOP($site, $context_token);
+    $token = SPAccessToken::createUOP($site, $context_token);
+
+    $site->setSPAccessToken($token);
 
 } catch (SPException $e) {
-	// handle exceptions
+    // handle exceptions
 }
 ```
 
