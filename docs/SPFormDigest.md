@@ -10,8 +10,8 @@ There are two ways to instantiate a `SPFormDigest` object.
 
 require 'vendor/autoload.php';
 
-use WeAreArchitect\SharePoint\SPFormDigest;
 use WeAreArchitect\SharePoint\SPException;
+use WeAreArchitect\SharePoint\SPFormDigest;
 use WeAreArchitect\SharePoint\SPSite;
 
 try {
@@ -37,8 +37,8 @@ try {
 
 require 'vendor/autoload.php';
 
-use WeAreArchitect\SharePoint\SPFormDigest;
 use WeAreArchitect\SharePoint\SPException;
+use WeAreArchitect\SharePoint\SPFormDigest;
 use WeAreArchitect\SharePoint\SPSite;
 
 try {
