@@ -221,7 +221,7 @@ Like with the **Access Tokens**, there's also three methods to manage `SPFormDig
 
 ### Create
 Like it's `createSPAccessToken()` couterpart, the `createSPFormDigest()` method is just a shorthand that creates a `SPFormDigest` and sets it internally to the `SPSite`.
-See the [SharePoint Form Digest](SPFormDigest.md) documentation for examples.
+Refer to the [SharePoint Form Digest](SPFormDigest.md) documentation for usage examples.
 
 ### Set
 The `setSPFormDigest()` method will assign a `SPFormDigest` to the `SPSite`. An `SPException` will be thrown if the digest has expired.
