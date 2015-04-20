@@ -184,6 +184,7 @@ class SPList extends SPListObject
             'description'  => $this->description,
             'relative_url' => $this->relativeUrl,
             'items'        => $this->items,
+            'item_count'   => $this->itemCount,
             'extra'        => $this->extra
         ];
     }
@@ -492,7 +493,7 @@ class SPList extends SPListObject
             ],
         ]);
 
-        return $json['d']['ItemCount'];
+        return $this->itemCount = $json['d']['ItemCount'];
     }
 
     /**

@@ -103,6 +103,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             'name'         => $this->name,
             'relative_url' => $this->relativeUrl,
             'items'        => $this->items,
+            'item_count'   => $this->itemCount,
             'extra'        => $this->extra,
         ];
     }
@@ -401,7 +402,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             ],
         ]);
 
-        return $json['d']['ItemCount'];
+        return $this->itemCount = $json['d']['ItemCount'];
     }
 
     /**
