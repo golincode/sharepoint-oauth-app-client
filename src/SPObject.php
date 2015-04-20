@@ -90,10 +90,10 @@ abstract class SPObject implements SPObjectInterface
      *
      * @access  protected
      * @param   array     $json JSON response from the SharePoint REST API
-     * @param   string    $path Path to the value we want to get
+     * @param   string    $path Dot notation path to the value we want to get
      * @return  mixed
      */
-    protected function fromJSON(array $json, $path)
+    protected function getJsonValue(array $json, $path)
     {
         if (is_string($path)) {
             foreach (explode('.', $path) as $segment) {
@@ -134,7 +134,7 @@ abstract class SPObject implements SPObjectInterface
                 // make spaces SharePoint compatible
                 $path = str_replace(' ', '_x0020_', $path);
 
-                $current = $this->fromJSON($data, $path);
+                $current = $this->getJsonValue($data, $path);
 
                 if ($current !== null || $rehydrate === false) {
                     $this->assign($property, $current);
