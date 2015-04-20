@@ -107,3 +107,228 @@ try {
     // handle exceptions
 }
 ```
+
+## Create
+Create a SharePoint File
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use WeAreArchitect\SharePoint\SPException;
+use WeAreArchitect\SharePoint\SPFile;
+use WeAreArchitect\SharePoint\SPFolder;
+use WeAreArchitect\SharePoint\SPSite;
+
+try {
+	// SharePoint Site settings
+	$settings = [
+		// ...
+	];
+
+	// instantiate SharePoint Site
+	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+
+	// generate Access Token and Form Digest
+	$site->createSPAccessToken()->createSPFormDigest();
+
+	// get a Folder by relative URL
+	$folder = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+
+	// content from an SplFileInfo object
+	$content = new SplFileInfo('document.doc');
+	$name = null; // if null, the file name from the SplFileInfo will be used
+
+	// content from a resource
+	$content = fopen('document.doc', 'r');
+	$name = 'document.doc'; // an SPException will be thrown if the name is not provided
+
+	// content from a string
+	$content = 'Document content...';
+	$name = 'document.doc'; // an SPException will be thrown if the name is not provided
+
+	// allow overwriting the file if it already exists
+	$overwrite = false; // an SPException will be thrown if the file exists and we didn't allow overwriting
+
+	$file = SPFile::create($folder, $content, $name, $overwrite);
+
+} catch (SPException $e) {
+    // handle exceptions
+}
+```
+
+## Update
+Update a SharePoint File
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use WeAreArchitect\SharePoint\SPException;
+use WeAreArchitect\SharePoint\SPFile;
+use WeAreArchitect\SharePoint\SPFolder;
+use WeAreArchitect\SharePoint\SPSite;
+
+try {
+	// SharePoint Site settings
+	$settings = [
+		// ...
+	];
+
+	// instantiate SharePoint Site
+	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+
+	// generate Access Token and Form Digest
+	$site->createSPAccessToken()->createSPFormDigest();
+
+	// get a Folder by relative URL
+	$folder = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+
+	$file = SPFile::getByName($folder, 'document.doc');
+
+	// content from an SplFileInfo object
+	$content = new SplFileInfo('document2.doc');
+
+	// content from a resource
+	$content = fopen('document2.doc', 'r');
+
+	// content from a string
+	$content = 'New document content...';
+
+	$file = $file->update($content);
+
+} catch (SPException $e) {
+    // handle exceptions
+}
+```
+
+## Move
+Move a SharePoint File. This method can also be used to rename a file.
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use WeAreArchitect\SharePoint\SPException;
+use WeAreArchitect\SharePoint\SPFile;
+use WeAreArchitect\SharePoint\SPFolder;
+use WeAreArchitect\SharePoint\SPSite;
+
+try {
+	// SharePoint Site settings
+	$settings = [
+		// ...
+	];
+
+	// instantiate SharePoint Site
+	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+
+	// generate Access Token and Form Digest
+	$site->createSPAccessToken()->createSPFormDigest();
+
+	// get a Folder by relative URL
+	$folder1 = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+
+	// get another Folder by relative URL
+	$folder2 = SPFolder::getByRelativeURL($site, 'otherFolder');
+
+	// get the File we want to move
+	$file = SPFile::getByName($folder1, 'document.doc');
+
+	// rename the file
+	$name = 'moved_document.doc'; // if null, the original name will be used
+
+	$file->move($folder2, $name);
+
+} catch (SPException $e) {
+    // handle exceptions
+}
+```
+
+## Copy
+Copy a SharePoint File
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use WeAreArchitect\SharePoint\SPException;
+use WeAreArchitect\SharePoint\SPFile;
+use WeAreArchitect\SharePoint\SPFolder;
+use WeAreArchitect\SharePoint\SPSite;
+
+try {
+	// SharePoint Site settings
+	$settings = [
+		// ...
+	];
+
+	// instantiate SharePoint Site
+	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+
+	// generate Access Token and Form Digest
+	$site->createSPAccessToken()->createSPFormDigest();
+
+	// get a Folder by relative URL
+	$folder1 = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+
+	// get another Folder by relative URL
+	$folder2 = SPFolder::getByRelativeURL($site, 'otherFolder');
+
+	// get the File we want to copy
+	$file = SPFile::getByName($folder1, 'document.doc');
+
+	// rename the file
+	$name = 'copied_document.doc'; // if null, the original name will be used
+	
+	// allow overwriting the file if it already exists
+	$overwrite = false; // an SPException will be thrown if the file exists and we didn't allow overwriting
+
+	$file->copy($folder2, $name, $overwrite);
+
+} catch (SPException $e) {
+    // handle exceptions
+}
+```
+
+## Delete
+Delete a SharePoint File
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use WeAreArchitect\SharePoint\SPException;
+use WeAreArchitect\SharePoint\SPFile;
+use WeAreArchitect\SharePoint\SPFolder;
+use WeAreArchitect\SharePoint\SPSite;
+
+try {
+	// SharePoint Site settings
+	$settings = [
+		// ...
+	];
+
+	// instantiate SharePoint Site
+	$site = SPSite::create('https://example.sharepoint.com/sites/mySite/', $settings);
+
+	// generate Access Token and Form Digest
+	$site->createSPAccessToken()->createSPFormDigest();
+
+	// get a Folder by relative URL
+	$folder = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+
+	// get the File we want to delete
+	$file = SPFile::getByName($folder, 'document.doc');
+
+	$file->delete();
+
+} catch (SPException $e) {
+    // handle exceptions
+}
+```
