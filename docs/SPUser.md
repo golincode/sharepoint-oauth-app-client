@@ -151,5 +151,5 @@ echo $user->getPicture(); // null
 Get the `SPUser` URL.
 
 ```php
-echo $user->getURL(); // https://example.sharepoint.com/personal/username_example_onmicrosoft_com/
+echo $user->getUrl(); // https://example.sharepoint.com/personal/username_example_onmicrosoft_com/
 ```

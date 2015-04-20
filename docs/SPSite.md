@@ -127,16 +127,16 @@ Retrieve the `SPSite` path.
 Retrieve the `SPSite` URL.
 
 ```php
-    echo $site->getURL(); // https://example.sharepoint.com/sites/mySite
+    echo $site->getUrl(); // https://example.sharepoint.com/sites/mySite
 
-    echo $site->getURL('/stuff'); // https://example.sharepoint.com/sites/mySite/stuff
+    echo $site->getUrl('/stuff'); // https://example.sharepoint.com/sites/mySite/stuff
 ```
 
 ## Logout URL
 Retrieve the `SPSite` logout URL.
 
 ```php
-    echo $site->getLogoutURL(); // https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx
+    echo $site->getLogoutUrl(); // https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx
 ```
 
 ## HTTP request

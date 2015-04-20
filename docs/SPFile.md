@@ -27,7 +27,7 @@ try {
 	$site->createSPAccessToken();
 
 	// get a Folder by relative URL
-	$folder = SPFolder::getByRelativeURL($site, 'myFolder');
+	$folder = SPFolder::getByRelativeUrl($site, 'myFolder');
 	
 	// get all the Files from the Folder we just got
 	$files = SPFile::getAll($folder);
@@ -66,7 +66,7 @@ try {
 	// generate Access Token
 	$site->createSPAccessToken();
 
-	$file = SPFile::getByRelativeURL($site, 'myFolder/mySubfolder/image.png');
+	$file = SPFile::getByRelativeUrl($site, 'myFolder/mySubfolder/image.png');
 
 } catch (SPException $e) {
     // handle exceptions
@@ -99,7 +99,7 @@ try {
 	$site->createSPAccessToken();
 
 	// get a Folder by relative URL
-	$folder = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+	$folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
 	$file = SPFile::getByName($folder, 'image.png');
 
@@ -134,7 +134,7 @@ try {
 	$site->createSPAccessToken()->createSPFormDigest();
 
 	// get a Folder by relative URL
-	$folder = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+	$folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
 	// content from an SplFileInfo object
 	$content = new SplFileInfo('document.doc');
@@ -184,7 +184,7 @@ try {
 	$site->createSPAccessToken()->createSPFormDigest();
 
 	// get a Folder by relative URL
-	$folder = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+	$folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
 	$file = SPFile::getByName($folder, 'document.doc');
 
@@ -230,10 +230,10 @@ try {
 	$site->createSPAccessToken()->createSPFormDigest();
 
 	// get a Folder by relative URL
-	$folder1 = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+	$folder1 = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
 	// get another Folder by relative URL
-	$folder2 = SPFolder::getByRelativeURL($site, 'otherFolder');
+	$folder2 = SPFolder::getByRelativeUrl($site, 'otherFolder');
 
 	// get the File we want to move
 	$file = SPFile::getByName($folder1, 'document.doc');
@@ -274,10 +274,10 @@ try {
 	$site->createSPAccessToken()->createSPFormDigest();
 
 	// get a Folder by relative URL
-	$folder1 = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+	$folder1 = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
 	// get another Folder by relative URL
-	$folder2 = SPFolder::getByRelativeURL($site, 'otherFolder');
+	$folder2 = SPFolder::getByRelativeUrl($site, 'otherFolder');
 
 	// get the File we want to copy
 	$file = SPFile::getByName($folder1, 'document.doc');
@@ -321,7 +321,7 @@ try {
 	$site->createSPAccessToken()->createSPFormDigest();
 
 	// get a Folder by relative URL
-	$folder = SPFolder::getByRelativeURL($site, 'myFolder/mySubfolder');
+	$folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
 	// get the File we want to delete
 	$file = SPFile::getByName($folder, 'document.doc');
