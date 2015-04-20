@@ -18,6 +18,7 @@ class SPFolder extends SPListObject implements SPItemInterface
     /**
      * System Folder names
      *
+     * @static
      * @access  public
      * @var     array
      */

@@ -204,8 +204,8 @@ try {
 }
 ```
 
-## Move
-Move a SharePoint File. This method can also be used to rename a file.
+## Move/rename
+Move and/or rename a SharePoint File.
 
 ```php
 <?php

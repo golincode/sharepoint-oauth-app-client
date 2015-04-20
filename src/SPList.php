@@ -42,7 +42,7 @@ class SPList extends SPListObject
      * @access  public
      * @var     array
      */
-    public static $allowed = [
+    public static $allowedListTypes = [
         self::TPL_GENERICLIST,
         self::TPL_DOCUMENTLIBRARY,
         self::TPL_SURVEY,
@@ -58,13 +58,14 @@ class SPList extends SPListObject
     ];
 
     /**
-     * Writable SharePoint List Types
+     * SharePoint List Types that allow
+     * Folder/File operations
      *
      * @static
      * @access  public
      * @var     array
      */
-    public static $writable = [
+    public static $writableListTypes = [
         self::TPL_DOCUMENTLIBRARY,
         self::TPL_PICTURELIBRARY,
         self::TPL_WEBPAGELIBRARY,
@@ -203,10 +204,10 @@ class SPList extends SPListObject
      */
     public function isWritable($exception = false)
     {
-        $writable = in_array($this->template, static::$writable);
+        $writable = in_array($this->template, static::$writableListTypes);
 
         if ($exception && ! $writable) {
-            throw new SPException('SPList Template Type ['.$this->template.'] does not allow SPFolder/SPFile operations');
+            throw new SPException('SPList Template Type ['.$this->template.'] does not allow SharePoint Folder/File operations');
         }
 
         return $writable;
@@ -232,6 +233,19 @@ class SPList extends SPListObject
     public function getItemType()
     {
         return $this->itemType;
+    }
+
+    /**
+     * Check if a List Type is allowed
+     *
+     * @static
+     * @access  public
+     * @param   int    $listType SharePoint List Type
+     * @return  bool
+     */
+    public static function isListTypeAllowed($listType)
+    {
+        return in_array($listType, static::$allowedListTypes);
     }
 
     /**
@@ -261,7 +275,7 @@ class SPList extends SPListObject
 
         foreach ($json['d']['results'] as $list) {
             // allowed SharePoint List Types only
-            if (in_array($list['BaseTemplate'], static::$allowed)) {
+            if (static::isListTypeAllowed($list['BaseTemplate'])) {
                 $lists[$list['Id']] = new static($site, $list, $settings);
             }
         }
