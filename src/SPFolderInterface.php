@@ -30,7 +30,7 @@ interface SPFolderInterface extends SPRequestInterface
      * @param   string $path Path to append to the URL
      * @return  string
      */
-    public function getRelativeURL($path = null);
+    public function getRelativeUrl($path = null);
 
     /**
      * Is the folder writable?

@@ -216,7 +216,7 @@ class SPUser extends SPObject
      * @access  public
      * @return  string
      */
-    public function getURL()
+    public function getUrl()
     {
         return $this->url;
     }

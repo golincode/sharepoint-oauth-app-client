@@ -145,7 +145,7 @@ class SPSite implements SPRequestInterface
      * @param   string $path Path to append
      * @return  string
      */
-    public function getURL($path = null)
+    public function getUrl($path = null)
     {
         return $this->getHostname($this->getPath($path));
     }
@@ -156,9 +156,9 @@ class SPSite implements SPRequestInterface
      * @access  public
      * @return  string
      */
-    public function getLogoutURL()
+    public function getLogoutUrl()
     {
-        return $this->getURL('_layouts/SignOut.aspx');
+        return $this->getUrl('_layouts/SignOut.aspx');
     }
 
     /**

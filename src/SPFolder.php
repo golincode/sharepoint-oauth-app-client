@@ -145,9 +145,9 @@ class SPFolder extends SPListObject implements SPItemInterface
      * @param   string $path Path to append to the URL
      * @return  string
      */
-    public function getURL($path = null)
+    public function getUrl($path = null)
     {
-        return $this->site->getHostname($this->getRelativeURL($path));
+        return $this->site->getHostname($this->getRelativeUrl($path));
     }
 
     /**
@@ -259,7 +259,7 @@ class SPFolder extends SPListObject implements SPItemInterface
      * @throws  SPException
      * @return  SPFolder
      */
-    public static function getByRelativeURL(SPSite $site, $relativeUrl, array $settings = [])
+    public static function getByRelativeUrl(SPSite $site, $relativeUrl, array $settings = [])
     {
         if (static::isSystemFolder($relativeUrl)) {
             throw new SPException('Trying to get a SharePoint System Folder');
@@ -299,7 +299,7 @@ class SPFolder extends SPListObject implements SPItemInterface
                 'type' => 'SP.Folder',
             ],
 
-            'ServerRelativeUrl' => $folder->getRelativeURL($name),
+            'ServerRelativeUrl' => $folder->getRelativeUrl($name),
         ]);
 
         $json = $folder->request('_api/web/Folders', [

@@ -140,7 +140,7 @@ abstract class SPListObject extends SPObject implements ArrayAccess, Countable, 
     /**
      * {@inheritdoc}
      */
-    public function getRelativeURL($path = null)
+    public function getRelativeUrl($path = null)
     {
         return sprintf('%s/%s', rtrim($this->relativeUrl, '/'), ltrim($path, '/'));
     }

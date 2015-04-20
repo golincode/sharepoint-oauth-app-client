@@ -185,7 +185,7 @@ class SPFile extends SPObject implements SPItemInterface
      * @access  public
      * @return  string
      */
-    public function getRelativeURL()
+    public function getRelativeUrl()
     {
         return $this->relativeUrl;
     }
@@ -196,9 +196,9 @@ class SPFile extends SPObject implements SPItemInterface
      * @access  public
      * @return  string
      */
-    public function getURL()
+    public function getUrl()
     {
-        return $this->folder->getURL($this->name);
+        return $this->folder->getUrl($this->name);
     }
 
     /**
@@ -233,7 +233,7 @@ class SPFile extends SPObject implements SPItemInterface
             'size'     => $this->size,
             'created'  => $this->created,
             'modified' => $this->modified,
-            'url'      => $this->getURL(),
+            'url'      => $this->getUrl(),
         ];
     }
 
@@ -262,7 +262,7 @@ class SPFile extends SPObject implements SPItemInterface
      */
     public static function getAll(SPFolder $folder, array $extra = [])
     {
-        $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files", [
+        $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeUrl()."')/Files", [
             'headers' => [
                 'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
@@ -293,7 +293,7 @@ class SPFile extends SPObject implements SPItemInterface
      * @throws  SPException
      * @return  SPFile
      */
-    public static function getByRelativeURL(SPSite $site, $relativeUrl, array $extra = [])
+    public static function getByRelativeUrl(SPSite $site, $relativeUrl, array $extra = [])
     {
         $json = $site->request("_api/web/GetFileByServerRelativeUrl('".$relativeUrl."')", [
             'headers' => [
@@ -306,7 +306,7 @@ class SPFile extends SPObject implements SPItemInterface
             ],
         ]);
 
-        $folder = SPFolder::getByRelativeURL($site, dirname($relativeUrl));
+        $folder = SPFolder::getByRelativeUrl($site, dirname($relativeUrl));
 
         return new static($folder, $json['d'], $extra);
     }
@@ -326,7 +326,7 @@ class SPFile extends SPObject implements SPItemInterface
     {
         $folder->isWritable(true);
 
-        $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files('".$name."')", [
+        $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeUrl()."')/Files('".$name."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'        => 'application/json;odata=verbose',
@@ -413,7 +413,7 @@ class SPFile extends SPObject implements SPItemInterface
             }
         }
 
-        $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeURL()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
+        $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeUrl()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
                 'Accept'          => 'application/json;odata=verbose',
@@ -480,7 +480,7 @@ class SPFile extends SPObject implements SPItemInterface
     {
         $folder->isWritable(true);
 
-        $newUrl = $folder->getRelativeURL($name ?: $this->name);
+        $newUrl = $folder->getRelativeUrl($name ?: $this->name);
 
         $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/moveTo(newUrl='".$newUrl."',flags=1)", [
             'headers' => [
@@ -493,7 +493,7 @@ class SPFile extends SPObject implements SPItemInterface
         // Since the SharePoint API doesn't return a proper response on
         // a successful move operation, we do a second request to get an
         // updated SPFile to rehydrate the current object
-        $file = static::getByRelativeURL($folder->getSPSite(), $newUrl, $extra);
+        $file = static::getByRelativeUrl($folder->getSPSite(), $newUrl, $extra);
 
         $this->hydrate($file);
 
@@ -515,7 +515,7 @@ class SPFile extends SPObject implements SPItemInterface
     {
         $folder->isWritable(true);
 
-        $newUrl = $folder->getRelativeURL($name ?: $this->name);
+        $newUrl = $folder->getRelativeUrl($name ?: $this->name);
 
         $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/copyTo(strNewUrl='".$newUrl."',boverwrite=".($overwrite ? 'true' : 'false').")", [
             'headers' => [
@@ -528,7 +528,7 @@ class SPFile extends SPObject implements SPItemInterface
         // Since the SharePoint API doesn't return a proper response on
         // a successful copy operation, we do a second request to get the
         // copied SPFile
-        return static::getByRelativeURL($folder->getSPSite(), $newUrl, $extra);
+        return static::getByRelativeUrl($folder->getSPSite(), $newUrl, $extra);
     }
 
     /**

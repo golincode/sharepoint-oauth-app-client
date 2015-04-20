@@ -31,7 +31,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @access  public
      * @return  void
      */
-    public function testSPSiteConstructorFailInvalidURL()
+    public function testSPSiteConstructorFailInvalidUrl()
     {
         $http = new Client();
 
@@ -389,13 +389,13 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetURLPass(SPSite $site = null)
+    public function testSPSiteGetUrlPass(SPSite $site = null)
     {
-        $this->assertEquals('https://example.sharepoint.com/sites/mySite/', $site->getURL());
-        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path', $site->getURL('test/path'));
-        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path/', $site->getURL('test/path/'));
-        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path', $site->getURL('/test/path'));
-        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path/', $site->getURL('/test/path/'));
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/', $site->getUrl());
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path', $site->getUrl('test/path'));
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path/', $site->getUrl('test/path/'));
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path', $site->getUrl('/test/path'));
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path/', $site->getUrl('/test/path/'));
     }
 
     /**
@@ -407,9 +407,9 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetLogoutURLPass(SPSite $site = null)
+    public function testSPSiteGetLogoutUrlPass(SPSite $site = null)
     {
-        $this->assertNotFalse(filter_var($site->getLogoutURL(), FILTER_VALIDATE_URL));
-        $this->assertEquals('https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx', $site->getLogoutURL());
+        $this->assertNotFalse(filter_var($site->getLogoutUrl(), FILTER_VALIDATE_URL));
+        $this->assertEquals('https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx', $site->getLogoutUrl());
     }
 }
