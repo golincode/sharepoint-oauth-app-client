@@ -1,0 +1,23 @@
+HTTP/1.1 200 OK
+Cache-Control: private, max-age=0
+Transfer-Encoding: chunked
+Content-Type: application/json;odata=verbose;charset=utf-8
+Expires: Sat, 01 Jan 2000 00:00:00 GMT
+Last-Modified: Sat, 01 Jan 2000 00:00:00 GMT
+Server: Microsoft-IIS/8.5
+X-SharePointHealthScore: 0
+X-SP-SERVERSTATE: ReadOnly=0
+DATASERVICEVERSION: 3.0
+SPClientServiceRequestDuration: 32
+X-AspNet-Version: 4.0.30319
+SPRequestGuid: 98d6fe9c-10be-1000-cd4d-f0b108e38e99
+request-id: 98d6fe9c-10be-1000-cd4d-f0b108e38e99
+X-FRAME-OPTIONS: SAMEORIGIN
+X-Powered-By: ASP.NET
+MicrosoftSharePointTeamServices: 16.0.0.3912
+X-Content-Type-Options: nosniff
+X-MS-InvokeApp: 1; RequireReadOnly
+P3P: CP="ALL IND DSP COR ADM CONo CUR CUSo IVAo IVDo PSA PSD TAI TELo OUR SAMo CNT COM INT NAV ONL PHY PRE PUR UNI"
+Date: Sat, 01 Jan 2000 00:00:00 GMT
+
+{"d":{"GetContextWebInformation":{"__metadata":{"type":"SP.ContextWebInformation"},"FormDigestTimeoutSeconds":1799,"FormDigestValue":"0xX1E3A40F0D4E6E5204FE85C06341E03F456760CA8A245F397DF069A043F4C33F269E6E537D53F403F4C4A6D21EF4E260453C7AA4073B09C48F60809641AC3969,01 Jan 20005 00:00:00 -0000","LibraryVersion":"16.0.3912.1229","SiteFullUrl":"https://example.sharepoint.com/sites/mySite","SupportedSchemaVersions":{"__metadata":{"type":"Collection(Edm.String)"},"results":["14.0.0.0","15.0.0.0"]},"WebFullUrl":"https://example.sharepoint.com/sites/mySite"}}}

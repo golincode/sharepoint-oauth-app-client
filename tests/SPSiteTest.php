@@ -14,8 +14,6 @@
 namespace WeAreArchitect\SharePoint;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Message\Response;
-use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\Mock;
 use JWT;
 use PHPUnit_Framework_TestCase;
@@ -33,11 +31,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      */
     public function testSPSiteConstructorFailInvalidUrl()
     {
-        $http = new Client();
-
-        $this->assertInstanceOf('\GuzzleHttp\Client', $http);
-
-        new SPSite($http, []);
+        new SPSite(new Client(), []);
     }
 
     /**
@@ -52,38 +46,23 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
             'base_url' => 'https://example.sharepoint.com/sites/mySite/',
         ]);
 
-        $this->assertInstanceOf('\GuzzleHttp\Client', $http);
+        $mock = new Mock();
 
-        $responses = new Mock([
-            // testSPSiteGetSPAccessTokenWithoutContextPass
-            new Response(200, [], Stream::factory(json_encode([
-                'access_token' => 'iz%1&r<jVDoQJ74787#,Z4}4DQ8aw7',
-                'expires_on'   => 2147483647,
-            ]))),
+        // testSPSiteGetSPAccessTokenWithoutContextPass
+        $mock->addResponse(__DIR__.'/responses/token');
 
-            // testSPSiteGetSPAccessTokenWithContextPass
-            new Response(200, [], Stream::factory(json_encode([
-                'access_token' => 'iz%1&r<jVDoQJ74787#,Z4}4DQ8aw7',
-                'expires_on'   => 2147483647,
-            ]))),
+        // testSPSiteGetSPAccessTokenWithContextPass
+        $mock->addResponse(__DIR__.'/responses/token');
 
-            // testSPSiteGetSPAccessTokenWithContextPass
-            new Response(200, [], Stream::factory(json_encode([
-                'd' => [
-                    'GetContextWebInformation' => [
-                        'FormDigestValue'          => '1D98CAC834A6139426DF168F2E8ED',
-                        'FormDigestTimeoutSeconds' => 1800,
-                    ],
-                ],
-            ]))),
-        ]);
+        //testSPSiteGetSPFormDigestPass
+        $mock->addResponse(__DIR__.'/responses/digest');
 
-        $http->getEmitter()->attach($responses);
+        $http->getEmitter()->attach($mock);
 
         $site = new SPSite($http, [
             'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
             'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-            'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
+            'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE=',
         ]);
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPSite', $site);
@@ -102,7 +81,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetSPAccessTokenFailInvalidToken(SPSite $site = null)
+    public function testSPSiteGetSPAccessTokenFailInvalidToken(SPSite $site)
     {
         $site->getSPAccessToken();
     }
@@ -118,7 +97,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetSPAccessTokenFailExpiredToken(SPSite $site = null)
+    public function testSPSiteGetSPAccessTokenFailExpiredToken(SPSite $site)
     {
         $serialized = sprintf('C:39:"WeAreArchitect\SharePoint\SPAccessToken":34:{a:2:{i:0;s:0:"";i:1;i:%d;}}', time());
         $token = unserialize($serialized);
@@ -130,6 +109,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
 
         sleep(1); // wait 1 sec for token expiration
 
+        $this->assertTrue($token->hasExpired());
         $site->getSPAccessToken();
     }
 
@@ -142,7 +122,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetSPAccessTokenWithoutContextPass(SPSite $site = null)
+    public function testSPSiteGetSPAccessTokenWithoutContextPass(SPSite $site)
     {
         $site->createSPAccessToken();
 
@@ -160,9 +140,10 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetSPAccessTokenWithContextPass(SPSite $site = null)
+    public function testSPSiteGetSPAccessTokenWithContextPass(SPSite $site)
     {
-        $data = [
+        // dummy payload
+        $payload = [
             'aud'                => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
             'iss'                => '00000000-0000-ffff-0000-000000000000@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
             'nbf'                => time(),
@@ -177,7 +158,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
             'isbrowserhostedapp' => true,
         ];
 
-        $access_token = JWT::encode($data, 'secret_key');
+        $access_token = JWT::encode($payload, 'secret');
 
         $site->createSPAccessToken($access_token);
 
@@ -195,7 +176,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteSetSPAccessTokenFailInvalidToken(SPSite $site = null)
+    public function testSPSiteSetSPAccessTokenFailInvalidToken(SPSite $site)
     {
         $token = unserialize('C:39:"WeAreArchitect\SharePoint\SPAccessToken":25:{a:2:{i:0;s:0:"";i:1;i:0;}}');
 
@@ -214,7 +195,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteSetSPAccessTokenPass(SPSite $site = null)
+    public function testSPSiteSetSPAccessTokenPass(SPSite $site)
     {
         $token = unserialize('C:39:"WeAreArchitect\SharePoint\SPAccessToken":34:{a:2:{i:0;s:0:"";i:1;i:2147483647;}}');
 
@@ -235,7 +216,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetSPFormDigestFailInvalidDigest(SPSite $site = null)
+    public function testSPSiteGetSPFormDigestFailInvalidDigest(SPSite $site)
     {
         $site->getSPFormDigest();
     }
@@ -251,7 +232,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetSPFormDigestFailExpiredDigest(SPSite $site = null)
+    public function testSPSiteGetSPFormDigestFailExpiredDigest(SPSite $site)
     {
         $serialized = sprintf('C:38:"WeAreArchitect\SharePoint\SPFormDigest":34:{a:2:{i:0;s:0:"";i:1;i:%d;}}', time());
         $digest = unserialize($serialized);
@@ -275,7 +256,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetSPFormDigestPass(SPSite $site = null)
+    public function testSPSiteGetSPFormDigestPass(SPSite $site)
     {
         $site->createSPFormDigest();
 
@@ -295,7 +276,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteSetSPFormDigestInvalidDigest(SPSite $site = null)
+    public function testSPSiteSetSPFormDigestInvalidDigest(SPSite $site)
     {
         $digest = unserialize('C:38:"WeAreArchitect\SharePoint\SPFormDigest":25:{a:2:{i:0;s:0:"";i:1;i:0;}}');
 
@@ -314,7 +295,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteSetSPFormDigestPass(SPSite $site = null)
+    public function testSPSiteSetSPFormDigestPass(SPSite $site)
     {
         $digest = unserialize('C:38:"WeAreArchitect\SharePoint\SPFormDigest":34:{a:2:{i:0;s:0:"";i:1;i:2147483647;}}');
 
@@ -333,12 +314,13 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetConfigPass(SPSite $site = null)
+    public function testSPSiteGetConfigPass(SPSite $site)
     {
         $config = $site->getConfig();
 
         $this->assertInternalType('array', $config);
 
+        $this->assertArrayHasKey('acs', $config);
         $this->assertArrayHasKey('resource', $config);
         $this->assertArrayHasKey('client_id', $config);
         $this->assertArrayHasKey('secret', $config);
@@ -353,7 +335,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetHostnamePass(SPSite $site = null)
+    public function testSPSiteGetHostnamePass(SPSite $site)
     {
         $this->assertEquals('https://example.sharepoint.com/', $site->getHostname());
         $this->assertEquals('https://example.sharepoint.com/test/path', $site->getHostname('test/path'));
@@ -371,7 +353,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetPathPass(SPSite $site = null)
+    public function testSPSiteGetPathPass(SPSite $site)
     {
         $this->assertEquals('/sites/mySite/', $site->getPath());
         $this->assertEquals('/sites/mySite/test/path', $site->getPath('test/path'));
@@ -389,7 +371,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetUrlPass(SPSite $site = null)
+    public function testSPSiteGetUrlPass(SPSite $site)
     {
         $this->assertEquals('https://example.sharepoint.com/sites/mySite/', $site->getUrl());
         $this->assertEquals('https://example.sharepoint.com/sites/mySite/test/path', $site->getUrl('test/path'));
@@ -407,7 +389,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      * @param   SPSite $site SharePoint Site
      * @return  void
      */
-    public function testSPSiteGetLogoutUrlPass(SPSite $site = null)
+    public function testSPSiteGetLogoutUrlPass(SPSite $site)
     {
         $this->assertNotFalse(filter_var($site->getLogoutUrl(), FILTER_VALIDATE_URL));
         $this->assertEquals('https://example.sharepoint.com/sites/mySite/_layouts/SignOut.aspx', $site->getLogoutUrl());
