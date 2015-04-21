@@ -13,7 +13,7 @@
 
 namespace WeAreArchitect\SharePoint;
 
-interface SPFolderInterface extends SPRequestInterface
+interface SPFolderInterface extends SPRequesterInterface
 {
     /**
      * Get SharePoint Site

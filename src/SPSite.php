@@ -17,7 +17,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Message\ResponseInterface;
 
-class SPSite implements SPRequestInterface
+class SPSite implements SPRequesterInterface
 {
     /**
      * Azure Access Control System URL

@@ -13,7 +13,7 @@
 
 namespace WeAreArchitect\SharePoint;
 
-interface SPRequestInterface
+interface SPRequesterInterface
 {
     /**
      * Send an HTTP request
