@@ -341,7 +341,7 @@ class SPFile extends SPObject implements SPItemInterface
     }
 
     /**
-     * Content handler
+     * Content type handler
      *
      * @static
      * @access  private
@@ -349,7 +349,7 @@ class SPFile extends SPObject implements SPItemInterface
      * @throws  SPException
      * @return  string
      */
-    private static function contentHandler($input)
+    private static function contentTypeHandler($input)
     {
         if ($input instanceof SplFileInfo) {
             $data = $input->openFile('r')->fread($input->getSize());
@@ -401,8 +401,6 @@ class SPFile extends SPObject implements SPItemInterface
     {
         $folder->isWritable(true);
 
-        $data = static::contentHandler($content);
-
         if (empty($name)) {
             if ($content instanceof SplFileInfo) {
                 $name = $content->getFilename();
@@ -412,6 +410,8 @@ class SPFile extends SPObject implements SPItemInterface
                 throw new SPException('SharePoint File Name is empty/not set');
             }
         }
+
+        $data = static::contentTypeHandler($content);
 
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeUrl()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
             'headers' => [
@@ -441,7 +441,7 @@ class SPFile extends SPObject implements SPItemInterface
      */
     public function update($content)
     {
-        $data = static::contentHandler($content);
+        $data = static::contentTypeHandler($content);
 
         $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/\$value", [
             'headers' => [
