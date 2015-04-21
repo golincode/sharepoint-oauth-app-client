@@ -102,7 +102,7 @@ class SPAccessToken extends SPObject implements Serializable
      */
     public function unserialize($serialized)
     {
-        list($this->digest, $timestamp, $timezone) = unserialize($serialized);
+        list($this->token, $timestamp, $timezone) = unserialize($serialized);
 
         $this->expires = Carbon::createFromTimeStamp($timestamp, $timezone);
     }
