@@ -99,7 +99,8 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      */
     public function testSPSiteGetSPAccessTokenFailExpiredToken(SPSite $site)
     {
-        $serialized = sprintf('C:39:"WeAreArchitect\SharePoint\SPAccessToken":34:{a:2:{i:0;s:0:"";i:1;i:%d;}}', time());
+        $serialized = sprintf('C:39:"WeAreArchitect\SharePoint\SPAccessToken":59:{a:3:{i:0;s:0:"";i:1;i:%d;i:2;s:13:"Europe/London";}}', time());
+
         $token = unserialize($serialized);
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPAccessToken', $token);
@@ -178,7 +179,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      */
     public function testSPSiteSetSPAccessTokenFailInvalidToken(SPSite $site)
     {
-        $token = unserialize('C:39:"WeAreArchitect\SharePoint\SPAccessToken":25:{a:2:{i:0;s:0:"";i:1;i:0;}}');
+        $token = unserialize('C:39:"WeAreArchitect\SharePoint\SPAccessToken":50:{a:3:{i:0;s:0:"";i:1;i:0;i:2;s:13:"Europe/London";}}');
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPAccessToken', $token);
         $this->assertTrue($token->hasExpired());
@@ -197,7 +198,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      */
     public function testSPSiteSetSPAccessTokenPass(SPSite $site)
     {
-        $token = unserialize('C:39:"WeAreArchitect\SharePoint\SPAccessToken":34:{a:2:{i:0;s:0:"";i:1;i:2147483647;}}');
+        $token = unserialize('C:39:"WeAreArchitect\SharePoint\SPAccessToken":59:{a:3:{i:0;s:0:"";i:1;i:2147483647;i:2;s:13:"Europe/London";}}');
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPAccessToken', $token);
         $this->assertFalse($token->hasExpired());
@@ -234,7 +235,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      */
     public function testSPSiteGetSPFormDigestFailExpiredDigest(SPSite $site)
     {
-        $serialized = sprintf('C:38:"WeAreArchitect\SharePoint\SPFormDigest":34:{a:2:{i:0;s:0:"";i:1;i:%d;}}', time());
+        $serialized = sprintf('C:38:"WeAreArchitect\SharePoint\SPFormDigest":59:{a:3:{i:0;s:0:"";i:1;i:%d;i:2;s:13:"Europe/London";}}', time());
         $digest = unserialize($serialized);
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPFormDigest', $digest);
@@ -278,7 +279,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      */
     public function testSPSiteSetSPFormDigestInvalidDigest(SPSite $site)
     {
-        $digest = unserialize('C:38:"WeAreArchitect\SharePoint\SPFormDigest":25:{a:2:{i:0;s:0:"";i:1;i:0;}}');
+        $digest = unserialize('C:38:"WeAreArchitect\SharePoint\SPFormDigest":50:{a:3:{i:0;s:0:"";i:1;i:0;i:2;s:13:"Europe/London";}}');
 
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPFormDigest', $digest);
         $this->assertTrue($digest->hasExpired());
@@ -297,8 +298,7 @@ class SPSiteTest extends PHPUnit_Framework_TestCase
      */
     public function testSPSiteSetSPFormDigestPass(SPSite $site)
     {
-        $digest = unserialize('C:38:"WeAreArchitect\SharePoint\SPFormDigest":34:{a:2:{i:0;s:0:"";i:1;i:2147483647;}}');
-
+        $digest = unserialize('C:38:"WeAreArchitect\SharePoint\SPFormDigest":59:{a:3:{i:0;s:0:"";i:1;i:2147483647;i:2;s:13:"Europe/London";}}');
         $this->assertInstanceOf('\WeAreArchitect\SharePoint\SPFormDigest', $digest);
         $this->assertFalse($digest->hasExpired());
 
