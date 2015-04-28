@@ -145,10 +145,11 @@ class SPList extends SPListObject
     public function __construct(SPSite $site, array $json, array $settings = [])
     {
         $settings = array_replace_recursive([
-            'extra' => [],    // extra SharePoint List properties to map
             'fetch' => false, // fetch SharePoint Items?
+        ], $settings, [
+            'extra' => [],    // extra SharePoint List properties to map
             'items' => [],    // SharePoint Item instantiation settings
-        ], $settings);
+        ]);
 
         parent::__construct([
             'template'    => 'BaseTemplate',
@@ -507,9 +508,10 @@ class SPList extends SPListObject
     public function getSPItems(array $settings = [])
     {
         $settings = array_replace_recursive([
-            'extra' => [],   // extra SharePoint Item properties to map
             'top'   => 5000, // SharePoint Item threshold
-        ], $settings);
+        ], $settings, [
+            'extra' => [],   // extra SharePoint Item properties to map
+        ]);
 
         $this->items = SPItem::getAll($this, $settings);
 

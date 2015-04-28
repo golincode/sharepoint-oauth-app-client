@@ -62,10 +62,11 @@ class SPFolder extends SPListObject implements SPItemInterface
     public function __construct(SPSite $site, array $json, array $settings = [])
     {
         $settings = array_replace_recursive([
-            'extra' => [],    // extra SharePoint Folder properties to map
             'fetch' => false, // fetch SharePoint Items (Folders/Files)?
+        ], $settings, [
+            'extra' => [],    // extra SharePoint Folder properties to map
             'items' => [],    // SharePoint Item instantiation settings
-        ], $settings);
+        ]);
 
         parent::__construct([
             'type'        => '__metadata.type',
@@ -415,7 +416,7 @@ class SPFolder extends SPListObject implements SPItemInterface
      */
     public function getSPItems(array $settings = [])
     {
-        $settings = array_replace_recursive([
+        $settings = array_replace_recursive($settings, [
             'folders' => [
                 'extra' => [], // extra SharePoint Folder properties to map
             ],
@@ -423,7 +424,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             'files' => [
                 'extra' => [], // extra SharePoint File properties to map
             ],
-        ], $settings);
+        ]);
 
         $folders = static::getAll($this->site, $this->relativeUrl, $settings['folders']);
         $files = SPFile::getAll($this, $settings['files']['extra']);

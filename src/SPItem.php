@@ -94,9 +94,10 @@ class SPItem extends SPObject implements SPItemInterface
     public static function getAll(SPList $list, array $settings = [])
     {
         $settings = array_replace_recursive([
-            'extra' => [],  // extra SharePoint Item properties to map
             'top'   => 5000, // SharePoint Item threshold
-        ], $settings);
+        ], $settings, [
+            'extra' => [],   // extra SharePoint Item properties to map
+        ]);
 
         $json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
             'headers' => [

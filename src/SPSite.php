@@ -85,7 +85,7 @@ class SPSite implements SPRequesterInterface
      */
     public function __construct(Client $http, array $config)
     {
-        $this->config = array_replace([
+        $this->config = array_replace_recursive([
             'acs' => static::ACS,
         ], $config);
 
@@ -177,9 +177,8 @@ class SPSite implements SPRequesterInterface
             $url = sprintf('%s/', rtrim($url, '/'));
         }
 
-        $settings = array_replace_recursive([
+        $settings = array_replace_recursive($settings, [
             'site' => [], // SharePoint Site configuration
-        ], $settings, [
             'http' => [   // Guzzle HTTP Client configuration
                 'base_url' => $url,
             ],
