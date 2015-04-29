@@ -78,6 +78,14 @@ class SPFile extends SPObject implements SPItemInterface
     protected $relativeUrl;
 
     /**
+     * File Author
+     *
+     * @access  protected
+     * @var     string
+     */
+    protected $author;
+
+    /**
      * SharePoint File constructor
      *
      * @access  public
@@ -98,6 +106,7 @@ class SPFile extends SPObject implements SPItemInterface
             'created'     => 'TimeCreated',
             'modified'    => 'TimeLastModified',
             'relativeUrl' => 'ServerRelativeUrl',
+            'author'      => 'Author.LoginName',
         ], $extra);
 
         $this->folder = $folder;
@@ -131,6 +140,7 @@ class SPFile extends SPObject implements SPItemInterface
             'created'      => $this->created,
             'modified'     => $this->modified,
             'relative_url' => $this->relativeUrl,
+            'author'       => $this->author,
             'extra'        => $this->extra,
         ];
     }
@@ -202,6 +212,22 @@ class SPFile extends SPObject implements SPItemInterface
     }
 
     /**
+     * Get Author
+     *
+     * @access  public
+     * @param   bool   $asObject Get the Author as an SPUser object?
+     * @return  string
+     */
+    public function getAuthor($asObject = false)
+    {
+        if ($asObject) {
+            return SPUser::getByAccount($this->folder->getSPSite(), $this->author);
+        }
+
+        return $this->author;
+    }
+
+    /**
      * Get File Contents
      *
      * @access  public
@@ -234,6 +260,7 @@ class SPFile extends SPObject implements SPItemInterface
             'created'  => $this->created,
             'modified' => $this->modified,
             'url'      => $this->getUrl(),
+            'author'   => $this->author,
         ];
     }
 
@@ -269,7 +296,7 @@ class SPFile extends SPObject implements SPItemInterface
             ],
 
             'query'   => [
-                '$expand' => 'ListItemAllFields',
+                '$expand' => 'ListItemAllFields,Author',
             ],
         ]);
 
@@ -302,7 +329,7 @@ class SPFile extends SPObject implements SPItemInterface
             ],
 
             'query'   => [
-                '$expand' => 'ListItemAllFields',
+                '$expand' => 'ListItemAllFields,Author',
             ],
         ]);
 
@@ -333,7 +360,7 @@ class SPFile extends SPObject implements SPItemInterface
             ],
 
             'query'   => [
-                '$expand' => 'ListItemAllFields',
+                '$expand' => 'ListItemAllFields,Author',
             ],
         ]);
 
