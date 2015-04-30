@@ -27,6 +27,22 @@ class SPFolder extends SPListObject implements SPItemInterface
     ];
 
     /**
+     * File Creation Time
+     *
+     * @access  protected
+     * @var     \Carbon\Carbon
+     */
+    protected $created;
+
+    /**
+     * File Modification Time
+     *
+     * @access  protected
+     * @var     \Carbon\Carbon
+     */
+    protected $modified;
+
+    /**
      * SharePoint List GUID
      *
      * @access  protected
@@ -73,6 +89,8 @@ class SPFolder extends SPListObject implements SPItemInterface
             'guid'        => 'UniqueId',
             'name'        => 'Name',
             'title'       => 'Name',
+            'created'     => 'TimeCreated',
+            'modified'    => 'TimeLastModified',
             'relativeUrl' => 'ServerRelativeUrl',
             'itemCount'   => 'ItemCount',
 
@@ -102,6 +120,8 @@ class SPFolder extends SPListObject implements SPItemInterface
             'guid'         => $this->guid,
             'title'        => $this->title,
             'name'         => $this->name,
+            'created'      => $this->created,
+            'modified'     => $this->modified,
             'relative_url' => $this->relativeUrl,
             'items'        => $this->items,
             'item_count'   => $this->itemCount,
