@@ -19,7 +19,7 @@ use Carbon\Carbon;
 
 class SPFile extends SPObject implements SPItemInterface
 {
-    use SPPropertiesTrait;
+    use SPPropertiesTrait, SPTimestampsTrait;
 
     /**
      * SharePoint Folder
@@ -52,22 +52,6 @@ class SPFile extends SPObject implements SPItemInterface
      * @var     int
      */
     protected $size = 0;
-
-    /**
-     * File Creation Time
-     *
-     * @access  protected
-     * @var     \Carbon\Carbon
-     */
-    protected $created;
-
-    /**
-     * File Modification Time
-     *
-     * @access  protected
-     * @var     \Carbon\Carbon
-     */
-    protected $modified;
 
     /**
      * File Relative URL
@@ -165,28 +149,6 @@ class SPFile extends SPObject implements SPItemInterface
     public function getSize()
     {
         return $this->size;
-    }
-
-    /**
-     * Get File Creation Time
-     *
-     * @access  public
-     * @return  Carbon
-     */
-    public function getTimeCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * Get File Modification Time
-     *
-     * @access  public
-     * @return  Carbon
-     */
-    public function getTimeModified()
-    {
-        return $this->modified;
     }
 
     /**

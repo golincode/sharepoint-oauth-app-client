@@ -15,6 +15,8 @@ namespace WeAreArchitect\SharePoint;
 
 class SPFolder extends SPListObject implements SPItemInterface
 {
+    use SPTimestampsTrait;
+
     /**
      * System Folder names
      *
@@ -25,22 +27,6 @@ class SPFolder extends SPListObject implements SPItemInterface
     public static $systemFolders = [
         'forms',
     ];
-
-    /**
-     * File Creation Time
-     *
-     * @access  protected
-     * @var     \Carbon\Carbon
-     */
-    protected $created;
-
-    /**
-     * File Modification Time
-     *
-     * @access  protected
-     * @var     \Carbon\Carbon
-     */
-    protected $modified;
 
     /**
      * SharePoint List GUID

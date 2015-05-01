@@ -15,6 +15,8 @@ namespace WeAreArchitect\SharePoint;
 
 class SPList extends SPListObject
 {
+    use SPTimestampsTrait;
+
     /**
      * SharePoint List Template Types (SharePoint 2013)
      *
@@ -32,7 +34,7 @@ class SPList extends SPListObject
     const TPL_TASKS           = 107; // Tasks
     const TPL_DISCUSSIONBOARD = 108; // Discussion board
     const TPL_PICTURELIBRARY  = 109; // Picture library
-    const TPL_WEBPAGELIBRARY  = 119; // Webpage library
+    const TPL_WEBPAGELIBRARY  = 119; // Web page library
     const TPL_PAGES           = 850; // Publishing pages
 
     /**
@@ -160,6 +162,8 @@ class SPList extends SPListObject
             'relativeUrl' => 'RootFolder.ServerRelativeUrl',
             'description' => 'Description',
             'itemCount'   => 'ItemCount',
+            'created'     => 'RootFolder.TimeCreated',
+            'modified'    => 'RootFolder.TimeLastModified',
         ], $settings['extra']);
 
         $this->site = $site;
@@ -186,7 +190,9 @@ class SPList extends SPListObject
             'relative_url' => $this->relativeUrl,
             'items'        => $this->items,
             'item_count'   => $this->itemCount,
-            'extra'        => $this->extra
+            'extra'        => $this->extra,
+            'created'      => $this->created,
+            'modified'     => $this->modified,
         ];
     }
 

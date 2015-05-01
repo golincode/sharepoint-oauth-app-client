@@ -15,7 +15,7 @@ namespace WeAreArchitect\SharePoint;
 
 class SPItem extends SPObject implements SPItemInterface
 {
-    use SPPropertiesTrait;
+    use SPPropertiesTrait, SPTimestampsTrait;
 
     /**
      * SharePoint List
@@ -45,10 +45,12 @@ class SPItem extends SPObject implements SPItemInterface
     public function __construct(SPList $list, array $json, array $extra = [])
     {
         parent::__construct([
-            'type'  => '__metadata.type',
-            'id'    => 'Id',
-            'guid'  => 'GUID',
-            'title' => 'Title',
+            'type'     => '__metadata.type',
+            'id'       => 'Id',
+            'guid'     => 'GUID',
+            'title'    => 'Title',
+            'created'  => 'Created',
+            'modified' => 'Modified',
         ], $extra);
 
         $this->list = $list;
@@ -73,11 +75,13 @@ class SPItem extends SPObject implements SPItemInterface
     public function toArray()
     {
         return [
-            'type'  => $this->type,
-            'id'    => $this->id,
-            'guid'  => $this->guid,
-            'title' => $this->title,
-            'extra' => $this->extra,
+            'type'     => $this->type,
+            'id'       => $this->id,
+            'guid'     => $this->guid,
+            'title'    => $this->title,
+            'extra'    => $this->extra,
+            'created'  => $this->created,
+            'modified' => $this->modified,
         ];
     }
 
