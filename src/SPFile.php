@@ -177,15 +177,10 @@ class SPFile extends SPObject implements SPItemInterface
      * Get Author
      *
      * @access  public
-     * @param   bool   $asObject Get the Author as an SPUser object?
      * @return  string
      */
-    public function getAuthor($asObject = false)
+    public function getAuthor()
     {
-        if ($asObject) {
-            return SPUser::getByAccount($this->folder->getSPSite(), $this->author);
-        }
-
         return $this->author;
     }
 
