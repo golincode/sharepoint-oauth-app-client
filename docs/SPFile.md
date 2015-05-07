@@ -137,16 +137,16 @@ try {
     $folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
     // content from an SplFileInfo object
-    $content = new SplFileInfo('document.doc');
+    $content = new SplFileInfo('document.pdf');
     $name = null; // if null, the file name from the SplFileInfo will be used
 
     // content from a resource
-    $content = fopen('document.doc', 'r');
-    $name = 'document.doc'; // an SPException will be thrown if the name is not provided
+    $content = fopen('document.pdf', 'r');
+    $name = 'document.pdf'; // an SPException will be thrown if the name is not provided
 
     // content from a string
     $content = 'Document content...';
-    $name = 'document.doc'; // an SPException will be thrown if the name is not provided
+    $name = 'document.pdf'; // an SPException will be thrown if the name is not provided
 
     // allow overwriting the file if it already exists
     $overwrite = false; // an SPException will be thrown if the file exists and we didn't allow overwriting
@@ -186,13 +186,13 @@ try {
     // get a Folder by relative URL
     $folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
-    $file = SPFile::getByName($folder, 'document.doc');
+    $file = SPFile::getByName($folder, 'document.pdf');
 
     // content from an SplFileInfo object
-    $content = new SplFileInfo('document2.doc');
+    $content = new SplFileInfo('document2.pdf');
 
     // content from a resource
-    $content = fopen('document2.doc', 'r');
+    $content = fopen('document2.pdf', 'r');
 
     // content from a string
     $content = 'New document content...';
@@ -236,10 +236,10 @@ try {
     $folder2 = SPFolder::getByRelativeUrl($site, 'otherFolder');
 
     // get the File we want to move
-    $file = SPFile::getByName($folder1, 'document.doc');
+    $file = SPFile::getByName($folder1, 'document.pdf');
 
     // rename the file
-    $name = 'moved_document.doc'; // if null, the original name will be used
+    $name = 'moved_document.pdf'; // if null, the original name will be used
 
     $file->move($folder2, $name);
 
@@ -280,10 +280,10 @@ try {
     $folder2 = SPFolder::getByRelativeUrl($site, 'otherFolder');
 
     // get the File we want to copy
-    $file = SPFile::getByName($folder1, 'document.doc');
+    $file = SPFile::getByName($folder1, 'document.pdf');
 
     // rename the file
-    $name = 'copied_document.doc'; // if null, the original name will be used
+    $name = 'copied_document.pdf'; // if null, the original name will be used
     
     // allow overwriting the file if it already exists
     $overwrite = false; // an SPException will be thrown if the file exists and we didn't allow overwriting
@@ -324,11 +324,216 @@ try {
     $folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
     // get the File we want to delete
-    $file = SPFile::getByName($folder, 'document.doc');
+    $file = SPFile::getByName($folder, 'document.pdf');
 
     $file->delete();
 
 } catch (SPException $e) {
     // handle exceptions
 }
+```
+
+## To array
+Retrieve an `array` representation of the `SPFile` object.
+
+```php
+    var_dump($file->toArray());
+    
+    // array(11) {
+    //   ["type"]=>
+    //   string(18) "SP.Data.mySubfolderItem"
+    //   ["id"]=>
+    //   int(123)
+    //   ["guid"]=>
+    //   string(36) "00000000-0000-ffff-0000-000000000000"
+    //   ["title"]=>
+    //   NULL
+    //   ["name"]=>
+    //   string(12) "document.pdf"
+    //   ["size"]=>
+    //   string(5) "65536"
+    //   ["created"]=>
+    //   object(Carbon\Carbon)#55 (3) {
+    //   ["date"]=>
+    //     string(26) "2000-01-01 00:00:00.000000"
+    //     ["timezone_type"]=>
+    //     int(3)
+    //     ["timezone"]=>
+    //     string(13) "Europe/London"
+    //   }
+    //   ["modified"]=>
+    //   object(Carbon\Carbon)#59 (3) {
+    //     ["date"]=>
+    //     string(26) "2000-01-01 00:00:00.000000"
+    //     ["timezone_type"]=>
+    //     int(3)
+    //     ["timezone"]=>
+    //     string(13) "Europe/London"
+    //   }
+    //   ["relative_url"]=>
+    //   string(31) "/sites/mySite/myFolder/mySubfolder/document.pdf"
+    //   ["author"]=>
+    //   string(55) "i:0i.t|membership|username@example.onmicrosoft.com"
+    //   ["extra"]=>
+    //   array(0) {
+    //   }
+    // }
+```
+
+## Get ID
+Get the `SPFile` id.
+
+```php
+echo $file->getID(); // 123
+```
+
+## Get name
+Get the `SPFile` name.
+
+```php
+echo $file->getName(); // document.pdf
+```
+
+## Get size
+Get the `SPFile` size.
+
+```php
+echo $file->getSize(); // 65536
+```
+
+## Get relative URL
+Get the `SPFile` relative URL.
+
+```php
+echo $file->getRelativeUrl(); // /sites/mySite/myFolder/mySubfolder/document.pdf
+```
+
+## Get URL
+Get the `SPFile` URL.
+
+```php
+echo $file->getUrl(); // https://example.sharepoint.com/sites/mySite/myFolder/mySubfolder/document.pdf
+```
+
+## Get author
+Get the `SPFile` URL.
+
+```php
+echo $file->getAuthor(); // i:0i.t|membership|username@example.onmicrosoft.com
+```
+
+## Get contents
+Get the contents of the `SPFile`.
+
+```php
+file_put_contents('document.pdf', $file->getContents());
+```
+
+## Get metadata
+This method is similar to the `toArray()` one, with the exception that it includes the `url` and excludes the `type`, `title`, `relative_url`, `author` and `extra`.
+
+```php
+    var_dump($file->toArray());
+    
+    // array(11) {
+    //   ["id"]=>
+    //   int(123)
+    //   ["guid"]=>
+    //   string(36) "00000000-0000-ffff-0000-000000000000"
+    //   ["name"]=>
+    //   string(12) "document.pdf"
+    //   ["size"]=>
+    //   string(5) "65536"
+    //   ["created"]=>
+    //   object(Carbon\Carbon)#55 (3) {
+    //   ["date"]=>
+    //     string(26) "2000-01-01 00:00:00.000000"
+    //     ["timezone_type"]=>
+    //     int(3)
+    //     ["timezone"]=>
+    //     string(13) "Europe/London"
+    //   }
+    //   ["modified"]=>
+    //   object(Carbon\Carbon)#59 (3) {
+    //     ["date"]=>
+    //     string(26) "2000-01-01 00:00:00.000000"
+    //     ["timezone_type"]=>
+    //     int(3)
+    //     ["timezone"]=>
+    //     string(13) "Europe/London"
+    //   }
+    //   ["url"]=>
+    //   string(78) "https://example.sharepoint.com/sites/mySite/myFolder/mySubfolder/document.pdf"
+    // }
+```
+
+## Get SharePoint Item
+Get the associated SharePoint Item of a `SPFile`. This method is normally used when the metadata of a `SPFile` needs to be set.
+
+```php
+try {
+    $item = $file->getSPItem();
+    
+    $item->update([
+        'Title'        => 'A PDF Document',
+        
+        // custom fields
+        'CustomField1' => 'Foo',
+    ]);
+} catch (SPException $e) {
+    // handle exceptions
+}
+```
+
+## Get GUID
+Get the `SPFile` GUID.
+
+```php
+echo $file->getGUID(); // 00000000-0000-ffff-0000-000000000000
+```
+
+## Get title
+Get the `SPFile` title.
+
+```php
+echo $file->getTitle(); // NULL
+```
+
+## Get type
+Get the `SPFile` SharePoint type.
+           
+```php
+echo $file->getType(); // SP.Data.mySubfolderItem
+```
+
+## Get creation time
+Get the `SPFile` creation time as a `Carbon` object.
+           
+```php
+    var_dump($file->getTimeCreated());
+    
+    // object(Carbon\Carbon)#55 (3) {
+    //   ["date"]=>
+    //   string(26) "2000-01-01 00:00:00.000000"
+    //   ["timezone_type"]=>
+    //   int(3)
+    //   ["timezone"]=>
+    //   string(13) "Europe/London"
+    // }
+```
+
+## Get modification time
+Get the `SPFile` modification time as a `Carbon` object.
+           
+```php
+    var_dump($file->getTimeModified());
+    
+    // object(Carbon\Carbon)#55 (3) {
+    //   ["date"]=>
+    //   string(26) "2000-01-01 00:00:00.000000"
+    //   ["timezone_type"]=>
+    //   int(3)
+    //   ["timezone"]=>
+    //   string(13) "Europe/London"
+    // }
 ```
