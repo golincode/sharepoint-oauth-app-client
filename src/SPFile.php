@@ -217,7 +217,6 @@ class SPFile extends SPObject implements SPItemInterface
             'created'  => $this->created,
             'modified' => $this->modified,
             'url'      => $this->getUrl(),
-            'author'   => $this->author,
         ];
     }
 
