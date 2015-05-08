@@ -193,42 +193,6 @@ class SPFolder extends SPListObject implements SPItemInterface
     }
 
     /**
-     * Get all SharePoint Folders
-     *
-     * @static
-     * @access  public
-     * @param   SPSite $site        SharePoint Site
-     * @param   string $relativeUrl SharePoint Folder relative URL
-     * @param   array  $settings    Instantiation settings
-     * @throws  SPException
-     * @return  array
-     */
-    public static function getAll(SPSite $site, $relativeUrl, array $settings = [])
-    {
-        $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relativeUrl."')/Folders", [
-            'headers' => [
-                'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
-            ],
-
-            'query'   => [
-                '$expand' => 'ListItemAllFields/ParentList,Properties',
-            ],
-        ]);
-
-        $folders = [];
-
-        foreach ($json['d']['results'] as $subFolder) {
-            // skip System Folders
-            if (! static::isSystemFolder($subFolder['Name'])) {
-                $folders[$subFolder['UniqueId']] = new static($site, $subFolder, $settings);
-            }
-        }
-
-        return $folders;
-    }
-
-    /**
      * Get a SharePoint Folder by GUID
      *
      * @static
@@ -284,6 +248,42 @@ class SPFolder extends SPListObject implements SPItemInterface
         ]);
 
         return new static($site, $json['d'], $settings);
+    }
+
+    /**
+     * Get SubFolders of a SharePoint Folder
+     *
+     * @static
+     * @access  public
+     * @param   SPSite $site        SharePoint Site
+     * @param   string $relativeUrl SharePoint Folder relative URL
+     * @param   array  $settings    Instantiation settings
+     * @throws  SPException
+     * @return  array
+     */
+    public static function getSubFolders(SPSite $site, $relativeUrl, array $settings = [])
+    {
+        $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relativeUrl."')/Folders", [
+            'headers' => [
+                'Authorization' => 'Bearer '.$site->getSPAccessToken(),
+                'Accept'        => 'application/json;odata=verbose',
+            ],
+
+            'query'   => [
+                '$expand' => 'ListItemAllFields/ParentList,Properties',
+            ],
+        ]);
+
+        $folders = [];
+
+        foreach ($json['d']['results'] as $subFolder) {
+            // skip System Folders
+            if (! static::isSystemFolder($subFolder['Name'])) {
+                $folders[$subFolder['UniqueId']] = new static($site, $subFolder, $settings);
+            }
+        }
+
+        return $folders;
     }
 
     /**
@@ -432,7 +432,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             ],
         ]);
 
-        $folders = static::getAll($this->site, $this->relativeUrl, $settings['folders']);
+        $folders = static::getSubFolders($this->site, $this->relativeUrl, $settings['folders']);
         $files = SPFile::getAll($this, $settings['files']['extra']);
 
         $this->items = array_merge($folders, $files);
