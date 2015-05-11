@@ -258,3 +258,9 @@ Retrieve an `array` representation of the `SPFolder` object.
     //   }
     // }
 ```
+
+## Properties
+`SPFolder` property methods belong to a trait and are documented [here](SPProperties.md).
+
+## Timestamps
+`SPFolder` timestamp methods belong to a trait and are documented [here](SPTimestamps.md).

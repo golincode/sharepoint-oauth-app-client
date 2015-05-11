@@ -485,55 +485,8 @@ try {
 }
 ```
 
-## Get GUID
-Get the `SPFile` GUID.
+## Properties
+`SPFile` property methods belong to a trait and are documented [here](SPProperties.md).
 
-```php
-echo $file->getGUID(); // 00000000-0000-ffff-0000-000000000000
-```
-
-## Get title
-Get the `SPFile` title.
-
-```php
-echo $file->getTitle(); // NULL
-```
-
-## Get type
-Get the `SPFile` SharePoint type.
-           
-```php
-echo $file->getType(); // SP.Data.mySubfolderItem
-```
-
-## Get creation time
-Get the `SPFile` creation time as a `Carbon` object.
-           
-```php
-    var_dump($file->getTimeCreated());
-    
-    // object(Carbon\Carbon)#55 (3) {
-    //   ["date"]=>
-    //   string(26) "2000-01-01 00:00:00.000000"
-    //   ["timezone_type"]=>
-    //   int(3)
-    //   ["timezone"]=>
-    //   string(13) "Europe/London"
-    // }
-```
-
-## Get modification time
-Get the `SPFile` modification time as a `Carbon` object.
-           
-```php
-    var_dump($file->getTimeModified());
-    
-    // object(Carbon\Carbon)#55 (3) {
-    //   ["date"]=>
-    //   string(26) "2000-01-01 00:00:00.000000"
-    //   ["timezone_type"]=>
-    //   int(3)
-    //   ["timezone"]=>
-    //   string(13) "Europe/London"
-    // }
-```
+## Timestamps
+`SPFile` timestamp methods belong to a trait and are documented [here](SPTimestamps.md).
