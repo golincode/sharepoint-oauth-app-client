@@ -1,5 +1,5 @@
 # SharePoint Properties
-The `SPPropertiesTrait` contains getter methods related to properties of SharePoint objects.
+The `SPPropertiesTrait` contains getter methods related to common properties of SharePoint objects.
 
 ## Classes using this trait
 - [SPList](docs/SPList.md)
@@ -11,7 +11,7 @@ The `SPPropertiesTrait` contains getter methods related to properties of SharePo
 Get the GUID of a `SPList`, `SPItem`, `SPFolder` or `SPFile` object.
 
 ```php
-echo $file->getGUID(); // 00000000-0000-ffff-0000-000000000000
+echo $object->getGUID(); // 00000000-0000-ffff-0000-000000000000
 ```
 
 ## Title
