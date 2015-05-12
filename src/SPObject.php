@@ -115,7 +115,7 @@ abstract class SPObject implements SPObjectInterface
      * @param   mixed     $data      SPObject / JSON response from the SharePoint REST API
      * @param   bool      $rehydrate Are we rehydrating?
      * @throws  SPException
-     * @return  void
+     * @return  SPObject
      */
     protected function hydrate($data, $rehydrate = false)
     {
@@ -125,7 +125,7 @@ abstract class SPObject implements SPObjectInterface
                 $this->$key = $value;
             }
 
-            return;
+            return $this;
         }
 
         // hydrate from an array (JSON)
@@ -141,7 +141,7 @@ abstract class SPObject implements SPObjectInterface
                 }
             }
 
-            return;
+            return $this;
         }
 
         throw new SPException('Could not hydrate '.get_class($this));

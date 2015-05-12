@@ -367,9 +367,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         // Rehydration is done using the $properties array,
         // since the SharePoint API doesn't return a response
         // on a successful update
-        $this->hydrate($properties, true);
-
-        return $this;
+        return $this->hydrate($properties, true);
     }
 
     /**

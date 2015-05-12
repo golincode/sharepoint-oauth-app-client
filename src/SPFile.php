@@ -441,12 +441,10 @@ class SPFile extends SPObject implements SPItemInterface
         // Rehydration is done in a best effort manner,
         // since the SharePoint API doesn't return a response
         // on a successful update
-        $this->hydrate([
+        return $this->hydrate([
             'Length'           => strlen($data),
             'TimeLastModified' => Carbon::now(),
         ], true);
-
-        return $this;
     }
 
     /**
@@ -478,9 +476,7 @@ class SPFile extends SPObject implements SPItemInterface
         // updated SPFile to rehydrate the current object
         $file = static::getByRelativeUrl($folder->getSPSite(), $newUrl, $extra);
 
-        $this->hydrate($file);
-
-        return $this;
+        return $this->hydrate($file);
     }
 
     /**
