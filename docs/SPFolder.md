@@ -63,8 +63,8 @@ try {
 }
 ```
 
-## Get the subfolders
-Gets all the subFolders of a SharePoint Folder
+## Get subfolders
+Gets all the Folders within a SharePoint Folder
 
 ```php
 <?php
