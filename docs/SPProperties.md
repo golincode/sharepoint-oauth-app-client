@@ -1,5 +1,5 @@
 # SharePoint Properties
-The `SPPropertiesTrait` contains getter methods related to common properties of SharePoint objects.
+The `SPPropertiesTrait` contains methods related to common properties of SharePoint objects.
 
 ## Classes using this trait
 - [SPList](docs/SPList.md)

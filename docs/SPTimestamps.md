@@ -1,5 +1,5 @@
 # SharePoint Timestamps
-The `SPTimestampsTrait` contains getter methods related to common date/time attributes of SharePoint objects.
+The `SPTimestampsTrait` contains methods related to common date/time properties of SharePoint objects.
 
 ## Classes using this trait
 - [SPList](docs/SPList.md)
