@@ -86,7 +86,7 @@ abstract class SPObject implements SPObjectInterface
     }
 
     /**
-     * Get a value from a JSON array using dot notation
+     * Get a value from a JSON array
      *
      * @access  protected
      * @param   array     $json JSON response from the SharePoint REST API
@@ -96,7 +96,7 @@ abstract class SPObject implements SPObjectInterface
     protected function getJsonValue(array $json, $path)
     {
         if (is_string($path)) {
-            foreach (explode('.', $path) as $segment) {
+            foreach (explode('->', $path) as $segment) {
                 if (! is_array($json) || ! array_key_exists($segment, $json)) {
                     return null;
                 }
