@@ -71,7 +71,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         ]);
 
         parent::__construct([
-            'type'        => '__metadata.type',
+            'type'        => 'odata.type',
             'guid'        => 'UniqueId',
             'name'        => 'Name',
             'title'       => 'Name',
@@ -81,10 +81,10 @@ class SPFolder extends SPListObject implements SPItemInterface
             'itemCount'   => 'ItemCount',
 
             // only available in sub Folders
-            'listGUID'    => 'ListItemAllFields.ParentList.Id',
+            'listGUID'    => 'ListItemAllFields->ParentList->Id',
 
             // only available in the root Folder
-            'listTitle'   => 'Properties.vti_x005f_listtitle',
+            'listTitle'   => 'Properties->vti_x005f_listtitle',
         ], $settings['extra']);
 
         $this->site = $site;
@@ -208,7 +208,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         $json = $site->request("_api/web/GetFolderById('".$guid."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query'   => [
@@ -216,7 +216,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             ],
         ]);
 
-        return new static($site, $json['d'], $settings);
+        return new static($site, $json, $settings);
     }
 
     /**
@@ -239,7 +239,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relativeUrl."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query'   => [
@@ -247,7 +247,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             ],
         ]);
 
-        return new static($site, $json['d'], $settings);
+        return new static($site, $json, $settings);
     }
 
     /**
@@ -266,7 +266,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         $json = $site->request("_api/web/GetFolderByServerRelativeUrl('".$relativeUrl."')/Folders", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query'   => [
@@ -276,7 +276,7 @@ class SPFolder extends SPListObject implements SPItemInterface
 
         $folders = [];
 
-        foreach ($json['d']['results'] as $subFolder) {
+        foreach ($json['results'] as $subFolder) {
             // skip System Folders
             if (! static::isSystemFolder($subFolder['Name'])) {
                 $folders[$subFolder['UniqueId']] = new static($site, $subFolder, $settings);
@@ -312,9 +312,9 @@ class SPFolder extends SPListObject implements SPItemInterface
         $json = $folder->request('_api/web/Folders', [
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $folder->getSPFormDigest(),
-                'Content-type'    => 'application/json;odata=verbose',
+                'Content-type'    => 'application/json',
                 'Content-length'  => strlen($body),
             ],
 
@@ -325,7 +325,7 @@ class SPFolder extends SPListObject implements SPItemInterface
             'body'    => $body,
         ], 'POST');
 
-        return new static($folder->getSPSite(), $json['d'], $settings);
+        return new static($folder->getSPSite(), $json, $settings);
     }
 
     /**
@@ -349,11 +349,11 @@ class SPFolder extends SPListObject implements SPItemInterface
         $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relativeUrl."')", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $this->getSPFormDigest(),
                 'X-HTTP-Method'   => 'MERGE',
                 'IF-MATCH'        => '*',
-                'Content-type'    => 'application/json;odata=verbose',
+                'Content-type'    => 'application/json',
                 'Content-length'  => strlen($body),
             ],
 
@@ -405,11 +405,11 @@ class SPFolder extends SPListObject implements SPItemInterface
         $json = $this->request("_api/web/GetFolderByServerRelativeUrl('".$this->relativeUrl."')/itemCount", [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
         ]);
 
-        return $this->itemCount = $json['d']['ItemCount'];
+        return $this->itemCount = $json['ItemCount'];
     }
 
     /**

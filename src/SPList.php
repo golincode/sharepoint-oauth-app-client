@@ -155,15 +155,15 @@ class SPList extends SPListObject
 
         parent::__construct([
             'template'    => 'BaseTemplate',
-            'type'        => '__metadata.type',
+            'type'        => 'odata.type',
             'itemType'    => 'ListItemEntityTypeFullName',
             'guid'        => 'Id',
             'title'       => 'Title',
-            'relativeUrl' => 'RootFolder.ServerRelativeUrl',
+            'relativeUrl' => 'RootFolder->ServerRelativeUrl',
             'description' => 'Description',
             'itemCount'   => 'ItemCount',
-            'created'     => 'RootFolder.TimeCreated',
-            'modified'    => 'RootFolder.TimeLastModified',
+            'created'     => 'RootFolder->TimeCreated',
+            'modified'    => 'RootFolder->TimeLastModified',
         ], $settings['extra']);
 
         $this->site = $site;
@@ -271,7 +271,7 @@ class SPList extends SPListObject
         $json = $site->request('_api/web/Lists', [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query' => [
@@ -281,7 +281,7 @@ class SPList extends SPListObject
 
         $lists = [];
 
-        foreach ($json['d']['results'] as $list) {
+        foreach ($json['results'] as $list) {
             // allowed SharePoint List Types only
             if (static::isListTypeAllowed($list['BaseTemplate'])) {
                 $lists[$list['Id']] = new static($site, $list, $settings);
@@ -307,7 +307,7 @@ class SPList extends SPListObject
         $json = $site->request("_api/web/Lists(guid'".$guid."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query' => [
@@ -315,7 +315,7 @@ class SPList extends SPListObject
             ],
         ]);
 
-        return new static($site, $json['d'], $settings);
+        return new static($site, $json, $settings);
     }
 
     /**
@@ -334,7 +334,7 @@ class SPList extends SPListObject
         $json = $site->request("_api/web/Lists/GetByTitle('".$title."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query' => [
@@ -342,7 +342,7 @@ class SPList extends SPListObject
             ],
         ]);
 
-        return new static($site, $json['d'], $settings);
+        return new static($site, $json, $settings);
     }
 
     /**
@@ -371,9 +371,9 @@ class SPList extends SPListObject
         $json = $site->request('_api/web/Lists', [
             'headers' => [
                 'Authorization'   => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $site->getSPFormDigest(),
-                'Content-type'    => 'application/json;odata=verbose',
+                'Content-type'    => 'application/json',
                 'Content-length'  => strlen($body),
             ],
 
@@ -384,7 +384,7 @@ class SPList extends SPListObject
             'body'    => $body,
         ], 'POST');
 
-        return new static($site, $json['d'], $settings);
+        return new static($site, $json, $settings);
     }
 
     /**
@@ -408,11 +408,11 @@ class SPList extends SPListObject
         $this->request("_api/web/Lists(guid'".$this->guid."')", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $this->getSPFormDigest(),
                 'X-HTTP-Method'   => 'MERGE',
                 'IF-MATCH'        => '*',
-                'Content-type'    => 'application/json;odata=verbose',
+                'Content-type'    => 'application/json',
                 'Content-length'  => strlen($body),
             ],
 
@@ -439,7 +439,7 @@ class SPList extends SPListObject
         $this->request("_api/web/Lists(guid'".$this->guid."')", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $this->getSPFormDigest(),
                 'X-HTTP-Method'   => 'DELETE',
                 'IF-MATCH'        => '*',
@@ -472,16 +472,16 @@ class SPList extends SPListObject
         $json = $this->request("_api/web/Lists(guid'".$this->guid."')/Fields", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $this->getSPFormDigest(),
-                'Content-type'    => 'application/json;odata=verbose',
+                'Content-type'    => 'application/json',
                 'Content-length'  => strlen($body),
             ],
 
             'body'    => $body,
         ], 'POST');
 
-        return $json['d']['Id'];
+        return $json['Id'];
     }
 
     /**
@@ -496,11 +496,11 @@ class SPList extends SPListObject
         $json = $this->request("_api/web/Lists(guid'".$this->guid."')/itemCount", [
             'headers' => [
                 'Authorization' => 'Bearer '.$this->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
         ]);
 
-        return $this->itemCount = $json['d']['ItemCount'];
+        return $this->itemCount = $json['ItemCount'];
     }
 
     /**

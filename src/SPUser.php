@@ -103,8 +103,8 @@ class SPUser extends SPObject
             'account'   => 'AccountName',
             'email'     => 'Email',
             'fullName'  => 'DisplayName',
-            'firstName' => 'UserProfileProperties.results.4.Value',
-            'lastName'  => 'UserProfileProperties.results.6.Value',
+            'firstName' => 'UserProfileProperties->4->Value',
+            'lastName'  => 'UserProfileProperties->6->Value',
             'title'     => 'Title',
             'picture'   => 'PictureUrl',
             'url'       => 'PersonalUrl',
@@ -235,11 +235,11 @@ class SPUser extends SPObject
         $json = $site->request('_api/SP.UserProfiles.PeopleManager/GetMyProperties', [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
         ]);
 
-        return new static($site, $json['d'], $extra);
+        return new static($site, $json, $extra);
     }
 
     /**
@@ -257,7 +257,7 @@ class SPUser extends SPObject
         $json = $site->request('_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)', [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query' => [
@@ -265,6 +265,6 @@ class SPUser extends SPObject
             ],
         ], 'POST');
 
-        return new static($site, $json['d'], $extra);
+        return new static($site, $json, $extra);
     }
 }

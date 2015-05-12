@@ -45,7 +45,7 @@ class SPItem extends SPObject implements SPItemInterface
     public function __construct(SPList $list, array $json, array $extra = [])
     {
         parent::__construct([
-            'type'     => '__metadata.type',
+            'type'     => 'odata.type',
             'id'       => 'Id',
             'guid'     => 'GUID',
             'title'    => 'Title',
@@ -106,7 +106,7 @@ class SPItem extends SPObject implements SPItemInterface
         $json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
             'headers' => [
                 'Authorization' => 'Bearer '.$list->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query'   => [
@@ -116,7 +116,7 @@ class SPItem extends SPObject implements SPItemInterface
 
         $items = [];
 
-        foreach ($json['d']['results'] as $item) {
+        foreach ($json['results'] as $item) {
             $items[$item['GUID']] = new static($list, $item, $settings['extra']);
         }
 
@@ -139,11 +139,11 @@ class SPItem extends SPObject implements SPItemInterface
         $json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items(".$id.")", [
             'headers' => [
                 'Authorization' => 'Bearer '.$list->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
         ]);
 
-        return new static($list, $json['d'], $extra);
+        return new static($list, $json, $extra);
     }
 
     /**
@@ -170,9 +170,9 @@ class SPItem extends SPObject implements SPItemInterface
         $json = $list->request("_api/web/Lists(guid'".$list->getGUID()."')/items", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$list->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $list->getSPFormDigest(),
-                'Content-type'    => 'application/json;odata=verbose',
+                'Content-type'    => 'application/json',
                 'Content-length'  => strlen($body),
             ],
 
@@ -180,7 +180,7 @@ class SPItem extends SPObject implements SPItemInterface
 
         ], 'POST');
 
-        return new static($list, $json['d'], $extra);
+        return new static($list, $json, $extra);
     }
 
     /**
@@ -204,11 +204,11 @@ class SPItem extends SPObject implements SPItemInterface
         $this->list->request("_api/web/Lists(guid'".$this->list->getGUID()."')/items(".$this->id.")", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$this->list->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $this->list->getSPFormDigest(),
                 'X-HTTP-Method'   => 'MERGE',
                 'IF-MATCH'        => '*',
-                'Content-type'    => 'application/json;odata=verbose',
+                'Content-type'    => 'application/json',
                 'Content-length'  => strlen($body),
             ],
 

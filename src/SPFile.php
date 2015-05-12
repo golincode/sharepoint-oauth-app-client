@@ -81,16 +81,16 @@ class SPFile extends SPObject implements SPItemInterface
     public function __construct(SPFolderInterface $folder, array $json, array $extra = [])
     {
         parent::__construct([
-            'type'        => 'ListItemAllFields.__metadata.type',
-            'id'          => 'ListItemAllFields.ID',
-            'guid'        => 'ListItemAllFields.GUID',
+            'type'        => 'odata.type',
+            'id'          => 'ListItemAllFields->ID',
+            'guid'        => 'ListItemAllFields->GUID',
             'title'       => 'Title',
             'name'        => 'Name',
             'size'        => 'Length',
             'created'     => 'TimeCreated',
             'modified'    => 'TimeLastModified',
             'relativeUrl' => 'ServerRelativeUrl',
-            'author'      => 'Author.LoginName',
+            'author'      => 'Author->LoginName',
         ], $extra);
 
         $this->folder = $folder;
@@ -248,7 +248,7 @@ class SPFile extends SPObject implements SPItemInterface
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeUrl()."')/Files", [
             'headers' => [
                 'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query'   => [
@@ -258,7 +258,7 @@ class SPFile extends SPObject implements SPItemInterface
 
         $files = [];
 
-        foreach ($json['d']['results'] as $file) {
+        foreach ($json['results'] as $file) {
             $files[$file['UniqueId']] = new static($folder, $file, $extra);
         }
 
@@ -281,7 +281,7 @@ class SPFile extends SPObject implements SPItemInterface
         $json = $site->request("_api/web/GetFileByServerRelativeUrl('".$relativeUrl."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$site->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query'   => [
@@ -291,7 +291,7 @@ class SPFile extends SPObject implements SPItemInterface
 
         $folder = SPFolder::getByRelativeUrl($site, dirname($relativeUrl));
 
-        return new static($folder, $json['d'], $extra);
+        return new static($folder, $json, $extra);
     }
 
     /**
@@ -312,7 +312,7 @@ class SPFile extends SPObject implements SPItemInterface
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeUrl()."')/Files('".$name."')", [
             'headers' => [
                 'Authorization' => 'Bearer '.$folder->getSPAccessToken(),
-                'Accept'        => 'application/json;odata=verbose',
+                'Accept'        => 'application/json',
             ],
 
             'query'   => [
@@ -320,7 +320,7 @@ class SPFile extends SPObject implements SPItemInterface
             ],
         ]);
 
-        return new static($folder, $json['d'], $extra);
+        return new static($folder, $json, $extra);
     }
 
     /**
@@ -399,7 +399,7 @@ class SPFile extends SPObject implements SPItemInterface
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeUrl()."')/Files/Add(url='".$name."',overwrite=".($overwrite ? 'true' : 'false').")", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $folder->getSPFormDigest(),
                 'Content-length'  => strlen($data),
             ],
@@ -411,7 +411,7 @@ class SPFile extends SPObject implements SPItemInterface
             'body'    => $data,
         ], 'POST');
 
-        return new static($folder, $json['d'], $extra);
+        return new static($folder, $json, $extra);
     }
 
     /**
@@ -468,7 +468,7 @@ class SPFile extends SPObject implements SPItemInterface
         $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/moveTo(newUrl='".$newUrl."',flags=1)", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
             ],
         ], 'POST');
@@ -503,7 +503,7 @@ class SPFile extends SPObject implements SPItemInterface
         $this->folder->request("_api/Web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/copyTo(strNewUrl='".$newUrl."',boverwrite=".($overwrite ? 'true' : 'false').")", [
             'headers' => [
                 'Authorization'   => 'Bearer '.$folder->getSPAccessToken(),
-                'Accept'          => 'application/json;odata=verbose',
+                'Accept'          => 'application/json',
                 'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
             ],
         ], 'POST');
