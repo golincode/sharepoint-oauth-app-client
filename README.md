@@ -33,7 +33,7 @@ try {
         'site' => [
             'resource'  => '00000000-0000-ffff-0000-000000000000/example.sharepoint.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
             'client_id' => '52848cad-bc13-4d69-a371-30deff17bb4d/example.com@09g7c3b0-f0d4-416d-39a7-09671ab91f64',
-            'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE='
+            'secret'    => 'YzcZQ7N4lTeK5COin/nmNRG5kkL35gAW1scrum5mXVgE=',
         ]
     ];
 
@@ -45,7 +45,7 @@ try {
 
     // get all the Lists and respective Items 
     $lists = SPList::getAll($site, [
-        'fetch' => true
+        'fetch' => true,
     ]);
 
     // iterate through each List
@@ -72,6 +72,9 @@ try {
 - [SPFolder](docs/SPFolder.md)
 - [SPFile](docs/SPFile.md)
 - [SPUser](docs/SPUser.md)
+
+## SharePoint credentials
+See how to generate the needed credentials [here](Credentials.md). 
 
 ## Troubleshooting
 Check for common library issues and how to [solve them](docs/Troubleshooting.md)
