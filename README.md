@@ -74,7 +74,7 @@ try {
 - [SPUser](docs/SPUser.md)
 
 ## SharePoint credentials
-See how to generate the needed credentials [here](Credentials.md). 
+See how to generate the SharePoint credentials [here](docs/Credentials.md). 
 
 ## Troubleshooting
 Check for common library issues and how to [solve them](docs/Troubleshooting.md)
