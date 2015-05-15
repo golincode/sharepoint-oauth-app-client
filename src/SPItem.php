@@ -160,9 +160,7 @@ class SPItem extends SPObject implements SPItemInterface
     public static function create(SPList $list, array $properties, array $extra = [])
     {
         $properties = array_replace_recursive($properties, [
-            '__metadata' => [
-                'type' => $list->getItemType(),
-            ],
+            'odata.type' => $list->getItemType(),
         ]);
 
         $body = json_encode($properties);
@@ -194,9 +192,7 @@ class SPItem extends SPObject implements SPItemInterface
     public function update(array $properties)
     {
         $properties = array_replace_recursive($properties, [
-            '__metadata' => [
-                'type' => $this->type,
-            ],
+            'odata.type' => $this->type,
         ], $properties);
 
         $body = json_encode($properties);

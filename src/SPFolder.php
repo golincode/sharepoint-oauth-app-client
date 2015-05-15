@@ -302,10 +302,7 @@ class SPFolder extends SPListObject implements SPItemInterface
         $folder->isWritable(true);
 
         $body = json_encode([
-            '__metadata' => [
-                'type' => 'SP.Folder',
-            ],
-
+            'odata.type'        => 'SP.Folder',
             'ServerRelativeUrl' => $folder->getRelativeUrl($name),
         ]);
 
@@ -339,9 +336,7 @@ class SPFolder extends SPListObject implements SPItemInterface
     public function update(array $properties)
     {
         $properties = array_replace_recursive($properties, [
-            '__metadata' => [
-                'type' => 'SP.Folder',
-            ],
+            'odata.type' => 'SP.Folder',
         ]);
 
         $body = json_encode($properties);

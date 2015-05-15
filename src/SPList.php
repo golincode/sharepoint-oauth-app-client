@@ -361,9 +361,7 @@ class SPList extends SPListObject
         $properties = array_replace_recursive([
             'BaseTemplate' => static::TPL_DOCUMENTLIBRARY,
         ], $properties, [
-            '__metadata' => [
-                'type' => 'SP.List',
-            ],
+            'odata.type' => 'SP.List',
         ]);
 
         $body = json_encode($properties);
@@ -398,9 +396,7 @@ class SPList extends SPListObject
     public function update(array $properties)
     {
         $properties = array_replace_recursive($properties, [
-            '__metadata' => [
-                'type' => 'SP.List',
-            ],
+            'odata.type' => 'SP.List',
         ]);
 
         $body = json_encode($properties);
@@ -460,9 +456,7 @@ class SPList extends SPListObject
         $properties = array_replace_recursive([
             'FieldTypeKind' => static::FLD_TEXT,
         ], $properties, [
-            '__metadata' => [
-                'type' => 'SP.Field',
-            ],
+            'odata.type' => 'SP.Field',
         ]);
 
         $body = json_encode($properties);
