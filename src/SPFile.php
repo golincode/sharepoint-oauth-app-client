@@ -25,7 +25,7 @@ class SPFile extends SPObject implements SPItemInterface
      * SharePoint Folder
      *
      * @access  private
-     * @var     SPFolder
+     * @var     SPFolderInterface
      */
     private $folder;
 
@@ -238,12 +238,12 @@ class SPFile extends SPObject implements SPItemInterface
      *
      * @static
      * @access  public
-     * @param   SPFolder $folder SharePoint Folder
-     * @param   array    $extra  Extra properties to map
+     * @param   SPFolderInterface $folder SharePoint Folder
+     * @param   array             $extra  Extra properties to map
      * @throws  SPException
      * @return  array
      */
-    public static function getAll(SPFolder $folder, array $extra = [])
+    public static function getAll(SPFolderInterface $folder, array $extra = [])
     {
         $json = $folder->request("_api/web/GetFolderByServerRelativeUrl('".$folder->getRelativeUrl()."')/Files", [
             'headers' => [
