@@ -28,8 +28,11 @@ try {
 
     // get a Folder by relative URL
     $folder = SPFolder::getByRelativeUrl($site, 'myFolder');
-    
-    // get all the Files from the Folder we just got
+
+    // get a List by title
+    $folder = SPList::getByTitle($site, 'My List');
+
+    // get all the Files from the Folder/List we just got
     $files = SPFile::getAll($folder);
     
     // do something with the files
@@ -136,6 +139,9 @@ try {
     // get a Folder by relative URL
     $folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
+    // get a List by title
+    $folder = SPList::getByTitle($site, 'My List');
+
     // content from an SplFileInfo object
     $content = new SplFileInfo('document.pdf');
     $name = null; // if null, the file name from the SplFileInfo will be used
@@ -186,6 +192,9 @@ try {
     // get a Folder by relative URL
     $folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
 
+    // get a List by title
+    $folder = SPList::getByTitle($site, 'My List');
+
     $file = SPFile::getByName($folder, 'document.pdf');
 
     // content from an SplFileInfo object
@@ -235,6 +244,12 @@ try {
     // get another Folder by relative URL
     $folder2 = SPFolder::getByRelativeUrl($site, 'otherFolder');
 
+    // get a List by title
+    $folder1 = SPList::getByTitle($site, 'My List');
+
+    // get another List by title
+    $folder2 = SPList::getByTitle($site, 'My Other List');
+
     // get the File we want to move
     $file = SPFile::getByName($folder1, 'document.pdf');
 
@@ -279,6 +294,12 @@ try {
     // get another Folder by relative URL
     $folder2 = SPFolder::getByRelativeUrl($site, 'otherFolder');
 
+    // get a List by title
+    $folder1 = SPList::getByTitle($site, 'My List');
+
+    // get another List by title
+    $folder2 = SPList::getByTitle($site, 'My Other List');
+
     // get the File we want to copy
     $file = SPFile::getByName($folder1, 'document.pdf');
 
@@ -322,6 +343,9 @@ try {
 
     // get a Folder by relative URL
     $folder = SPFolder::getByRelativeUrl($site, 'myFolder/mySubfolder');
+
+    // get a List by title
+    $folder = SPList::getByTitle($site, 'My List');
 
     // get the File we want to delete
     $file = SPFile::getByName($folder, 'document.pdf');
