@@ -199,16 +199,14 @@ class SPSite implements SPRequesterInterface
      */
     private function checkSPErrors(ResponseInterface $response)
     {
-        $json = $response->json([
-            'object' => true,
-        ]);
+        $json = $response->json();
 
-        if (isset($json->error->message->value)) {
-            throw new SPException($json->error->message->value, $response->getStatusCode());
+        if (isset($json['odata.error']['message']['value'])) {
+            throw new SPException($json['odata.error']['message']['value'], $response->getStatusCode());
         }
 
-        if (isset($json->error)) {
-            throw new SPException($json->error, $response->getStatusCode());
+        if (isset($json['odata.error'])) {
+            throw new SPException($json['odata.error'], $response->getStatusCode());
         }
     }
 
