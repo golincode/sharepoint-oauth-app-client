@@ -281,7 +281,7 @@ class SPList extends SPListObject
 
         $lists = [];
 
-        foreach ($json['results'] as $list) {
+        foreach ($json['value'] as $list) {
             // allowed SharePoint List Types only
             if (static::isListTypeAllowed($list['BaseTemplate'])) {
                 $lists[$list['Id']] = new static($site, $list, $settings);

@@ -258,7 +258,7 @@ class SPFile extends SPObject implements SPItemInterface
 
         $files = [];
 
-        foreach ($json['results'] as $file) {
+        foreach ($json['value'] as $file) {
             $files[$file['UniqueId']] = new static($folder, $file, $extra);
         }
 

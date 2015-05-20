@@ -116,7 +116,7 @@ class SPItem extends SPObject implements SPItemInterface
 
         $items = [];
 
-        foreach ($json['results'] as $item) {
+        foreach ($json['value'] as $item) {
             $items[$item['GUID']] = new static($list, $item, $settings['extra']);
         }
 

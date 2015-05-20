@@ -276,7 +276,7 @@ class SPFolder extends SPListObject implements SPItemInterface
 
         $folders = [];
 
-        foreach ($json['results'] as $subFolder) {
+        foreach ($json['value'] as $subFolder) {
             // skip System Folders
             if (! static::isSystemFolder($subFolder['Name'])) {
                 $folders[$subFolder['UniqueId']] = new static($site, $subFolder, $settings);
