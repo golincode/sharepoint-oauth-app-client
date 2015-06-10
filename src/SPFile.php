@@ -335,7 +335,7 @@ class SPFile extends SPObject implements SPItemInterface
     private static function contentTypeHandler($input)
     {
         if ($input instanceof SplFileInfo) {
-            $data = $input->openFile('r')->fread($input->getSize());
+            $data = file_get_contents($input->getPathname());
 
             if ($data === false) {
                 throw new SPException('Unable to get file contents');
