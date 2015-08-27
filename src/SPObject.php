@@ -73,8 +73,8 @@ abstract class SPObject implements SPObjectInterface
      */
     protected function assign($property, $value)
     {
-        // convert datetime strings to Carbon objects
-        if (preg_match('/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/', $value) === 1) {
+        // convert any date format string to a Carbon object
+        if (strtotime($value) !== false) {
             $value = new Carbon($value);
         }
 
