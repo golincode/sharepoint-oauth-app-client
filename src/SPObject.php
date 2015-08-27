@@ -54,8 +54,12 @@ abstract class SPObject implements SPObjectInterface
      * @throws  SPException
      * @return  mixed
      */
-    public function getExtra($property)
+    public function getExtra($property = null)
     {
+        if ($property === null) {
+            return $this->extra;
+        }
+
         if (array_key_exists($property, $this->extra)) {
             return $this->extra[$property];
         }
