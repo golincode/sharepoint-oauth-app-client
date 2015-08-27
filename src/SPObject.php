@@ -123,7 +123,7 @@ abstract class SPObject implements SPObjectInterface
      */
     protected function hydrate($data, $rehydrate = false)
     {
-        // hydrate from a SPObject
+        // hydrate from an SPObject
         if ($data instanceof $this) {
             foreach (get_object_vars($data) as $key => $value) {
                 $this->$key = $value;
@@ -138,10 +138,10 @@ abstract class SPObject implements SPObjectInterface
                 // make spaces SharePoint compatible
                 $path = str_replace(' ', '_x0020_', $path);
 
-                $current = $this->getJsonValue($data, $path);
+                $value = $this->getJsonValue($data, $path);
 
-                if ($current !== null || $rehydrate === false) {
-                    $this->assign($property, $current);
+                if ($value !== null || $rehydrate === false) {
+                    $this->assign($property, $value);
                 }
             }
 
