@@ -40,9 +40,11 @@ class SPFormDigest extends SPObject implements Serializable
      */
     protected function hydrate($data, $exceptions = true)
     {
-        parent::hydrate($data, $exceptions);
+        if (array_key_exists('FormDigestTimeoutSeconds', $data)) {
+            $data['FormDigestTimeoutSeconds'] = Carbon::now()->addSeconds($data['FormDigestTimeoutSeconds']);
+        }
 
-        $this->expires = Carbon::now()->addSeconds($this->expires);
+        parent::hydrate($data, $exceptions);
     }
 
     /**
