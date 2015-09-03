@@ -59,6 +59,17 @@ class SPItem extends SPObject implements SPItemInterface
     }
 
     /**
+     * Get SharePoint List
+     *
+     * @access  public
+     * @return  SPList
+     */
+    public function getSPList()
+    {
+        return $this->list;
+    }
+
+    /**
      * Get SharePoint ID
      *
      * @access  public

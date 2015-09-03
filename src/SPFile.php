@@ -99,6 +99,17 @@ class SPFile extends SPObject implements SPItemInterface
     }
 
     /**
+     * Get SharePoint Folder
+     *
+     * @access  public
+     * @return  SPFolderInterface
+     */
+    public function getSPFolder()
+    {
+        return $this->folder;
+    }
+
+    /**
      * Get SharePoint ID
      *
      * @access  public
