@@ -20,10 +20,10 @@ class SPItem extends SPObject implements SPItemInterface
     /**
      * SharePoint List
      *
-     * @access  private
+     * @access  protected
      * @var     SPList
      */
-    private $list;
+    protected $list;
 
     /**
      * SharePoint ID

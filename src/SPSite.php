@@ -29,50 +29,50 @@ class SPSite implements SPRequesterInterface
     /**
      * HTTP Client object
      *
-     * @access  private
+     * @access  protected
      * @var     \GuzzleHttp\Client
      */
-    private $http;
+    protected $http;
 
     /**
      * Access Token
      *
-     * @access  private
+     * @access  protected
      * @var     SPAccessToken
      */
-    private $token;
+    protected $token;
 
     /**
      * Form Digest
      *
-     * @access  private
+     * @access  protected
      * @var     SPFormDigest
      */
-    private $digest;
+    protected $digest;
 
     /**
      * Site Hostname
      *
-     * @access  private
+     * @access  protected
      * @var     string
      */
-    private $hostname;
+    protected $hostname;
 
     /**
      * Site Path
      *
-     * @access  private
+     * @access  protected
      * @var     string
      */
-    private $path;
+    protected $path;
 
     /**
      * Site Configuration
      *
-     * @access  private
+     * @access  protected
      * @var     array
      */
-    private $config = [];
+    protected $config = [];
 
     /**
      * SharePoint Site constructor
@@ -192,12 +192,12 @@ class SPSite implements SPRequesterInterface
     /**
      * Check for errors in the SharePoint API response
      *
-     * @access  private
+     * @access  protected
      * @param   \GuzzleHttp\Message\ResponseInterface $response
      * @throws  SPException
      * @return  void
      */
-    private function checkSPErrors(ResponseInterface $response)
+    protected function checkSPErrors(ResponseInterface $response)
     {
         $json = $response->json();
 

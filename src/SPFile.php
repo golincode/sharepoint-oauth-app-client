@@ -24,10 +24,10 @@ class SPFile extends SPObject implements SPItemInterface
     /**
      * SharePoint Folder
      *
-     * @access  private
+     * @access  protected
      * @var     SPFolderInterface
      */
-    private $folder;
+    protected $folder;
 
     /**
      * SharePoint ID
@@ -327,12 +327,12 @@ class SPFile extends SPObject implements SPItemInterface
      * Content type handler
      *
      * @static
-     * @access  private
+     * @access  protected
      * @param   mixed   $input
      * @throws  SPException
      * @return  string
      */
-    private static function contentTypeHandler($input)
+    protected static function contentTypeHandler($input)
     {
         if ($input instanceof SplFileInfo) {
             $data = file_get_contents($input->getPathname());

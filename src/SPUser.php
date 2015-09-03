@@ -18,10 +18,10 @@ class SPUser extends SPObject
     /**
      * SharePoint Site
      *
-     * @access  private
+     * @access  protected
      * @var     SPSite
      */
-    private $site;
+    protected $site;
 
     /**
      * User Account
