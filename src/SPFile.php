@@ -522,6 +522,27 @@ class SPFile extends SPObject implements SPItemInterface
     }
 
     /**
+     * Recycle a SharePoint File
+     *
+     * @access  public
+     * @throws  SPException
+     * @return  string
+     */
+    public function recycle()
+    {
+        $json = $this->folder->request("_api/web/GetFileByServerRelativeUrl('".$this->relativeUrl."')/recycle", [
+            'headers' => [
+                'Authorization'   => 'Bearer '.$this->folder->getSPAccessToken(),
+                'Accept'          => 'application/json',
+                'X-RequestDigest' => (string) $this->folder->getSPFormDigest(),
+            ],
+        ], 'POST');
+
+        // return the the recycle bin item GUID
+        return $json['value'];
+    }
+
+    /**
      * Delete a SharePoint File
      *
      * @access  public

@@ -230,6 +230,27 @@ class SPItem extends SPObject implements SPItemInterface
     }
 
     /**
+     * Recycle a SharePoint Item
+     *
+     * @access  public
+     * @throws  SPException
+     * @return  string
+     */
+    public function recycle()
+    {
+        $json = $this->list->request("_api/web/Lists(guid'".$this->list->getGUID()."')/items(".$this->id.")/recycle", [
+            'headers' => [
+                'Authorization'   => 'Bearer '.$this->list->getSPAccessToken(),
+                'Accept'          => 'application/json',
+                'X-RequestDigest' => (string) $this->list->getSPFormDigest(),
+            ],
+        ], 'POST');
+
+        // return the the recycle bin item GUID
+        return $json['value'];
+    }
+
+    /**
      * Delete a SharePoint Item
      *
      * @access  public
