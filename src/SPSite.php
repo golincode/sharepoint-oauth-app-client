@@ -201,7 +201,7 @@ class SPSite implements SPRequesterInterface
     {
         $httpStatus = $response->getStatusCode();
 
-        if ($httpStatus !== 200) {
+        if ($httpStatus >= 400) {
             $json = $response->json();
 
             // the error messages are fetched from most to the least detailed
