@@ -146,11 +146,7 @@ class SPFolder extends SPListObject implements SPItemInterface
     }
 
     /**
-     * Get URL
-     *
-     * @access  public
-     * @param   string $path Path to append to the URL
-     * @return  string
+     * {@inheritdoc}
      */
     public function getUrl($path = null)
     {
