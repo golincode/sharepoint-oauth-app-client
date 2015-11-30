@@ -222,6 +222,14 @@ class SPList extends SPListObject
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getUrl($path = null)
+    {
+        return $this->site->getHostname($this->getRelativeUrl($path));
+    }
+
+    /**
      * Get List Description
      *
      * @access  public
