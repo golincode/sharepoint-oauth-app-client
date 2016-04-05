@@ -44,7 +44,7 @@ class SPFormDigest extends SPObject implements Serializable
             $data['FormDigestTimeoutSeconds'] = Carbon::now()->addSeconds($data['FormDigestTimeoutSeconds']);
         }
 
-        parent::hydrate($data, $exceptions);
+        return parent::hydrate($data, $exceptions);
     }
 
     /**
