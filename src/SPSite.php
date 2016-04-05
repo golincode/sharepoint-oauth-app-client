@@ -190,40 +190,47 @@ class SPSite implements SPRequesterInterface
     }
 
     /**
-     * Check for errors in the SharePoint API response
+     * Parse the SharePoint API response
      *
      * @access  protected
      * @param   \GuzzleHttp\Message\ResponseInterface $response
      * @throws  SPException
-     * @return  void
+     * @return  array
      */
-    protected function checkSPErrors(ResponseInterface $response)
+    protected function parseResponse(ResponseInterface $response)
     {
         $httpStatus = $response->getStatusCode();
+        $json = json_decode($response->getBody(), true);
 
         if ($httpStatus >= 400) {
-            $json = $response->json();
+            $message = null;
 
-            // the error messages are fetched from most to the least detailed
-            if (isset($json['odata.error']['message']['value'])) {
-                throw new SPException($json['odata.error']['message']['value'], $httpStatus);
+            // If the response body cannot be parsed as JSON,
+            // the body will be used as the error message
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $message = $response->getBody();
+            } else {
+                if (isset($json['odata.error']['message']['value']) && $message === null) {
+                    $message = $json['odata.error']['message']['value'];
+                }
+
+                if (isset($json['error_description']) && $message === null) {
+                    $message = $json['error_description'];
+                }
+
+                if (isset($json['odata.error']) && $message === null) {
+                    $message = $json['odata.error'];
+                }
+
+                if (isset($json['error']) && $message === null) {
+                    $message = $json['error'];
+                }
             }
 
-            if (isset($json['odata.error'])) {
-                throw new SPException($json['odata.error'], $httpStatus);
-            }
-
-            if (isset($json['error_description'])) {
-                throw new SPException($json['error_description'], $httpStatus);
-            }
-
-            if (isset($json['error'])) {
-                throw new SPException($json['error'], $httpStatus);
-            }
-
-            // resort to the response body if none of the above exist
-            throw new SPException($response->getBody(), $httpStatus);
+            throw new SPException($message, $httpStatus);
         }
+
+        return $json;
     }
 
     /**
@@ -238,13 +245,7 @@ class SPSite implements SPRequesterInterface
 
             $response = $this->http->send($this->http->createRequest($method, $url, $options));
 
-            if ($json) {
-                $this->checkSPErrors($response);
-
-                return $response->json();
-            }
-
-            return $response;
+            return $json ? $this->parseResponse($response) : $response;
         } catch (TransferException $e) {
             throw SPException::fromTransferException($e);
         }
