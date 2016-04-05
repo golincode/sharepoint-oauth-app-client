@@ -27,10 +27,19 @@ interface SPFolderInterface extends SPRequesterInterface
      * Get Relative URL
      *
      * @access  public
-     * @param   string $path Path to append to the URL
+     * @param   string $path Path to append to the Relative URL
      * @return  string
      */
     public function getRelativeUrl($path = null);
+
+    /**
+     * Get URL
+     *
+     * @access  public
+     * @param   string $path Path to append to the URL
+     * @return  string
+     */
+    public function getUrl($path = null);
 
     /**
      * Is the folder writable?
